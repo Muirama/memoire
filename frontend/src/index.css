@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+  background: #0D0D0D;
+}
+
+* {
+  cursor: url("/cursors/Zanpaktou.cur"), auto;
+}
+
+/* Optimisations GPU */
+.bounce-card,
+.aurora-container,
+[class*="motion-"] {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Améliorer le rendu des select sur mobile */
+select {
+  background-image: none;
+}
+
+/* Optimisation des animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Amélioration du curseur sur les éléments interactifs */
+button,
+a,
+select,
+input[type="button"],
+input[type="submit"],
+[role="button"] {
+  cursor: url("/cursors/Zanpaktou.cur"), pointer !important;
+}
+
+:root {
+  background: #0D0D0D;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.87);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scroll bar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0D0D0D;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E50914;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF1E56;
+}
