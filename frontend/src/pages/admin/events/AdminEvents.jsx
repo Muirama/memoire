@@ -1,13 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FaCalendarAlt,
   FaSearch,
   FaUsers,
   FaLock,
   FaLockOpen,
+  FaChevronDown,
+  FaChevronUp,
   FaSpinner,
+  FaPlus,
+  FaEdit,
+  FaTrash,
 } from "react-icons/fa";
 import AdminLayout from "../AdminLayout";
 import api from "../../../api/api";
@@ -15,6 +20,7 @@ import EventCard from "./EventCard";
 import ViewRegModal from "./modals/ViewRegModal";
 import EditRegModal from "./modals/EditRegModal";
 import DeleteRegModal from "./modals/DeleteRegModal";
+import AdminEventForm from "./AdminEventForm";
 
 export default function AdminEvents() {
   const [events, setEvents] = useState([]);
@@ -26,7 +32,7 @@ export default function AdminEvents() {
   const [loadingRegs, setLoadingRegs] = useState({});
   const [toggling, setToggling] = useState({});
 
-  // Modals
+  // Modals inscriptions
   const [viewReg, setViewReg] = useState(null);
   const [editReg, setEditReg] = useState(null);
   const [newRegStatus, setNewRegStatus] = useState("");
@@ -34,14 +40,29 @@ export default function AdminEvents() {
   const [deleteRegId, setDeleteRegId] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
+  // Formulaire événement (create / edit)
+  const [showForm, setShowForm] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
+
+  // Suppression événement
+  const [deleteEventId, setDeleteEventId] = useState(null);
+  const [deletingEvent, setDeletingEvent] = useState(false);
+
+  // ── Fetch événements ──────────────────────────────────
+  const fetchEvents = () => {
+    setLoading(true);
     api
       .get("/events")
       .then((r) => setEvents(r.data.events))
       .catch(console.error)
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchEvents();
   }, []);
 
+  // ── Fetch inscriptions ────────────────────────────────
   const fetchRegistrations = async (eventId) => {
     if (registrations[eventId]) return;
     setLoadingRegs((p) => ({ ...p, [eventId]: true }));
@@ -60,6 +81,7 @@ export default function AdminEvents() {
     if (expandedId !== id) fetchRegistrations(id);
   };
 
+  // ── Toggle inscriptions ────────────────────────────────
   const handleToggle = async (event) => {
     setToggling((p) => ({ ...p, [event.id]: true }));
     try {
@@ -80,6 +102,7 @@ export default function AdminEvents() {
     }
   };
 
+  // ── Modifier statut inscription ────────────────────────
   const handleSaveStatus = async () => {
     setSaving(true);
     try {
@@ -100,7 +123,8 @@ export default function AdminEvents() {
     }
   };
 
-  const handleDelete = async () => {
+  // ── Supprimer inscription ──────────────────────────────
+  const handleDeleteReg = async () => {
     setDeleting(true);
     try {
       const reg = Object.values(registrations)
@@ -128,6 +152,28 @@ export default function AdminEvents() {
     }
   };
 
+  // ── Supprimer événement ────────────────────────────────
+  const handleDeleteEvent = async () => {
+    setDeletingEvent(true);
+    try {
+      await api.delete(`/events/${deleteEventId}`);
+      setEvents((p) => p.filter((e) => e.id !== deleteEventId));
+      setDeleteEventId(null);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeletingEvent(false);
+    }
+  };
+
+  // ── Après sauvegarde formulaire ────────────────────────
+  const handleSaved = () => {
+    setShowForm(false);
+    setEditingEvent(null);
+    fetchEvents(); // recharger la liste
+  };
+
+  // ── Filtrage ────────────────────────────────────────────
   const filtered = events.filter((e) => {
     const matchSearch =
       e.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -143,13 +189,29 @@ export default function AdminEvents() {
 
   return (
     <AdminLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-white flex items-center gap-3">
-          <FaCalendarAlt className="text-[#E50914]" /> Événements & Inscriptions
-        </h1>
-        <p className="text-gray-500 mt-1">
-          Gérez vos tournois et les inscriptions des participants
-        </p>
+      {/* Header */}
+      <div className="flex items-start justify-between mb-8 gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-white flex items-center gap-3">
+            <FaCalendarAlt className="text-[#E50914]" /> Événements &
+            Inscriptions
+          </h1>
+          <p className="text-gray-500 mt-1">
+            Gérez vos tournois et les inscriptions des participants
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setEditingEvent(null);
+            setShowForm(true);
+          }}
+          className="flex items-center gap-2 px-4 py-2.5 bg-[#E50914] hover:bg-[#FF1E56]
+                     text-white font-bold text-sm rounded-xl transition flex-shrink-0
+                     hover:shadow-[0_0_15px_rgba(229,9,20,0.5)]"
+        >
+          <FaPlus size={12} /> Nouvel événement
+        </button>
       </div>
 
       {/* Stats */}
@@ -198,7 +260,7 @@ export default function AdminEvents() {
         <div className="relative flex-1">
           <input
             type="text"
-            placeholder="Rechercher..."
+            placeholder="Rechercher un événement, un jeu..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-11 pr-4 py-3 bg-[#1A1A1A] text-white rounded-xl
@@ -217,7 +279,11 @@ export default function AdminEvents() {
               type="button"
               onClick={() => setFilterOpen(f.val)}
               className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all
-                          ${filterOpen === f.val ? "bg-[#E50914] text-white" : "bg-[#1A1A1A] text-gray-400 border border-white/10"}`}
+                          ${
+                            filterOpen === f.val
+                              ? "bg-[#E50914] text-white shadow-[0_0_12px_rgba(229,9,20,0.4)]"
+                              : "bg-[#1A1A1A] text-gray-400 border border-white/10 hover:border-white/20"
+                          }`}
             >
               {f.label}
             </button>
@@ -227,8 +293,23 @@ export default function AdminEvents() {
 
       {/* Liste */}
       {loading ? (
-        <div className="flex justify-center h-48 items-center">
+        <div className="flex justify-center items-center h-48">
           <FaSpinner className="text-[#E50914] text-4xl animate-spin" />
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-16 text-gray-500">
+          <FaCalendarAlt className="text-5xl mx-auto mb-3 opacity-30" />
+          <p>Aucun événement trouvé.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setEditingEvent(null);
+              setShowForm(true);
+            }}
+            className="mt-4 px-5 py-2.5 bg-[#E50914] text-white rounded-xl text-sm font-bold"
+          >
+            Créer le premier événement
+          </button>
         </div>
       ) : (
         <div className="space-y-4">
@@ -249,12 +330,90 @@ export default function AdminEvents() {
                 setNewRegStatus(reg.status);
               }}
               onDeleteReg={setDeleteRegId}
+              onEditEvent={(ev) => {
+                setEditingEvent(ev);
+                setShowForm(true);
+              }}
+              onDeleteEvent={(id) => setDeleteEventId(id)}
             />
           ))}
         </div>
       )}
 
-      {/* Modals */}
+      {/* ── Formulaire create/edit (panneau latéral) ── */}
+      <AnimatePresence>
+        {showForm && (
+          <AdminEventForm
+            event={editingEvent}
+            onClose={() => {
+              setShowForm(false);
+              setEditingEvent(null);
+            }}
+            onSaved={handleSaved}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Modal suppression événement ── */}
+      <AnimatePresence>
+        {deleteEventId && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setDeleteEventId(null)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                         w-full max-w-md bg-[#1A1A1A] rounded-2xl border border-white/10
+                         shadow-2xl z-50 p-6"
+            >
+              <h3 className="text-white font-bold text-lg mb-2">
+                Supprimer l'événement
+              </h3>
+              <p className="text-gray-400 text-sm mb-6">
+                Cette action supprimera l'événement{" "}
+                <span className="text-[#E50914] font-bold">
+                  #{deleteEventId}
+                </span>{" "}
+                ainsi que toutes ses inscriptions. Irréversible.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setDeleteEventId(null)}
+                  className="flex-1 py-3 rounded-xl border border-white/10
+                             text-gray-400 hover:text-white font-semibold text-sm transition"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteEvent}
+                  disabled={deletingEvent}
+                  className="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-500
+                             text-white font-bold text-sm transition disabled:opacity-50
+                             flex items-center justify-center gap-2"
+                >
+                  {deletingEvent ? (
+                    <FaSpinner className="animate-spin" />
+                  ) : (
+                    <FaTrash />
+                  )}
+                  Supprimer
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ── Modals inscriptions ── */}
       <ViewRegModal reg={viewReg} onClose={() => setViewReg(null)} />
       <EditRegModal
         reg={editReg}
@@ -266,7 +425,7 @@ export default function AdminEvents() {
       />
       <DeleteRegModal
         regId={deleteRegId}
-        onDelete={handleDelete}
+        onDelete={handleDeleteReg}
         onClose={() => setDeleteRegId(null)}
         deleting={deleting}
       />

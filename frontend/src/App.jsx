@@ -10,7 +10,7 @@ import Aurora from "./animations/Aurora";
 import CartDrawer from "./components/CartDrawer";
 import { CartProvider } from "./context/CartContext";
 
-// ── Pages publiques ───────────────────────────────────────
+// ── Pages publiques ──────────────────────────────────────
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/shop/ShopPage";
 import ShopDetailPage from "./pages/shop/ShopDetailPage";
@@ -23,28 +23,29 @@ import EventPage from "./pages/events/EventPage";
 import EventDetailPage from "./pages/events/EventDetailPage";
 import LoginPage from "./pages/LoginPage";
 
-// ── Pages admin ───────────────────────────────────────────
+// ── Pages admin ──────────────────────────────────────────
 import AdminHome from "./pages/admin/AdminHome";
 import AdminOrders from "./pages/admin/orders/AdminOrders";
+import AdminProductsPage from "./pages/admin/products/AdminProductsPage";
 import AdminEvents from "./pages/admin/events/AdminEvents";
+import AdminNewsPage from "./pages/admin/news/AdminNewsPage";
 
 function Layout({ children }) {
   const location = useLocation();
-  const hideLayout = location.pathname.startsWith("/admin");
-
+  const isAdmin = location.pathname.startsWith("/admin");
   return (
     <>
-      {!hideLayout && (
+      {!isAdmin && (
         <Aurora
           colorStops={["#E50914", "#730b0b", "#1a1a1a"]}
           amplitude={0.5}
           blend={0.7}
         />
       )}
-      {!hideLayout && <NavBar />}
-      {!hideLayout && <CartDrawer />}
+      {!isAdmin && <NavBar />}
+      {!isAdmin && <CartDrawer />}
       {children}
-      {!hideLayout && <Footer />}
+      {!isAdmin && <Footer />}
     </>
   );
 }
@@ -71,7 +72,9 @@ function App() {
             {/* ── Admin ── */}
             <Route path="/admin" element={<AdminHome />} />
             <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin/products" element={<AdminProductsPage />} />
             <Route path="/admin/events" element={<AdminEvents />} />
+            <Route path="/admin/news" element={<AdminNewsPage />} />
           </Routes>
         </Layout>
       </Router>

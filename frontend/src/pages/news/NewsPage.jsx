@@ -1,319 +1,290 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   FaSearch,
-  FaSortAmountDown,
-  FaHeart,
+  FaNewspaper,
   FaCalendarAlt,
   FaUser,
-  FaNewspaper,
-  FaEye,
+  FaSpinner,
+  FaArrowRight,
 } from "react-icons/fa";
-import { news, newsCategories, newsSortOptions } from "../../data/NewsData";
+import api from "../../api/api";
+
+const CATEGORIES = [
+  "Toutes",
+  "Actualité",
+  "Tournoi",
+  "Communauté",
+  "Produit",
+  "Annonce",
+];
+
+const CATEGORY_COLORS = {
+  Actualité: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  Tournoi: "bg-[#E50914]/20 text-[#E50914] border-[#E50914]/30",
+  Communauté: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+  Produit: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+  Annonce: "bg-green-500/20 text-green-400 border-green-500/30",
+};
+
+const formatDate = (d) =>
+  new Date(d).toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
 
 export default function NewsPage() {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Toutes");
-  const [sortBy, setSortBy] = useState("date-desc");
-  const [likedNews, setLikedNews] = useState(new Set());
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("Toutes");
 
-  // Filtrage et tri des actualités
-  const filteredAndSortedNews = useMemo(() => {
-    let filtered = news.filter((item) => {
-      const matchesSearch =
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory =
-        selectedCategory === "Toutes" || item.category === selectedCategory;
-      return matchesSearch && matchesCategory;
+  useEffect(() => {
+    api
+      .get("/news")
+      .then((r) => setNews(r.data.news))
+      .catch(() => setError("Impossible de charger les actualités."))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = useMemo(() => {
+    return news.filter((n) => {
+      const matchSearch = n.title.toLowerCase().includes(search.toLowerCase());
+      const matchCategory = category === "Toutes" || n.category === category;
+      return matchSearch && matchCategory;
     });
+  }, [news, search, category]);
 
-    switch (sortBy) {
-      case "date-desc":
-        filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-        break;
-      case "date-asc":
-        filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
-        break;
-      case "likes-desc":
-        filtered.sort((a, b) => b.likes - a.likes);
-        break;
-      case "title-asc":
-        filtered.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case "title-desc":
-        filtered.sort((a, b) => b.title.localeCompare(a.title));
-        break;
-      default:
-        break;
-    }
+  // Premier article = mis en avant
+  const featured = filtered[0];
+  const rest = filtered.slice(1);
 
-    return filtered;
-  }, [searchTerm, selectedCategory, sortBy]);
+  if (loading)
+    return (
+      <section className="relative bg-transparent min-h-screen flex items-center justify-center z-10">
+        <div className="text-center">
+          <FaSpinner className="text-[#E50914] text-5xl animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Chargement des actualités...</p>
+        </div>
+      </section>
+    );
 
-  const handleResetFilters = () => {
-    setSearchTerm("");
-    setSelectedCategory("Toutes");
-    setSortBy("date-desc");
-  };
-
-  const handleLike = (newsId) => {
-    setLikedNews((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(newsId)) {
-        newSet.delete(newsId);
-      } else {
-        newSet.add(newsId);
-      }
-      return newSet;
-    });
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }).format(date);
-  };
-
-  const getCategoryColor = (category) => {
-    const colors = {
-      "Jeux Vidéo": "bg-blue-600",
-      "e-Sport": "bg-[#E50914]",
-      Console: "bg-purple-600",
-      Hardware: "bg-green-600",
-    };
-    return colors[category] || "bg-gray-600";
-  };
+  if (error)
+    return (
+      <section className="relative bg-transparent min-h-screen flex items-center justify-center z-10">
+        <p className="text-red-400">{error}</p>
+      </section>
+    );
 
   return (
-    <section className="relative bg-transparent min-h-screen py-12 md:py-20 px-4 md:px-6 z-10">
-      <div className="max-w-7xl mx-auto relative z-10">
+    <section
+      className="relative bg-transparent min-h-screen py-12 md:py-20
+                        px-4 md:px-6 z-10"
+    >
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 md:mb-12 relative z-10"
+          className="text-center mb-10"
         >
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-3 md:mb-4">
-            Actualités <span className="text-[#E50914]">Gaming</span>
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-3">
+            Nos <span className="text-[#E50914]">Actualités</span>
           </h1>
-          <p className="text-gray-400 text-base md:text-lg">
-            Les dernières news du monde du gaming, esport et tech
+          <p className="text-gray-400">
+            Restez informés des dernières nouvelles Gascom
           </p>
-          <p className="text-gray-500 mt-2 text-sm md:text-base">
-            {filteredAndSortedNews.length} article(s) disponible(s)
+          <p className="text-gray-500 text-sm mt-2">
+            {filtered.length} article(s)
           </p>
         </motion.div>
 
-        {/* Barre de recherche et filtres */}
-        <div className="mb-8 md:mb-10 space-y-4 relative z-30">
-          {/* Ligne 1: Recherche + Tri */}
-          <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center">
-            {/* Recherche */}
-            <div className="relative w-full md:flex-1">
-              <label htmlFor="news-search" className="sr-only">
-                Rechercher une actualité
-              </label>
-              <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none z-10" />
-              <input
-                id="news-search"
-                name="newsSearch"
-                type="text"
-                placeholder="Rechercher une actualité..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                autoComplete="off"
-                className="w-full pl-12 pr-4 py-3 bg-[#1A1A1A] text-white rounded-lg border border-[#E50914]/30 focus:border-[#E50914] focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 transition-all relative z-30"
-              />
-            </div>
-
-            {/* Tri */}
-            <div className="relative w-full md:w-64">
-              <label htmlFor="news-sort" className="sr-only">
-                Trier par
-              </label>
-              <FaSortAmountDown className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none z-10" />
-              <select
-                id="news-sort"
-                name="newsSort"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full pl-12 pr-10 py-3 bg-[#1A1A1A] text-white rounded-lg border border-[#E50914]/30 focus:border-[#E50914] focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 transition-all appearance-none relative z-30"
-              >
-                {newsSortOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
-                <svg
-                  className="w-4 h-4 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          {/* Ligne 2: Filtres catégories */}
-          <div className="flex gap-2 md:gap-3 flex-wrap justify-center relative z-30">
-            {newsCategories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                type="button"
-                aria-pressed={selectedCategory === cat}
-                aria-label={`Filtrer par catégorie ${cat}`}
-                className={`px-4 md:px-6 py-2 rounded-lg font-semibold transition-all duration-300 text-sm md:text-base ${
-                  selectedCategory === cat
-                    ? "bg-[#E50914] text-white shadow-[0_0_15px_rgba(229,9,20,0.6)] scale-105"
-                    : "bg-[#1A1A1A] text-gray-400 hover:bg-[#E50914]/20 hover:text-white"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+        {/* Barre recherche */}
+        <div className="flex flex-col md:flex-row gap-3 mb-8">
+          <div className="relative flex-1">
+            <FaSearch
+              className="absolute left-4 top-1/2 -translate-y-1/2
+                                 text-gray-500 pointer-events-none"
+            />
+            <input
+              type="text"
+              placeholder="Rechercher une actualité..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-[#1A1A1A] text-white rounded-lg
+                         border border-[#E50914]/30 focus:border-[#E50914] focus:outline-none
+                         focus:ring-2 focus:ring-[#E50914]/50 transition-all"
+            />
           </div>
         </div>
 
-        {/* Grille d'actualités */}
-        <AnimatePresence mode="wait">
-          {filteredAndSortedNews.length > 0 ? (
-            <motion.div
-              key="news-grid"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 relative z-20"
+        {/* Filtres catégories */}
+        <div className="flex gap-2 flex-wrap justify-center mb-10">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => setCategory(cat)}
+              className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300
+                          ${
+                            category === cat
+                              ? "bg-[#E50914] text-white shadow-[0_0_15px_rgba(229,9,20,0.5)] scale-105"
+                              : "bg-[#1A1A1A] text-gray-400 hover:bg-[#E50914]/20 hover:text-white"
+                          }`}
             >
-              {filteredAndSortedNews.map((item, index) => (
-                <motion.article
-                  key={item.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ delay: index * 0.05, duration: 0.3 }}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="bg-[#1A1A1A] rounded-xl overflow-hidden border border-[#E50914]/20 hover:border-[#E50914] hover:shadow-[0_0_25px_rgba(229,9,20,0.4)] transition-all duration-300"
-                >
-                  {/* Image */}
-                  <div
-                    className="relative h-48 overflow-hidden cursor-pointer"
-                    onClick={() => navigate(`/news/${item.id}`)}
-                  >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {filtered.length === 0 ? (
+          <div className="text-center py-16">
+            <FaNewspaper className="text-gray-700 text-6xl mx-auto mb-4" />
+            <p className="text-gray-500 text-xl">Aucun article trouvé.</p>
+          </div>
+        ) : (
+          <>
+            {/* Article à la une */}
+            {featured && category === "Toutes" && !search && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={() => navigate(`/news/${featured.id}`)}
+                className="group relative rounded-2xl overflow-hidden border border-white/10
+                           hover:border-[#E50914]/50 transition-all duration-300 mb-10 cursor-pointer
+                           hover:shadow-[0_0_30px_rgba(229,9,20,0.2)]"
+              >
+                <div className="relative h-64 md:h-80 overflow-hidden bg-[#1A1A1A]">
+                  {featured.image ? (
                     <img
-                      src={item.image}
-                      alt={item.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover hover:scale-110 transition duration-500"
+                      src={featured.image}
+                      alt={featured.title}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-105
+                                    transition duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <FaNewspaper className="text-gray-700 text-6xl" />
+                    </div>
+                  )}
+                  <div
+                    className="absolute inset-0 bg-gradient-to-t
+                                  from-[#0D0D0D] via-[#0D0D0D]/40 to-transparent"
+                  />
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="flex items-center gap-3 mb-3">
                     <span
-                      className={`absolute top-3 right-3 ${getCategoryColor(item.category)} text-white text-xs px-3 py-1 rounded-full font-semibold`}
+                      className="text-xs bg-[#E50914] text-white px-2 py-0.5
+                                     rounded-full font-bold"
                     >
-                      {item.category}
+                      À la une
+                    </span>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full border font-semibold
+                                     ${CATEGORY_COLORS[featured.category]}`}
+                    >
+                      {featured.category}
                     </span>
                   </div>
-
-                  {/* Contenu */}
-                  <div className="p-5">
-                    {/* Titre */}
-                    <h3
-                      className="text-lg md:text-xl font-bold text-white mb-3 line-clamp-2 cursor-pointer hover:text-[#E50914] transition"
-                      onClick={() => navigate(`/news/${item.id}`)}
-                    >
-                      {item.title}
-                    </h3>
-
-                    {/* Excerpt */}
-                    <p className="text-gray-400 text-sm mb-4 line-clamp-3">
-                      {item.excerpt}
-                    </p>
-
-                    {/* Meta info */}
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                      <div className="flex items-center gap-2">
-                        <FaCalendarAlt className="text-[#E50914]" />
-                        <span>{formatDate(item.date)}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <FaUser className="text-[#E50914]" />
-                        <span>{item.author}</span>
-                      </div>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-700">
-                      <button
-                        type="button"
-                        onClick={() => handleLike(item.id)}
-                        className={`flex items-center gap-2 transition-colors ${
-                          likedNews.has(item.id)
-                            ? "text-[#E50914]"
-                            : "text-gray-400 hover:text-[#E50914]"
-                        }`}
-                        aria-label={`J'aime ${item.title}`}
-                      >
-                        <FaHeart
-                          className={
-                            likedNews.has(item.id) ? "fill-current" : ""
-                          }
-                        />
-                        <span className="text-sm font-semibold">
-                          {item.likes + (likedNews.has(item.id) ? 1 : 0)}
-                        </span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => navigate(`/news/${item.id}`)}
-                        className="text-sm font-semibold text-[#E50914] hover:text-[#FF1E56] transition flex items-center gap-2"
-                      >
-                        <FaEye /> Lire plus
-                      </button>
-                    </div>
+                  <h2
+                    className="text-white font-extrabold text-2xl md:text-3xl mb-2
+                                 group-hover:text-[#E50914] transition leading-tight"
+                  >
+                    {featured.title}
+                  </h2>
+                  <p className="text-gray-300 text-sm line-clamp-2 mb-3">
+                    {featured.excerpt}
+                  </p>
+                  <div className="flex items-center gap-4 text-gray-400 text-xs">
+                    <span className="flex items-center gap-1">
+                      <FaUser size={10} /> {featured.author}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <FaCalendarAlt size={10} />{" "}
+                      {formatDate(featured.createdAt)}
+                    </span>
+                    <span className="flex items-center gap-1 text-[#E50914] font-semibold ml-auto">
+                      Lire l'article <FaArrowRight size={10} />
+                    </span>
                   </div>
-                </motion.article>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="no-results"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="text-center mt-12 md:mt-16 py-12 relative z-10"
-            >
-              <div className="text-gray-500 text-5xl md:text-6xl mb-4">🔍</div>
-              <p className="text-gray-500 text-lg md:text-xl mb-6">
-                Aucune actualité trouvée pour votre recherche.
-              </p>
-              <button
-                type="button"
-                onClick={handleResetFilters}
-                aria-label="Réinitialiser tous les filtres"
-                className="px-6 md:px-8 py-3 bg-[#E50914] text-white rounded-lg hover:bg-[#FF1E56] transition-all duration-300 hover:shadow-[0_0_20px_rgba(229,9,20,0.6)] active:scale-95 font-semibold text-sm md:text-base"
-              >
-                Réinitialiser les filtres
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Grille articles */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {(category !== "Toutes" || search ? filtered : rest).map(
+                (item, index) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    onClick={() => navigate(`/news/${item.id}`)}
+                    className="group bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5
+                             hover:border-[#E50914]/40 hover:shadow-[0_0_20px_rgba(229,9,20,0.15)]
+                             transition-all duration-300 cursor-pointer flex flex-col"
+                  >
+                    {/* Image */}
+                    <div className="h-44 overflow-hidden bg-[#0D0D0D] relative">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover group-hover:scale-105
+                                      transition duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <FaNewspaper className="text-gray-700 text-5xl" />
+                        </div>
+                      )}
+                      <span
+                        className={`absolute top-3 left-3 text-xs px-2 py-1 rounded-full
+                                     border font-semibold ${CATEGORY_COLORS[item.category]}`}
+                      >
+                        {item.category}
+                      </span>
+                    </div>
+
+                    {/* Contenu */}
+                    <div className="p-5 flex flex-col flex-1">
+                      <h3
+                        className="text-white font-bold text-base mb-2 line-clamp-2
+                                   group-hover:text-[#E50914] transition leading-snug"
+                      >
+                        {item.title}
+                      </h3>
+                      <p className="text-gray-400 text-sm line-clamp-3 flex-1 leading-relaxed">
+                        {item.excerpt}
+                      </p>
+                      <div
+                        className="flex items-center justify-between mt-4 pt-3
+                                    border-t border-white/5 text-xs text-gray-500"
+                      >
+                        <span className="flex items-center gap-1">
+                          <FaUser size={9} /> {item.author}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <FaCalendarAlt size={9} />{" "}
+                          {formatDate(item.createdAt)}
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                ),
+              )}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

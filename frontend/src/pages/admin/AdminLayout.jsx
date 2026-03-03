@@ -6,6 +6,8 @@ import {
   FaTachometerAlt,
   FaShoppingBag,
   FaCalendarAlt,
+  FaNewspaper,
+  FaStore,
   FaBars,
   FaTimes,
   FaSignOutAlt,
@@ -13,26 +15,11 @@ import {
 } from "react-icons/fa";
 
 const navItems = [
-  {
-    label: "Dashboard",
-    icon: <FaTachometerAlt />,
-    to: "/admin",
-    end: true,
-  },
-  {
-    label: "Commandes",
-    icon: <FaShoppingBag />,
-    to: "/admin/orders",
-  },
-  {
-    label: "Événements",
-    icon: <FaCalendarAlt />,
-    to: "/admin/events",
-  },
-  // Futures sections :
-  // { label: "Produits", icon: <FaStore />,     to: "/admin/products" },
-  // { label: "News",     icon: <FaNewspaper />, to: "/admin/news"     },
-  // { label: "Teams",    icon: <FaUsers />,     to: "/admin/teams"    },
+  { label: "Dashboard", icon: <FaTachometerAlt />, to: "/admin", end: true },
+  { label: "Commandes", icon: <FaShoppingBag />, to: "/admin/orders" },
+  { label: "Produits", icon: <FaStore />, to: "/admin/products" },
+  { label: "Événements", icon: <FaCalendarAlt />, to: "/admin/events" },
+  { label: "News", icon: <FaNewspaper />, to: "/admin/news" },
 ];
 
 export default function AdminLayout({ children }) {
@@ -102,8 +89,7 @@ export default function AdminLayout({ children }) {
                      text-gray-400 hover:text-red-400 hover:bg-red-400/10
                      font-semibold text-sm transition-all"
         >
-          <FaSignOutAlt />
-          Déconnexion
+          <FaSignOutAlt /> Déconnexion
         </button>
       </div>
     </div>
@@ -113,9 +99,8 @@ export default function AdminLayout({ children }) {
     <div className="min-h-screen bg-[#0D0D0D] flex">
       {/* Sidebar desktop */}
       <aside
-        className="hidden md:flex flex-col w-60 flex-shrink-0
-                        bg-[#111111] border-r border-white/5 fixed
-                        top-0 left-0 h-full z-40"
+        className="hidden md:flex flex-col w-60 flex-shrink-0 bg-[#111111]
+                        border-r border-white/5 fixed top-0 left-0 h-full z-40"
       >
         <SidebarContent />
       </aside>
@@ -154,13 +139,12 @@ export default function AdminLayout({ children }) {
         )}
       </AnimatePresence>
 
-      {/* Contenu principal */}
+      {/* Contenu */}
       <div className="flex-1 flex flex-col md:ml-60 min-h-screen">
         {/* Topbar mobile */}
         <header
-          className="md:hidden flex items-center justify-between
-                           px-4 py-4 bg-[#111111] border-b border-white/5
-                           sticky top-0 z-30"
+          className="md:hidden flex items-center justify-between px-4 py-4
+                           bg-[#111111] border-b border-white/5 sticky top-0 z-30"
         >
           <div className="flex items-center gap-3">
             <div
@@ -180,9 +164,8 @@ export default function AdminLayout({ children }) {
           </button>
         </header>
 
-        {/* Contenu page */}
+        {/* Page */}
         <motion.main
-          key={location.pathname}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}

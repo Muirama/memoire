@@ -13,33 +13,37 @@ const News = sequelize.define(
       type: DataTypes.STRING(200),
       allowNull: false,
     },
-    category: {
-      type: DataTypes.STRING(100),
+    content: {
+      type: DataTypes.TEXT,
       allowNull: false,
-    },
-    image: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
     },
     excerpt: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(400),
+      allowNull: true,
+      comment: "Résumé court affiché dans la liste",
+    },
+    image: {
+      type: DataTypes.STRING(500),
       allowNull: true,
     },
-    content: {
-      type: DataTypes.TEXT("long"),
-      allowNull: false,
+    category: {
+      type: DataTypes.ENUM(
+        "Actualité",
+        "Tournoi",
+        "Communauté",
+        "Produit",
+        "Annonce",
+      ),
+      defaultValue: "Actualité",
     },
     author: {
       type: DataTypes.STRING(100),
-      defaultValue: "Gascom News",
+      defaultValue: "Équipe Gascom",
     },
-    tags: {
-      type: DataTypes.JSON, // stocké comme tableau JSON ["LoL", "Update"]
-      defaultValue: [],
-    },
-    likes: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+    published: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      comment: "true = visible sur le site public",
     },
   },
   {

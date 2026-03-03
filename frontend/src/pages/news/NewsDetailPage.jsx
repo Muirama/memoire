@@ -1,183 +1,201 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaArrowLeft, FaHeart, FaCalendarAlt, FaUser, FaTags, FaShare } from "react-icons/fa";
-import { news } from "../../data/NewsData";
+import {
+  FaArrowLeft,
+  FaCalendarAlt,
+  FaUser,
+  FaTag,
+  FaSpinner,
+  FaNewspaper,
+} from "react-icons/fa";
+import api from "../../api/api";
+
+const CATEGORY_COLORS = {
+  Actualité: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  Tournoi: "bg-[#E50914]/20 text-[#E50914] border-[#E50914]/30",
+  Communauté: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+  Produit: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+  Annonce: "bg-green-500/20 text-green-400 border-green-500/30",
+};
+
+const formatDate = (d) =>
+  new Date(d).toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
 
 export default function NewsDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [liked, setLiked] = useState(false);
 
-  const article = news.find((n) => n.id === parseInt(id));
+  const [news, setNews] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
-  if (!article) {
+  useEffect(() => {
+    api
+      .get(`/news/${id}`)
+      .then((r) => setNews(r.data.news))
+      .catch(() => setError("Article introuvable."))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading)
     return (
-      <section className="relative bg-transparent min-h-screen py-20 px-4 z-10 flex items-center justify-center">
+      <section className="relative bg-transparent min-h-screen flex items-center justify-center z-10">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-4">Article non trouvé</h1>
-          <Link to="/news" className="text-[#E50914] hover:text-[#FF1E56]">
-            Retour aux actualités
-          </Link>
+          <FaSpinner className="text-[#E50914] text-5xl animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Chargement...</p>
         </div>
       </section>
     );
-  }
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }).format(date);
-  };
-
-  const getCategoryColor = (category) => {
-    const colors = {
-      "Jeux Vidéo": "bg-blue-600",
-      "e-Sport": "bg-[#E50914]",
-      Console: "bg-purple-600",
-      Hardware: "bg-green-600",
-    };
-    return colors[category] || "bg-gray-600";
-  };
-
-  const relatedNews = news
-    .filter((n) => n.category === article.category && n.id !== article.id)
-    .slice(0, 3);
+  if (error || !news)
+    return (
+      <section className="relative bg-transparent min-h-screen flex items-center justify-center z-10">
+        <div className="text-center">
+          <p className="text-red-400 text-xl mb-6">{error || "Introuvable."}</p>
+          <button
+            onClick={() => navigate("/news")}
+            className="px-6 py-3 bg-[#E50914] text-white rounded-lg flex items-center gap-2 mx-auto"
+          >
+            <FaArrowLeft /> Retour
+          </button>
+        </div>
+      </section>
+    );
 
   return (
-    <section className="relative bg-transparent min-h-screen py-12 md:py-20 px-4 md:px-6 z-10">
-      <div className="max-w-5xl mx-auto relative z-10">
-        {/* Bouton retour */}
+    <section
+      className="relative bg-transparent min-h-screen py-12 md:py-20
+                        px-4 md:px-6 z-10"
+    >
+      <div className="max-w-3xl mx-auto">
+        {/* Retour */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           onClick={() => navigate("/news")}
-          className="flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition"
+          className="flex items-center gap-2 text-gray-400 hover:text-[#E50914]
+                     transition mb-8 font-semibold group"
         >
-          <FaArrowLeft /> Retour aux actualités
+          <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+          Retour aux actualités
         </motion.button>
 
-        <motion.article
-          initial={{ opacity: 0, y: 20 }}
+        {/* Badges */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="bg-[#1A1A1A] rounded-2xl overflow-hidden border border-[#E50914]/30 shadow-[0_0_30px_rgba(229,9,20,0.3)]"
+          className="flex items-center gap-2 mb-4 flex-wrap"
         >
-          {/* Image header */}
-          <div className="relative h-80 md:h-[500px] overflow-hidden">
-            <img
-              src={article.image}
-              alt={article.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent" />
-            <span
-              className={`absolute top-4 right-4 ${getCategoryColor(
-                article.category
-              )} text-white text-sm px-4 py-2 rounded-full font-semibold`}
-            >
-              {article.category}
-            </span>
-          </div>
+          <span
+            className={`text-xs px-3 py-1 rounded-full border font-semibold
+                           ${CATEGORY_COLORS[news.category]}`}
+          >
+            {news.category}
+          </span>
+        </motion.div>
 
-          <div className="p-6 md:p-10">
-            {/* Titre */}
-            <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-6">
-              {article.title}
-            </h1>
+        {/* Titre */}
+        <motion.h1
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4"
+        >
+          {news.title}
+        </motion.h1>
 
-            {/* Meta info */}
-            <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-8 pb-6 border-b border-gray-700">
-              <div className="flex items-center gap-2 text-gray-400">
-                <FaCalendarAlt className="text-[#E50914]" />
-                <span>{formatDate(article.date)}</span>
-              </div>
-              <div className="flex items-center gap-2 text-gray-400">
-                <FaUser className="text-[#E50914]" />
-                <span>{article.author}</span>
-              </div>
-              <button
-                onClick={() => setLiked(!liked)}
-                className={`flex items-center gap-2 transition-colors ${
-                  liked ? "text-[#E50914]" : "text-gray-400 hover:text-[#E50914]"
-                }`}
+        {/* Méta */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="flex items-center gap-5 text-gray-400 text-sm mb-8 pb-6
+                     border-b border-white/5 flex-wrap"
+        >
+          <span className="flex items-center gap-1.5">
+            <FaUser className="text-[#E50914]" size={12} /> {news.author}
+          </span>
+          <span className="flex items-center gap-1.5 capitalize">
+            <FaCalendarAlt className="text-[#E50914]" size={12} />
+            {formatDate(news.createdAt)}
+          </span>
+        </motion.div>
+
+        {/* Image */}
+        {news.image && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12 }}
+            className="relative rounded-2xl overflow-hidden mb-8 border border-white/10"
+            style={{ minHeight: "200px" }}
+          >
+            {!imgLoaded && (
+              <div
+                className="absolute inset-0 bg-[#1A1A1A] animate-pulse
+                              flex items-center justify-center"
               >
-                <FaHeart className={liked ? "fill-current" : ""} />
-                <span className="font-semibold">
-                  {article.likes + (liked ? 1 : 0)} likes
-                </span>
-              </button>
-              <button className="flex items-center gap-2 text-gray-400 hover:text-white transition">
-                <FaShare />
-                <span>Partager</span>
-              </button>
-            </div>
+                <FaNewspaper className="text-gray-700 text-4xl" />
+              </div>
+            )}
+            <img
+              src={news.image}
+              alt={news.title}
+              referrerPolicy="no-referrer"
+              onLoad={() => setImgLoaded(true)}
+              className={`w-full max-h-96 object-cover transition-opacity duration-500
+                             ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+            />
+          </motion.div>
+        )}
 
-            {/* Tags */}
-            <div className="flex items-center gap-2 mb-8 flex-wrap">
-              <FaTags className="text-[#E50914]" />
-              {article.tags.map((tag, idx) => (
-                <span
-                  key={idx}
-                  className="bg-[#0D0D0D] text-gray-300 text-xs px-3 py-1 rounded-full hover:bg-[#E50914]/20 transition cursor-pointer"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-
-            {/* Contenu */}
-            <div className="prose prose-invert prose-lg max-w-none">
-              <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-line mb-6">
-                {article.content}
+        {/* Contenu */}
+        <motion.article
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="prose-gascom"
+        >
+          {news.content.split("\n").map((para, i) =>
+            para.trim() === "" ? (
+              <div key={i} className="h-4" />
+            ) : (
+              <p
+                key={i}
+                className="text-gray-300 leading-relaxed text-base md:text-lg mb-4"
+              >
+                {para}
               </p>
-              <p className="text-gray-400 leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor 
-                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
-                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute 
-                irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla 
-                pariatur.
-              </p>
-            </div>
-          </div>
+            ),
+          )}
         </motion.article>
 
-        {/* Articles similaires */}
-        {relatedNews.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-6">
-              Articles similaires
-            </h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              {relatedNews.map((related) => (
-                <motion.div
-                  key={related.id}
-                  whileHover={{ scale: 1.03, y: -5 }}
-                  onClick={() => navigate(`/news/${related.id}`)}
-                  className="bg-[#1A1A1A] rounded-xl overflow-hidden border border-[#E50914]/20 hover:border-[#E50914] hover:shadow-[0_0_20px_rgba(229,9,20,0.4)] transition-all cursor-pointer"
-                >
-                  <img
-                    src={related.image}
-                    alt={related.title}
-                    className="w-full h-40 object-cover"
-                  />
-                  <div className="p-4">
-                    <h3 className="text-white font-bold mb-2 line-clamp-2">
-                      {related.title}
-                    </h3>
-                    <p className="text-gray-400 text-sm line-clamp-2">
-                      {related.excerpt}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Footer article */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mt-12 pt-8 border-t border-white/5"
+        >
+          <button
+            type="button"
+            onClick={() => navigate("/news")}
+            className="flex items-center gap-2 px-6 py-3 border border-[#E50914]/30
+                       text-white hover:bg-[#E50914]/10 rounded-xl font-semibold
+                       text-sm transition group"
+          >
+            <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+            Voir toutes les actualités
+          </button>
+        </motion.div>
       </div>
     </section>
   );

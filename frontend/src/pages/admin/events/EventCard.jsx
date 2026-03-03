@@ -10,6 +10,8 @@ import {
   FaChevronDown,
   FaChevronUp,
   FaSpinner,
+  FaEdit,
+  FaTrash,
 } from "react-icons/fa";
 import { formatDate } from "../../../utils/adminFormatters";
 import RegistrationsPanel from "./RegistrationsPanel";
@@ -26,6 +28,8 @@ export default function EventCard({
   onViewReg,
   onEditReg,
   onDeleteReg,
+  onEditEvent,
+  onDeleteEvent,
 }) {
   return (
     <motion.div
@@ -41,7 +45,11 @@ export default function EventCard({
     >
       {/* En-tête */}
       <div className="flex items-center gap-4 p-4 md:p-5">
-        <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-[#0D0D0D] flex items-center justify-center">
+        {/* Image */}
+        <div
+          className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0
+                        bg-[#0D0D0D] flex items-center justify-center"
+        >
           {event.image ? (
             <img
               src={event.image}
@@ -54,10 +62,14 @@ export default function EventCard({
           )}
         </div>
 
+        {/* Infos */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="text-white font-bold truncate">{event.title}</h3>
-            <span className="text-xs bg-[#E50914]/20 text-[#E50914] px-2 py-0.5 rounded-full font-semibold flex-shrink-0">
+            <span
+              className="text-xs bg-[#E50914]/20 text-[#E50914]
+                             px-2 py-0.5 rounded-full font-semibold flex-shrink-0"
+            >
               {event.category}
             </span>
           </div>
@@ -78,10 +90,12 @@ export default function EventCard({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
+        {/* Actions */}
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {/* Badge statut */}
           <span
             className={`hidden md:flex items-center gap-1.5 text-xs px-3 py-1.5
-                            rounded-full font-semibold border
+                            rounded-full font-semibold border mr-1
                             ${
                               event.registrationOpen
                                 ? "bg-green-500/15 text-green-400 border-green-500/30"
@@ -99,15 +113,34 @@ export default function EventCard({
             )}
           </span>
 
+          {/* Éditer l'événement */}
+          <button
+            type="button"
+            onClick={() => onEditEvent(event)}
+            title="Modifier l'événement"
+            className="w-9 h-9 rounded-xl bg-blue-500/10 hover:bg-blue-500/20
+                       text-blue-400 transition flex items-center justify-center"
+          >
+            <FaEdit size={13} />
+          </button>
+
+          {/* Supprimer l'événement */}
+          <button
+            type="button"
+            onClick={() => onDeleteEvent(event.id)}
+            title="Supprimer l'événement"
+            className="w-9 h-9 rounded-xl bg-red-500/10 hover:bg-red-500/20
+                       text-red-400 transition flex items-center justify-center"
+          >
+            <FaTrash size={13} />
+          </button>
+
+          {/* Toggle inscriptions */}
           <button
             type="button"
             onClick={() => onToggleRegistration(event)}
             disabled={isToggling}
-            title={
-              event.registrationOpen
-                ? "Fermer les inscriptions"
-                : "Ouvrir les inscriptions"
-            }
+            title={event.registrationOpen ? "Fermer" : "Ouvrir"}
             className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all
                         ${
                           event.registrationOpen
@@ -124,11 +157,16 @@ export default function EventCard({
             )}
           </button>
 
+          {/* Dérouler inscriptions */}
           <button
             type="button"
             onClick={() => onToggleExpand(event.id)}
             className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all
-                        ${isExpanded ? "bg-[#E50914] text-white" : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"}`}
+                        ${
+                          isExpanded
+                            ? "bg-[#E50914] text-white"
+                            : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+                        }`}
           >
             {isExpanded ? (
               <FaChevronUp size={13} />

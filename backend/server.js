@@ -1,45 +1,47 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
-const { sequelize } = require("./models");
+const sequelize = require("./config/database");
 
-dotenv.config();
+// ── Models (pour sync auto) ───────────────────────────────
+require("./models");
+
+// ── Routes ────────────────────────────────────────────────
+const authRoutes = require("./routes/auth.routes");
+const shopRoutes = require("./routes/shop.routes");
+const productRoutes = require("./routes/product.routes");
+const orderRoutes = require("./routes/order.routes");
+const teamRoutes = require("./routes/team.routes");
+const newsRoutes = require("./routes/news.routes");
+const eventRoutes = require("./routes/event.routes");
+const registrationRoutes = require("./routes/registration.routes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ── Middlewares globaux ───────────────────────────────────
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+// ── Middlewares ───────────────────────────────────────────
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// ── Routes ────────────────────────────────────────────────
-app.use("/api/auth", require("./routes/auth.routes"));
-app.use("/api/shop", require("./routes/shop.routes"));
-app.use("/api/news", require("./routes/news.routes"));
-app.use("/api/teams", require("./routes/team.routes"));
-app.use("/api/events", require("./routes/event.routes"));
-app.use("/api/orders", require("./routes/order.routes"));
-app.use("/api/registrations", require("./routes/registration.routes"));
+// ── Montage des routes ────────────────────────────────────
+app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/teams", teamRoutes);
+app.use("/api/shop", shopRoutes);
+app.use("/api/news", newsRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/registrations", registrationRoutes);
 
-// ── Route de test ─────────────────────────────────────────
-app.get("/", (req, res) => {
-  res.json({ message: "🎮 Gascom API is running !" });
-});
-
-// ── Démarrage ─────────────────────────────────────────────
+// ── Sync DB + démarrage ───────────────────────────────────
 sequelize
-  .authenticate()
+  .sync({ alter: true })
   .then(() => {
-    console.log("✅ Connexion MySQL établie.");
-    return sequelize.sync({ force: false });
-  })
-  .then(() => {
-    console.log("✅ Tables synchronisées.");
+    console.log("✅ Base de données synchronisée.");
     app.listen(PORT, () => {
       console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
-    console.error("❌ Erreur de connexion :", err);
+    console.error("❌ Erreur de connexion DB :", err);
   });
