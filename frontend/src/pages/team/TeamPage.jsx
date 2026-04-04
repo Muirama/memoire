@@ -1,294 +1,332 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
-  FaSearch,
-  FaSortAmountDown,
-  FaTrophy,
   FaUsers,
   FaGamepad,
-  FaCalendarAlt,
-  FaEye,
+  FaSearch,
+  FaSpinner,
+  FaArrowRight,
+  FaTwitter,
+  FaFacebook,
+  FaDiscord,
 } from "react-icons/fa";
-import { teams, gameCategories, teamSortOptions } from "../../data/TeamData";
+import api from "../../api/api";
+
+const GAMES = [
+  "Tous",
+  "League of Legends",
+  "CS2",
+  "Valorant",
+  "EA FC 24",
+  "PUBG Mobile",
+  "Free Fire",
+  "Mobile Legends",
+  "Autre",
+];
 
 export default function TeamPage() {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGame, setSelectedGame] = useState("Tous");
-  const [sortBy, setSortBy] = useState("default");
-  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [teams, setTeams] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [game, setGame] = useState("Tous");
 
-  // Filtrage et tri des équipes
-  const filteredAndSortedTeams = useMemo(() => {
-    let filtered = teams.filter((team) => {
-      const matchesSearch = team.name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      const matchesGame = selectedGame === "Tous" || team.game === selectedGame;
-      return matchesSearch && matchesGame;
-    });
+  useEffect(() => {
+    api
+      .get("/teams")
+      .then((r) => setTeams(r.data.teams))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
-    switch (sortBy) {
-      case "name-asc":
-        filtered.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "name-desc":
-        filtered.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case "wins-desc":
-        filtered.sort((a, b) => b.wins - a.wins);
-        break;
-      case "wins-asc":
-        filtered.sort((a, b) => a.wins - b.wins);
-        break;
-      case "founded-desc":
-        filtered.sort((a, b) => b.founded.localeCompare(a.founded));
-        break;
-      case "founded-asc":
-        filtered.sort((a, b) => a.founded.localeCompare(b.founded));
-        break;
-      default:
-        filtered.sort((a, b) => a.id - b.id);
-    }
+  const filtered = teams.filter((t) => {
+    const matchSearch = t.name.toLowerCase().includes(search.toLowerCase());
+    const matchGame = game === "Tous" || t.game === game;
+    return matchSearch && matchGame;
+  });
 
-    return filtered;
-  }, [searchTerm, selectedGame, sortBy]);
+  // Jeux présents dans les équipes
+  const gamesPresent = ["Tous", ...new Set(teams.map((t) => t.game))];
 
-  const handleResetFilters = () => {
-    setSearchTerm("");
-    setSelectedGame("Tous");
-    setSortBy("default");
-  };
-
-  const getWinRate = (wins, losses) => {
-    const total = wins + losses;
-    return total > 0 ? ((wins / total) * 100).toFixed(1) : 0;
-  };
+  if (loading)
+    return (
+      <section
+        className="relative bg-transparent min-h-screen flex items-center
+                        justify-center z-10"
+      >
+        <div className="text-center">
+          <FaSpinner className="text-[#E50914] text-5xl animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Chargement des équipes...</p>
+        </div>
+      </section>
+    );
 
   return (
-    <section className="relative bg-transparent min-h-screen py-12 md:py-20 px-4 md:px-6 z-10">
-      <div className="max-w-7xl mx-auto relative z-10">
+    <section
+      className="relative bg-transparent min-h-screen py-12 md:py-20
+                        px-4 md:px-6 z-10"
+    >
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 md:mb-12 relative z-10"
+          className="text-center mb-12"
         >
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-3 md:mb-4">
-            Nos Équipes <span className="text-[#E50914]">esports</span>
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-3">
+            Nos <span className="text-[#E50914]">Équipes</span>
           </h1>
-          <p className="text-gray-400 text-base md:text-lg">
-            Découvrez les équipes professionnelles de Gascom esport
-          </p>
-          <p className="text-gray-500 mt-2 text-sm md:text-base">
-            {filteredAndSortedTeams.length} équipe(s) active(s)
+          <p className="text-gray-400 max-w-xl mx-auto">
+            Découvrez les équipes professionnelles Gascom qui représentent
+            Madagascar dans les compétitions e-sport.
           </p>
         </motion.div>
 
-        {/* Barre de recherche et filtres */}
-        <div className="mb-8 md:mb-10 space-y-4 relative z-30">
-          {/* Ligne 1: Recherche + Tri */}
-          <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center">
-            {/* Recherche */}
-            <div className="relative w-full md:flex-1">
-              <label htmlFor="team-search" className="sr-only">
-                Rechercher une équipe
-              </label>
-              <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none z-10" />
-              <input
-                id="team-search"
-                name="teamSearch"
-                type="text"
-                placeholder="Rechercher une équipe..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                autoComplete="off"
-                className="w-full pl-12 pr-4 py-3 bg-[#1A1A1A] text-white rounded-lg border border-[#E50914]/30 focus:border-[#E50914] focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 transition-all relative z-30"
-              />
+        {/* Stats globales */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="flex items-center justify-center gap-8 mb-10"
+        >
+          {[
+            { label: "Équipes", value: teams.length },
+            {
+              label: "Joueurs",
+              value: teams.reduce((a, t) => a + (t.players?.length || 0), 0),
+            },
+            { label: "Jeux", value: new Set(teams.map((t) => t.game)).size },
+          ].map((s) => (
+            <div key={s.label} className="text-center">
+              <p className="text-3xl font-extrabold text-[#E50914]">
+                {s.value}
+              </p>
+              <p className="text-gray-500 text-sm">{s.label}</p>
             </div>
+          ))}
+        </motion.div>
 
-            {/* Tri */}
-            <div className="relative w-full md:w-64">
-              <label htmlFor="team-sort" className="sr-only">
-                Trier par
-              </label>
-              <FaSortAmountDown className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none z-10" />
-              <select
-                id="team-sort"
-                name="teamSort"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full pl-12 pr-10 py-3 bg-[#1A1A1A] text-white rounded-lg border border-[#E50914]/30 focus:border-[#E50914] focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 transition-all appearance-none relative z-30"
-              >
-                {teamSortOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
-                <svg
-                  className="w-4 h-4 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          {/* Ligne 2: Filtres par jeu */}
-          <div className="flex gap-2 md:gap-3 flex-wrap justify-center relative z-30">
-            {gameCategories.map((game) => (
-              <button
-                key={game}
-                onClick={() => setSelectedGame(game)}
-                type="button"
-                aria-pressed={selectedGame === game}
-                aria-label={`Filtrer par jeu ${game}`}
-                className={`px-4 md:px-6 py-2 rounded-lg font-semibold transition-all duration-300 text-sm md:text-base ${
-                  selectedGame === game
-                    ? "bg-[#E50914] text-white shadow-[0_0_15px_rgba(229,9,20,0.6)] scale-105"
-                    : "bg-[#1A1A1A] text-gray-400 hover:bg-[#E50914]/20 hover:text-white"
-                }`}
-              >
-                {game}
-              </button>
-            ))}
+        {/* Filtres */}
+        <div className="flex flex-col md:flex-row gap-3 mb-8">
+          <div className="relative flex-1">
+            <FaSearch
+              className="absolute left-4 top-1/2 -translate-y-1/2
+                                 text-gray-500 pointer-events-none"
+            />
+            <input
+              type="text"
+              placeholder="Rechercher une équipe..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-[#1A1A1A] text-white rounded-xl
+                         border border-[#E50914]/30 focus:border-[#E50914] focus:outline-none
+                         focus:ring-2 focus:ring-[#E50914]/50 transition-all"
+            />
           </div>
         </div>
 
-        {/* Grille d'équipes */}
-        <AnimatePresence mode="wait">
-          {filteredAndSortedTeams.length > 0 ? (
-            <motion.div
-              key="teams-grid"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 relative z-20"
+        {/* Filtres jeux */}
+        <div className="flex gap-2 flex-wrap justify-center mb-10">
+          {gamesPresent.map((g) => (
+            <button
+              key={g}
+              type="button"
+              onClick={() => setGame(g)}
+              className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all
+                          ${
+                            game === g
+                              ? "bg-[#E50914] text-white shadow-[0_0_15px_rgba(229,9,20,0.5)] scale-105"
+                              : "bg-[#1A1A1A] text-gray-400 hover:bg-[#E50914]/20 hover:text-white"
+                          }`}
             >
-              {filteredAndSortedTeams.map((team, index) => (
-                <motion.div
-                  key={team.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ delay: index * 0.05, duration: 0.3 }}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  onClick={() => navigate(`/team/${team.id}`)}
-                  className="bg-[#1A1A1A] rounded-xl overflow-hidden border border-[#E50914]/20 hover:border-[#E50914] hover:shadow-[0_0_25px_rgba(229,9,20,0.4)] transition-all duration-300 cursor-pointer"
-                >
-                  {/* Image de l'équipe */}
-                  <div className="relative h-48 overflow-hidden">
+              {g}
+            </button>
+          ))}
+        </div>
+
+        {/* Grille équipes */}
+        {filtered.length === 0 ? (
+          <div className="text-center py-16">
+            <FaUsers className="text-gray-700 text-6xl mx-auto mb-4" />
+            <p className="text-gray-500 text-xl">Aucune équipe trouvée.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filtered.map((team, index) => (
+              <motion.div
+                key={team.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.07 }}
+                onClick={() => navigate(`/team/${team.id}`)}
+                className="group bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5
+                           hover:border-[#E50914]/40 hover:shadow-[0_0_30px_rgba(229,9,20,0.15)]
+                           transition-all duration-300 cursor-pointer flex flex-col"
+              >
+                {/* Bannière ou couleur */}
+                <div className="relative h-36 overflow-hidden bg-[#0D0D0D]">
+                  {team.banner ? (
                     <img
-                      src={team.image}
-                      alt={team.name}
-                      loading="lazy"
-                      className="w-full h-full object-cover hover:scale-110 transition duration-500"
+                      src={team.banner}
+                      alt={`${team.name} banner`}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-105
+                                    transition duration-700 opacity-70"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-xl md:text-2xl font-bold text-white mb-1">
-                        {team.name}
-                      </h3>
-                      <p className="text-[#E50914] text-sm font-semibold flex items-center gap-2">
-                        <FaGamepad /> {team.game}
-                      </p>
+                  ) : (
+                    <div
+                      className="w-full h-full bg-gradient-to-br from-[#E50914]/20
+                                    to-[#0D0D0D]"
+                    />
+                  )}
+                  {/* Overlay gradient */}
+                  <div
+                    className="absolute inset-0 bg-gradient-to-t
+                                  from-[#1A1A1A] via-transparent to-transparent"
+                  />
+
+                  {/* Logo centré */}
+                  <div
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2
+                                  w-16 h-16 rounded-2xl overflow-hidden border-2 border-[#1A1A1A]
+                                  bg-[#0D0D0D] shadow-xl"
+                  >
+                    {team.logo ? (
+                      <img
+                        src={team.logo}
+                        alt={team.name}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center justify-center
+                                        bg-[#E50914]/10"
+                      >
+                        <FaUsers className="text-[#E50914] text-xl" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Contenu */}
+                <div className="p-5 pt-12 flex flex-col flex-1 text-center">
+                  <h3
+                    className="text-white font-extrabold text-lg mb-1
+                                 group-hover:text-[#E50914] transition"
+                  >
+                    {team.name}
+                  </h3>
+                  <span
+                    className="inline-flex items-center gap-1.5 text-[#E50914] text-xs
+                                   font-semibold justify-center mb-3"
+                  >
+                    <FaGamepad size={10} /> {team.game}
+                  </span>
+
+                  {team.description && (
+                    <p className="text-gray-400 text-sm line-clamp-2 mb-4 leading-relaxed">
+                      {team.description}
+                    </p>
+                  )}
+
+                  {/* Roster aperçu */}
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="flex -space-x-2">
+                      {(team.players || []).slice(0, 5).map((p, i) => (
+                        <div
+                          key={p.id}
+                          className="w-8 h-8 rounded-full overflow-hidden border-2
+                                     border-[#1A1A1A] bg-[#0D0D0D]"
+                          style={{ zIndex: 5 - i }}
+                        >
+                          {p.photo ? (
+                            <img
+                              src={p.photo}
+                              alt={p.pseudo}
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div
+                              className="w-full h-full flex items-center justify-center
+                                              text-xs font-bold text-gray-500"
+                            >
+                              {p.pseudo[0].toUpperCase()}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                      {(team.players || []).length > 5 && (
+                        <div
+                          className="w-8 h-8 rounded-full border-2 border-[#1A1A1A]
+                                        bg-[#E50914]/20 flex items-center justify-center
+                                        text-[#E50914] text-xs font-bold"
+                        >
+                          +{team.players.length - 5}
+                        </div>
+                      )}
                     </div>
-                    <span className="absolute top-3 right-3 bg-[#E50914] text-white text-xs px-3 py-1 rounded-full font-semibold">
-                      {team.rank}
+                    <span className="text-gray-500 text-xs ml-3">
+                      {(team.players || []).length} joueur(s)
                     </span>
                   </div>
 
-                  {/* Contenu */}
-                  <div className="p-5">
-                    {/* Stats */}
-                    <div className="grid grid-cols-3 gap-4 mb-4">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-[#E50914]">
-                          {team.wins}
-                        </div>
-                        <div className="text-xs text-gray-500">Victoires</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-gray-400">
-                          {team.losses}
-                        </div>
-                        <div className="text-xs text-gray-500">Défaites</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-green-500">
-                          {getWinRate(team.wins, team.losses)}%
-                        </div>
-                        <div className="text-xs text-gray-500">Winrate</div>
-                      </div>
+                  {/* Réseaux sociaux */}
+                  {(team.twitter || team.facebook || team.discord) && (
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                      {team.twitter && (
+                        <a
+                          href={team.twitter}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-sky-400 hover:text-sky-300 transition"
+                        >
+                          <FaTwitter size={14} />
+                        </a>
+                      )}
+                      {team.facebook && (
+                        <a
+                          href={team.facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-blue-500 hover:text-blue-400 transition"
+                        >
+                          <FaFacebook size={14} />
+                        </a>
+                      )}
+                      {team.discord && (
+                        <a
+                          href={team.discord}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-indigo-400 hover:text-indigo-300 transition"
+                        >
+                          <FaDiscord size={14} />
+                        </a>
+                      )}
                     </div>
+                  )}
 
-                    {/* Infos supplémentaires */}
-                    <div className="space-y-2 text-sm text-gray-400">
-                      <div className="flex items-center gap-2">
-                        <FaUsers className="text-[#E50914]" />
-                        <span>{team.members.length} membres</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <FaCalendarAlt className="text-[#E50914]" />
-                        <span>Fondée en {team.founded}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <FaTrophy className="text-[#E50914]" />
-                        <span>{team.achievements.length} récompenses</span>
-                      </div>
-                    </div>
-
-                    {/* Bouton Voir Plus */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/team/${team.id}`);
-                      }}
-                      className="w-full mt-4 bg-[#E50914] hover:bg-[#FF1E56] text-white font-semibold py-2 rounded-lg transition-all duration-300 hover:shadow-[0_0_15px_rgba(229,9,20,0.6)] active:scale-95 flex items-center justify-center gap-2"
+                  <div className="mt-auto pt-3 border-t border-white/5">
+                    <span
+                      className="text-[#E50914] text-xs font-semibold
+                                     flex items-center justify-center gap-1
+                                     group-hover:gap-2 transition-all"
                     >
-                      <FaEye /> Voir les détails
-                    </button>
+                      Voir le roster <FaArrowRight size={10} />
+                    </span>
                   </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="no-results"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="text-center mt-12 md:mt-16 py-12 relative z-10"
-            >
-              <div className="text-gray-500 text-5xl md:text-6xl mb-4">🔍</div>
-              <p className="text-gray-500 text-lg md:text-xl mb-6">
-                Aucune équipe trouvée pour votre recherche.
-              </p>
-              <button
-                type="button"
-                onClick={handleResetFilters}
-                aria-label="Réinitialiser tous les filtres"
-                className="px-6 md:px-8 py-3 bg-[#E50914] text-white rounded-lg hover:bg-[#FF1E56] transition-all duration-300 hover:shadow-[0_0_20px_rgba(229,9,20,0.6)] active:scale-95 font-semibold text-sm md:text-base"
-              >
-                Réinitialiser les filtres
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

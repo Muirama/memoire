@@ -1,46 +1,22 @@
-const { Team } = require("../models");
-const { Op } = require("sequelize");
+const { Team, Player } = require("../models");
 
-// ── GET toutes les équipes ────────────────────────────────
+// ── GET toutes les équipes actives (public) ───────────────
 const getAllTeams = async (req, res) => {
   try {
-    const { search, game, sortBy } = req.query;
-
-    const where = {};
-
-    if (search) {
-      where.name = { [Op.like]: `%${search}%` };
-    }
-
-    if (game && game !== "Tous") {
-      where.game = game;
-    }
-
-    let order = [["id", "ASC"]];
-    switch (sortBy) {
-      case "name-asc":
-        order = [["name", "ASC"]];
-        break;
-      case "name-desc":
-        order = [["name", "DESC"]];
-        break;
-      case "wins-desc":
-        order = [["wins", "DESC"]];
-        break;
-      case "wins-asc":
-        order = [["wins", "ASC"]];
-        break;
-      case "founded-desc":
-        order = [["founded", "DESC"]];
-        break;
-      case "founded-asc":
-        order = [["founded", "ASC"]];
-        break;
-      default:
-        break;
-    }
-
-    const teams = await Team.findAll({ where, order });
+    const teams = await Team.findAll({
+      where: { active: true },
+      include: [
+        {
+          model: Player,
+          as: "players",
+          order: [
+            ["order", "ASC"],
+            ["status", "ASC"],
+          ],
+        },
+      ],
+      order: [["name", "ASC"]],
+    });
     return res.status(200).json({ teams });
   } catch (error) {
     console.error("Erreur getAllTeams :", error);
@@ -48,13 +24,34 @@ const getAllTeams = async (req, res) => {
   }
 };
 
-// ── GET une équipe par ID ─────────────────────────────────
+// ── GET toutes les équipes (admin) ────────────────────────
+const getAllTeamsAdmin = async (req, res) => {
+  try {
+    const teams = await Team.findAll({
+      include: [{ model: Player, as: "players" }],
+      order: [["createdAt", "DESC"]],
+    });
+    return res.status(200).json({ teams });
+  } catch (error) {
+    console.error("Erreur getAllTeamsAdmin :", error);
+    return res.status(500).json({ message: "Erreur serveur." });
+  }
+};
+
+// ── GET une équipe par ID avec roster (public) ────────────
 const getTeamById = async (req, res) => {
   try {
-    const team = await Team.findByPk(req.params.id);
-    if (!team) {
-      return res.status(404).json({ message: "Équipe introuvable." });
-    }
+    const team = await Team.findOne({
+      where: { id: req.params.id, active: true },
+      include: [
+        {
+          model: Player,
+          as: "players",
+          order: [["order", "ASC"]],
+        },
+      ],
+    });
+    if (!team) return res.status(404).json({ message: "Équipe introuvable." });
     return res.status(200).json({ team });
   } catch (error) {
     console.error("Erreur getTeamById :", error);
@@ -68,45 +65,45 @@ const createTeam = async (req, res) => {
     const {
       name,
       game,
-      image,
-      members,
-      achievements,
-      rank,
-      founded,
-      wins,
-      losses,
+      logo,
+      banner,
+      description,
+      palmares,
+      twitter,
+      facebook,
+      discord,
+      active,
     } = req.body;
 
-    if (!name || !game) {
+    if (!name || !game)
       return res.status(400).json({ message: "Nom et jeu sont requis." });
-    }
 
     const team = await Team.create({
-      name,
-      game,
-      image,
-      members: members || [],
-      achievements: achievements || [],
-      rank: rank || null,
-      founded: founded || null,
-      wins: wins || 0,
-      losses: losses || 0,
+      name: name.trim(),
+      game: game.trim(),
+      logo: logo || null,
+      banner: banner || null,
+      description: description || null,
+      palmares: palmares || null,
+      twitter: twitter || null,
+      facebook: facebook || null,
+      discord: discord || null,
+      active: active !== undefined ? active : true,
     });
 
-    return res.status(201).json({ message: "Équipe créée avec succès.", team });
+    return res.status(201).json({ message: "Équipe créée.", team });
   } catch (error) {
     console.error("Erreur createTeam :", error);
     return res.status(500).json({ message: "Erreur serveur." });
   }
 };
 
-// ── PUT modifier une équipe (admin) ───────────────────────
+// ── PUT modifier une équipe (admin) ──────────────────────
 const updateTeam = async (req, res) => {
   try {
     const team = await Team.findByPk(req.params.id);
-    if (!team) {
-      return res.status(404).json({ message: "Équipe introuvable." });
-    }
+    if (!team) return res.status(404).json({ message: "Équipe introuvable." });
+
     await team.update(req.body);
     return res.status(200).json({ message: "Équipe mise à jour.", team });
   } catch (error) {
@@ -119,44 +116,95 @@ const updateTeam = async (req, res) => {
 const deleteTeam = async (req, res) => {
   try {
     const team = await Team.findByPk(req.params.id);
-    if (!team) {
-      return res.status(404).json({ message: "Équipe introuvable." });
-    }
-    await team.destroy();
-    return res.status(200).json({ message: "Équipe supprimée avec succès." });
+    if (!team) return res.status(404).json({ message: "Équipe introuvable." });
+
+    await team.destroy(); // cascade → supprime aussi les joueurs
+    return res.status(200).json({ message: "Équipe supprimée." });
   } catch (error) {
     console.error("Erreur deleteTeam :", error);
     return res.status(500).json({ message: "Erreur serveur." });
   }
 };
 
-// ── PATCH mettre à jour le score (admin) ──────────────────
-const updateScore = async (req, res) => {
+// ════ CRUD JOUEURS ════════════════════════════════════════
+
+// ── POST ajouter un joueur à une équipe (admin) ───────────
+const addPlayer = async (req, res) => {
   try {
-    const { wins, losses } = req.body;
-    const team = await Team.findByPk(req.params.id);
+    const team = await Team.findByPk(req.params.teamId);
+    if (!team) return res.status(404).json({ message: "Équipe introuvable." });
 
-    if (!team) {
-      return res.status(404).json({ message: "Équipe introuvable." });
-    }
+    const {
+      pseudo,
+      realName,
+      role,
+      photo,
+      number,
+      nationality,
+      status,
+      order,
+    } = req.body;
 
-    await team.update({
-      wins: wins !== undefined ? wins : team.wins,
-      losses: losses !== undefined ? losses : team.losses,
+    if (!pseudo)
+      return res.status(400).json({ message: "Le pseudo est requis." });
+
+    const player = await Player.create({
+      teamId: req.params.teamId,
+      pseudo: pseudo.trim(),
+      realName: realName || null,
+      role: role || null,
+      photo: photo || null,
+      number: number || null,
+      nationality: nationality || "Malgache",
+      status: status || "Titulaire",
+      order: order || 0,
     });
 
-    return res.status(200).json({ message: "Score mis à jour.", team });
+    return res.status(201).json({ message: "Joueur ajouté.", player });
   } catch (error) {
-    console.error("Erreur updateScore :", error);
+    console.error("Erreur addPlayer :", error);
+    return res.status(500).json({ message: "Erreur serveur." });
+  }
+};
+
+// ── PUT modifier un joueur (admin) ────────────────────────
+const updatePlayer = async (req, res) => {
+  try {
+    const player = await Player.findByPk(req.params.playerId);
+    if (!player)
+      return res.status(404).json({ message: "Joueur introuvable." });
+
+    await player.update(req.body);
+    return res.status(200).json({ message: "Joueur mis à jour.", player });
+  } catch (error) {
+    console.error("Erreur updatePlayer :", error);
+    return res.status(500).json({ message: "Erreur serveur." });
+  }
+};
+
+// ── DELETE supprimer un joueur (admin) ────────────────────
+const deletePlayer = async (req, res) => {
+  try {
+    const player = await Player.findByPk(req.params.playerId);
+    if (!player)
+      return res.status(404).json({ message: "Joueur introuvable." });
+
+    await player.destroy();
+    return res.status(200).json({ message: "Joueur supprimé." });
+  } catch (error) {
+    console.error("Erreur deletePlayer :", error);
     return res.status(500).json({ message: "Erreur serveur." });
   }
 };
 
 module.exports = {
   getAllTeams,
+  getAllTeamsAdmin,
   getTeamById,
   createTeam,
   updateTeam,
   deleteTeam,
-  updateScore,
+  addPlayer,
+  updatePlayer,
+  deletePlayer,
 };

@@ -17,33 +17,31 @@ const Team = sequelize.define(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    image: {
-      type: DataTypes.STRING(255),
+    logo: {
+      type: DataTypes.STRING(500),
       allowNull: true,
     },
-    members: {
-      type: DataTypes.JSON, // ["Player1", "Player2", ...]
-      defaultValue: [],
+    banner: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+      comment: "Image bannière pour la page détail",
     },
-    achievements: {
-      type: DataTypes.JSON, // ["Champion 2023", ...]
-      defaultValue: [],
-    },
-    rank: {
-      type: DataTypes.STRING(50),
+    description: {
+      type: DataTypes.TEXT,
       allowNull: true,
     },
-    founded: {
-      type: DataTypes.STRING(4), // "2022"
+    palmares: {
+      type: DataTypes.TEXT,
       allowNull: true,
+      comment: "Palmarès / titres (texte libre ou JSON stringifié)",
     },
-    wins: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-    losses: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+    twitter: { type: DataTypes.STRING(200), allowNull: true },
+    facebook: { type: DataTypes.STRING(200), allowNull: true },
+    discord: { type: DataTypes.STRING(200), allowNull: true },
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      comment: "true = visible sur le site public",
     },
   },
   {

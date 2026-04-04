@@ -2,31 +2,41 @@ const express = require("express");
 const router = express.Router();
 const {
   getAllTeams,
+  getAllTeamsAdmin,
   getTeamById,
   createTeam,
   updateTeam,
   deleteTeam,
-  updateScore,
+  addPlayer,
+  updatePlayer,
+  deletePlayer,
 } = require("../controllers/team.controller");
 const authMiddleware = require("../middleware/auth.middleware");
 const adminMiddleware = require("../middleware/admin.middleware");
 
-// GET    /api/teams             → toutes les équipes (public)
+// ── Public ────────────────────────────────────────────────
 router.get("/", getAllTeams);
-
-// GET    /api/teams/:id         → une équipe (public)
 router.get("/:id", getTeamById);
 
-// POST   /api/teams             → créer une équipe (admin)
+// ── Admin — équipes ───────────────────────────────────────
+router.get("/admin/all", authMiddleware, adminMiddleware, getAllTeamsAdmin);
 router.post("/", authMiddleware, adminMiddleware, createTeam);
-
-// PUT    /api/teams/:id         → modifier une équipe (admin)
 router.put("/:id", authMiddleware, adminMiddleware, updateTeam);
-
-// DELETE /api/teams/:id         → supprimer une équipe (admin)
 router.delete("/:id", authMiddleware, adminMiddleware, deleteTeam);
 
-// PATCH  /api/teams/:id/score   → mettre à jour wins/losses (admin)
-router.patch("/:id/score", authMiddleware, adminMiddleware, updateScore);
+// ── Admin — joueurs ───────────────────────────────────────
+router.post("/:teamId/players", authMiddleware, adminMiddleware, addPlayer);
+router.put(
+  "/:teamId/players/:playerId",
+  authMiddleware,
+  adminMiddleware,
+  updatePlayer,
+);
+router.delete(
+  "/:teamId/players/:playerId",
+  authMiddleware,
+  adminMiddleware,
+  deletePlayer,
+);
 
 module.exports = router;
