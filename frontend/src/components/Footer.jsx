@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="bg-[#0D0D0D]/80 backdrop-blur-sm text-gray-400 py-8 text-center border-t border-[#E50914]/20 relative z-20"
+      className="bg-[#000000] backdrop-blur-sm text-white py-8 text-center border-t border-[#E50914]/20 relative z-20"
       role="contentinfo"
     >
       <p className="mb-4">

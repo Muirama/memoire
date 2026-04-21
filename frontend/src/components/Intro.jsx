@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaMapMarkerAlt, FaGamepad, FaTrophy, FaUsers } from "react-icons/fa";
 
@@ -27,10 +26,7 @@ export default function Intro() {
       id="intro"
       className="relative bg-transparent text-white py-16 md:py-24 overflow-hidden"
     >
-      {/* Fond lumineux */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(229,9,20,0.15)_0%,transparent_60%)] blur-2xl animate-pulse z-0"></div>
-      <div className="absolute inset-0 bg-gradient-to-b from-[#141414]/50 to-[#0D0D0D]/30 opacity-90 z-0"></div>
-
+      
       {/* Hero principal */}
       <div className="relative z-20 max-w-7xl mx-auto px-4 md:px-6 grid md:grid-cols-2 gap-8 md:gap-16 items-center">
         {/* Texte */}
@@ -99,7 +95,7 @@ export default function Intro() {
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: i * 0.2 }}
             whileHover={{ scale: 1.05, y: -5 }}
-            className="bg-[#1A1A1A]/50 p-6 md:p-8 rounded-2xl text-center border border-red-800/40 hover:border-[#E50914]/80 hover:shadow-[0_0_35px_rgba(229,9,20,0.6)] backdrop-blur-md transition-all duration-500"
+            className="bg-black p-6 md:p-8 rounded-2xl text-center border border-red-800/40 hover:border-[#E50914]/80 hover:shadow-[0_0_35px_rgba(229,9,20,0.6)] backdrop-blur-md transition-all duration-500"
             style={{ cursor: "pointer" }}
           >
             <div className="mb-4 md:mb-5 flex justify-center">{s.icon}</div>

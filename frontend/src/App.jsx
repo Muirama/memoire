@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
-import Aurora from "./animations/Aurora";
 import CartDrawer from "./components/CartDrawer";
 import { CartProvider } from "./context/CartContext";
 
@@ -37,13 +36,6 @@ function Layout({ children }) {
   const isAdmin = location.pathname.startsWith("/admin");
   return (
     <>
-      {!isAdmin && (
-        <Aurora
-          colorStops={["#E50914", "#730b0b", "#1a1a1a"]}
-          amplitude={0.5}
-          blend={0.7}
-        />
-      )}
       {!isAdmin && <NavBar />}
       {!isAdmin && <CartDrawer />}
       {children}
