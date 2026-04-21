@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
 import { FaMapMarkerAlt, FaGamepad, FaTrophy, FaUsers } from "react-icons/fa";
+import HeroCarousel from "./ui/HeroCarousel";
 
 export default function Intro() {
   const services = [
@@ -26,7 +27,6 @@ export default function Intro() {
       id="intro"
       className="relative bg-transparent text-white py-16 md:py-24 overflow-hidden"
     >
-      
       {/* Hero principal */}
       <div className="relative z-20 max-w-7xl mx-auto px-4 md:px-6 grid md:grid-cols-2 gap-8 md:gap-16 items-center">
         {/* Texte */}
@@ -36,7 +36,7 @@ export default function Intro() {
           transition={{ duration: 0.8 }}
           className="text-center md:text-left"
         >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
+          <h1 className="text-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
             Bienvenue chez{" "}
             <span className="text-[#E50914] drop-shadow-[0_0_25px_rgba(229,9,20,0.8)]">
               Gascom
@@ -71,18 +71,7 @@ export default function Intro() {
           transition={{ delay: 0.3, duration: 0.8 }}
           className="relative flex justify-center items-center"
         >
-          <div className="w-64 h-64 sm:w-80 sm:h-80 md:w-[400px] md:h-[400px] bg-gradient-to-br from-[#E50914]/20 to-transparent rounded-full flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-4xl md:text-6xl mb-4">🎮</div>
-              <p className="text-gray-400 text-sm md:text-base px-4">
-                Votre plateforme gaming
-                <br />
-                <span className="text-xs md:text-sm text-gray-500">
-                  à Madagascar
-                </span>
-              </p>
-            </div>
-          </div>
+          <HeroCarousel />
         </motion.div>
       </div>
 
