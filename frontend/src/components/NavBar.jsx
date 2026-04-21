@@ -10,7 +10,7 @@ import {
   FaSignInAlt,
   FaShoppingCart,
 } from "react-icons/fa";
-import logo_GES_rouge from "/LOGO/Logo_GES_rouge.svg";
+import logo_GES_rouge from "/LOGO/Logo_GES_blanc.svg";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
@@ -44,12 +44,12 @@ export default function NavBar() {
       >
         <img
           src={logo_GES_rouge}
-          alt="Logo GasCom e-Sport"
+          alt="Logo Gascom e-Sport"
           width="45"
           height="45"
         />
         <span className="text-2xl font-extrabold tracking-wide text-white drop-shadow-lg">
-          Gascom
+          Gascom Esports
         </span>
       </Link>
 
