@@ -194,7 +194,7 @@ export default function AdminProductForm({ product, onClose, onSaved }) {
 
           {/* Catégorie */}
           <Field label="Catégorie" icon={<FaTag />}>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
@@ -215,7 +215,7 @@ export default function AdminProductForm({ product, onClose, onSaved }) {
           </Field>
 
           {/* Prix + Stock */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field
               label="Prix (Ar) *"
               icon={<FaMoneyBillWave />}

@@ -188,7 +188,7 @@ export default function AdminEventForm({ event, onClose, onSaved }) {
           </Field>
 
           {/* Jeu + Catégorie */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Jeu *" icon={<FaGamepad />} error={errors.game}>
               <select
                 value={form.game}
@@ -219,7 +219,7 @@ export default function AdminEventForm({ event, onClose, onSaved }) {
           </div>
 
           {/* Date + Heure */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Date *" icon={<FaCalendarAlt />} error={errors.date}>
               <input
                 type="date"

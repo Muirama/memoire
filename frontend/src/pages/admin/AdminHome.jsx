@@ -285,7 +285,7 @@ export default function AdminHome() {
         linkLabel="Voir tout"
         onLink={() => navigate("/admin/orders")}
       />
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         {[
           {
             label: "En attente",
@@ -415,7 +415,7 @@ export default function AdminHome() {
             linkLabel="Gérer"
             onLink={() => navigate("/admin/events")}
           />
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             {[
               {
                 label: "Total participants",
@@ -522,7 +522,7 @@ export default function AdminHome() {
             linkLabel="Gérer"
             onLink={() => navigate("/admin/events")}
           />
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             {[
               {
                 label: "Total",

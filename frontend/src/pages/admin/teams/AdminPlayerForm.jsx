@@ -181,7 +181,7 @@ export default function AdminPlayerForm({ player, teamId, onClose, onSaved }) {
           )}
 
           {/* Pseudo + Nom réel */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Pseudo *" icon={<FaUser />} error={errors.pseudo}>
               <input
                 type="text"
@@ -203,7 +203,7 @@ export default function AdminPlayerForm({ player, teamId, onClose, onSaved }) {
           </div>
 
           {/* Rôle + Numéro */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Rôle" icon={<FaGamepad />}>
               <input
                 type="text"
@@ -280,7 +280,7 @@ export default function AdminPlayerForm({ player, teamId, onClose, onSaved }) {
               </span>{" "}
               Statut
             </label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {STATUSES.map((s) => (
                 <button
                   key={s}
