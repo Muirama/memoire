@@ -13,6 +13,7 @@ const { sequelize } = require("./models");
 const ADMIN_NAME = "Administrateur";
 const ADMIN_EMAIL = "admin@gascom.mg";
 const ADMIN_PASSWORD = "Admin@1234"; // ← Change ce mot de passe
+const ADMIN_ROLE = "admin"; // Rôle de l'utilisateur (admin ou user)
 // ─────────────────────────────────────────────────────────
 
 async function createAdmin() {
@@ -23,7 +24,7 @@ async function createAdmin() {
     // Vérifier si l'admin existe déjà
     const existing = await User.findOne({ where: { email: ADMIN_EMAIL } });
     if (existing) {
-      console.log("⚠️  Un admin avec cet email existe déjà !");
+      console.log("⚠️ Un admin avec cet email existe déjà !");
       process.exit(0);
     }
 
@@ -35,6 +36,7 @@ async function createAdmin() {
       name: ADMIN_NAME,
       email: ADMIN_EMAIL,
       password: hashedPassword,
+      role : ADMIN_ROLE,
     });
 
     console.log("🎉 Admin créé avec succès !");
@@ -42,6 +44,7 @@ async function createAdmin() {
     console.log(`   Nom   : ${admin.name}`);
     console.log(`   Email : ${admin.email}`);
     console.log(`   Mdp   : ${ADMIN_PASSWORD}`);
+    console.log(`   Rôle  : ${ADMIN_ROLE}`);
     console.log("──────────────────────────────");
     console.log("⚠️  Supprime ce fichier après utilisation !");
 

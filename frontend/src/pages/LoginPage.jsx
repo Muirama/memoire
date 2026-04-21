@@ -316,7 +316,7 @@ export default function LoginPage() {
               className="text-[#E50914] font-bold text-sm hover:text-[#FF1E56]
                          hover:underline transition-all"
             >
-              S'inscrire 
+              S'inscrire
             </Link>
           </div>
         </motion.div>
