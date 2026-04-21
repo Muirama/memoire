@@ -22,6 +22,7 @@ import NewsDetailPage from "./pages/news/NewsDetailPage";
 import EventPage from "./pages/events/EventPage";
 import EventDetailPage from "./pages/events/EventDetailPage";
 import LoginPage from "./pages/LoginPage";
+import SignPage from "./pages/SignPage";
 
 // ── Pages admin ──────────────────────────────────────────
 import AdminHome from "./pages/admin/AdminHome";
@@ -69,7 +70,8 @@ function App() {
             <Route path="/events" element={<EventPage />} />
             <Route path="/events/:id" element={<EventDetailPage />} />
             <Route path="/login" element={<LoginPage />} />
-
+            <Route path="/sign" element={<SignPage />} />
+            
             {/* ── Admin ── */}
             <Route path="/admin" element={<AdminHome />} />
             <Route path="/admin/orders" element={<AdminOrders />} />

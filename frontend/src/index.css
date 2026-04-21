@@ -9,10 +9,6 @@ body {
   background: #0D0D0D;
 }
 
-* {
-  cursor: url("/cursors/Zanpaktou.cur"), auto;
-}
-
 /* Optimisations GPU */
 .bounce-card,
 .aurora-container,
@@ -37,16 +33,6 @@ select {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* Amélioration du curseur sur les éléments interactifs */
-button,
-a,
-select,
-input[type="button"],
-input[type="submit"],
-[role="button"] {
-  cursor: url("/cursors/Zanpaktou.cur"), pointer !important;
 }
 
 :root {

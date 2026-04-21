@@ -110,7 +110,7 @@ export default function ProductCard({ product, index = 0 }) {
           {product.name}
         </h3>
 
-        <p className="text-gray-400 text-xs md:text-sm mb-3 line-clamp-2 flex-1">
+        <p className="text-gray-400 text-xs md:text-sm mb-3 line-clamp-2 h-10">
           {product.description}
         </p>
 
