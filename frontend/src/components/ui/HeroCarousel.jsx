@@ -1,101 +1,145 @@
 /* eslint-disable no-unused-vars */
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
-import "swiper/css/autoplay";
-import { Autoplay, Pagination } from "swiper/modules";
-import Tilt from "react-parallax-tilt";
-import { motion } from "framer-motion";
+import "swiper/css/effect-fade";
+import { Autoplay, Pagination, EffectFade } from "swiper/modules";
+import { motion, AnimatePresence } from "framer-motion";
 
 const items = [
-  { id: 1, title: "League of Legends", image: "/images/lol.jpg" },
-  { id: 2, title: "Counter-Strike 2", image: "/images/CS2.jpg" },
-  { id: 3, title: "Valorant", image: "/images/valorant.jpg" },
-  { id: 4, title: "FIFA", image: "/images/fifa.jpg" },
-  { id: 5, title: "PUBG", image: "/images/pubg.jpg" },
-  { id: 6, title: "Call of Duty", image: "/images/cod.jpg" },
-  { id: 7, title: "Dota 2", image: "/images/dota.jpg" },
-  { id: 8, title: "Apex Legends", image: "/images/apex.jpg" },
+  { id: 1, title: "League of Legends", tag: "MOBA", image: "/images/lol.jpg" },
+  { id: 2, title: "Counter-Strike 2", tag: "FPS", image: "/images/CS2.jpg" },
+  {
+    id: 3,
+    title: "Valorant",
+    tag: "FPS TACTIC",
+    image: "/images/valorant.jpg",
+  },
+  { id: 4, title: "FIFA", tag: "SPORT", image: "/images/fifa.jpg" },
+  { id: 5, title: "PUBG", tag: "BATTLE ROYALE", image: "/images/pubg.jpg" },
+  { id: 6, title: "Call of Duty", tag: "FPS", image: "/images/cod.jpg" },
+  { id: 7, title: "Dota 2", tag: "MOBA", image: "/images/dota.jpg" },
+  {
+    id: 8,
+    title: "Apex Legends",
+    tag: "BATTLE ROYALE",
+    image: "/images/apex.jpg",
+  },
 ];
 
 export default function HeroCarousel() {
   const swiperRef = useRef(null);
+  const [activeIdx, setActiveIdx] = useState(0);
 
   return (
-    <section
-      id="jeux"
-      className="relative bg-transparent py-12 md:py-20 overflow-hidden z-10"
+    <div
+      className="relative w-full"
       onMouseEnter={() => swiperRef.current?.autoplay.stop()}
       onMouseLeave={() => swiperRef.current?.autoplay.start()}
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center relative z-10">
+      <Swiper
+        modules={[Autoplay, Pagination, EffectFade]}
+        effect="fade"
+        fadeEffect={{ crossFade: true }}
+        slidesPerView={1}
+        loop={true}
+        autoplay={{ delay: 3000, disableOnInteraction: false }}
+        pagination={{
+          clickable: true,
+          bulletClass: "swiper-bullet",
+          bulletActiveClass: "swiper-bullet-active",
+        }}
+        onSwiper={(swiper) => (swiperRef.current = swiper)}
+        onSlideChange={(swiper) => setActiveIdx(swiper.realIndex)}
+        className="w-full rounded-2xl overflow-hidden hero-swiper"
+      >
+        {items.map((item, index) => (
+          <SwiperSlide key={item.id}>
+            <div
+              className="relative w-full h-[340px] sm:h-[400px] md:h-[460px]
+                            overflow-hidden rounded-2xl"
+            >
+              {/* Image */}
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-full object-cover scale-105
+                           transition-transform duration-[6000ms] ease-out
+                           data-[swiper-slide-active]:scale-100"
+              />
 
-        {/* Carrousel à droite */}
-        <Swiper
-          modules={[Autoplay, Pagination]}
-          spaceBetween={20}
-          slidesPerView={2}
-          breakpoints={{
-            640: { slidesPerView: 1.5, spaceBetween: 20 },
-            1024: { slidesPerView: 2, spaceBetween: 25 },
-          }}
-          loop={true}
-          autoplay={{ delay: 2500, disableOnInteraction: false }}
-          className="w-full"
-          onSwiper={(swiper) => (swiperRef.current = swiper)}
-        >
-          {items.map((item, index) => (
-            <SwiperSlide key={item.id}>
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-              >
-                <Tilt
-                  tiltMaxAngleX={10}
-                  tiltMaxAngleY={10}
-                  perspective={800}
-                  scale={1.03}
-                  transitionSpeed={1000}
-                  glareEnable={true}
-                  glareMaxOpacity={0.3}
-                  className="rounded-xl"
+              {/* Overlay dégradé */}
+              <div
+                className="absolute inset-0 bg-gradient-to-t
+                              from-black/80 via-black/30 to-transparent"
+              />
+
+              {/* Bordure rouge en bas */}
+              <div
+                className="absolute bottom-0 left-0 right-0 h-0.5
+                              bg-gradient-to-r from-transparent via-[#E50914] to-transparent"
+              />
+
+              {/* Contenu slide */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 pb-10">
+                <motion.div
+                  key={index === activeIdx ? "active" : "idle"}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.15 }}
                 >
-                  <div
-                    className="relative group w-full h-[200px] sm:h-[240px] md:h-[280px] rounded-2xl overflow-hidden 
-                               shadow-[0_0_20px_rgba(229,9,20,0.2)] 
-                               border border-[#E50914]/20 backdrop-blur-sm
-                               transform transition duration-700 
-                               hover:scale-105 hover:shadow-[0_0_35px_rgba(229,9,20,0.6)]"
+                  {/* Tag */}
+                  <span
+                    className="inline-block text-[10px] font-black tracking-[0.2em]
+                                   text-[#E50914] bg-[#E50914]/10 border border-[#E50914]/30
+                                   px-3 py-1 rounded-full mb-2 uppercase"
                   >
-                    {/* image */}
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover rounded-2xl 
-                                 group-hover:scale-110 transition duration-700 ease-out"
-                    />
+                    {item.tag}
+                  </span>
+                  {/* Titre */}
+                  <h3
+                    className="text-white font-extrabold text-2xl md:text-3xl
+                                 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                  >
+                    {item.title}
+                  </h3>
+                </motion.div>
+              </div>
 
-                    {/* Overlay & titre */}
-                    <div
-                      className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
-                                 opacity-90 group-hover:opacity-100 transition duration-700 flex flex-col justify-end"
-                    >
-                      <h3 className="text-base sm:text-lg md:text-xl font-bold text-center text-white mb-3 md:mb-4 px-2 group-hover:text-[#E50914] drop-shadow-[0_0_10px_rgba(229,9,20,0.7)] transition">
-                        {item.title}
-                      </h3>
-                    </div>
+              {/* Coin décoratif */}
+              <div
+                className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2
+                              border-[#E50914]/60 rounded-tr-lg"
+              />
+              <div
+                className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2
+                              border-[#E50914]/60 rounded-bl-lg"
+              />
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
 
-                    {/* Effet glow subtil */}
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#E50914]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 blur-3xl transition duration-700"></div>
-                  </div>
-                </Tilt>
-              </motion.div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+      {/* Indicateur de slide actif custom */}
+      <div className="flex items-center justify-center gap-2 mt-4">
+        {items.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => swiperRef.current?.slideToLoop(i)}
+            className={`transition-all duration-300 rounded-full
+                        ${
+                          i === activeIdx
+                            ? "w-6 h-2 bg-[#E50914]"
+                            : "w-2 h-2 bg-white/20 hover:bg-white/40"
+                        }`}
+          />
+        ))}
       </div>
-    </section>
+
+      <style>{`
+        .hero-swiper .swiper-pagination { display: none; }
+      `}</style>
+    </div>
   );
 }

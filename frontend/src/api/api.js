@@ -11,7 +11,7 @@ const api = axios.create({
 // Ajoute automatiquement le token JWT si présent (pour les admins)
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("adminToken");
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -27,7 +27,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token expiré ou invalide → déconnecter l'admin
-      localStorage.removeItem("adminToken");
+      localStorage.removeItem("token");
       window.location.href = "/login";
     }
     return Promise.reject(error);
