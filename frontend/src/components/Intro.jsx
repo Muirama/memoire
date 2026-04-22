@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import {
   FaMapMarkerAlt,
-  FaGamepad,
+  FaShoppingCart,
   FaTrophy,
   FaUsers,
   FaArrowRight,
@@ -11,17 +11,17 @@ import HeroCarousel from "./ui/HeroCarousel";
 
 const services = [
   {
-    icon: <FaGamepad size={32} className="text-[#E50914]" />,
-    title: "Vente de Jeux",
-    desc: "Découvrez les meilleurs titres aux meilleurs prix, adaptés à tous les gamers.",
+    icon: <FaShoppingCart size={40} className="text-[#E50914]" />,
+    title: "Vente de Matériel Gaming",
+    desc: "Découvrez les meilleurs metériels et le meilleurs titres aux meilleurs prix, adaptés à tous les gamers.",
   },
   {
-    icon: <FaTrophy size={32} className="text-[#E50914]" />,
-    title: "Tournois Esports",
+    icon: <FaTrophy size={40} className="text-[#E50914]" />,
+    title: "Tournois esports",
     desc: "Participez à des compétitions intenses avec des récompenses prestigieuses.",
   },
   {
-    icon: <FaUsers size={32} className="text-[#E50914]" />,
+    icon: <FaUsers size={40} className="text-[#E50914]" />,
     title: "Communauté",
     desc: "Rejoignez une communauté passionnée et grandissante de joueurs à Madagascar.",
   },
@@ -143,52 +143,24 @@ export default function Intro() {
       </div>
 
       {/* ── Services ── */}
-      <div
-        className="relative z-20 mt-16 md:mt-24 max-w-6xl mx-auto
-                      px-4 md:px-6 grid sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-8"
-      >
+      <div className="relative z-20 mt-12 md:mt-20 max-w-6xl mx-auto px-4 md:px-6 grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
         {services.map((s, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.15 }}
-            whileHover={{ y: -6 }}
-            className={`relative bg-gradient-to-br ${s.bg}
-                        bg-black/60 backdrop-blur-md
-                        p-6 md:p-8 rounded-2xl text-center
-                        border border-white/10
-                        hover:border-[#E50914]/50
-                        hover:shadow-[0_0_30px_rgba(229,9,20,0.2)]
-                        transition-all duration-400 group cursor-pointer`}
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: i * 0.2 }}
+            whileHover={{ scale: 1.05, y: -5 }}
+            className="bg-[#1A1A1A]/50 p-6 md:p-8 rounded-2xl text-center border border-red-800/40 hover:border-[#E50914]/80 hover:shadow-[0_0_35px_rgba(229,9,20,0.6)] backdrop-blur-md transition-all duration-500"
+            style={{ cursor: "pointer" }}
           >
-            {/* Icône */}
-            <div className="mb-4 flex justify-center">
-              <div
-                className="w-14 h-14 rounded-2xl bg-[#E50914]/10
-                              border border-[#E50914]/20
-                              flex items-center justify-center
-                              group-hover:bg-[#E50914]/20 transition-all"
-              >
-                {s.icon}
-              </div>
-            </div>
-
-            <h3
-              className="text-lg md:text-xl font-bold mb-2 text-white
-                           group-hover:text-[#E50914] transition-colors"
-            >
+            <div className="mb-4 md:mb-5 flex justify-center">{s.icon}</div>
+            <h3 className="text-xl md:text-2xl font-semibold mb-2 md:mb-3">
               {s.title}
             </h3>
-            <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
-
-            {/* Coin décoratif */}
-            <div
-              className="absolute top-3 right-3 w-5 h-5 border-t border-r
-                            border-[#E50914]/30 rounded-tr-lg
-                            group-hover:border-[#E50914]/70 transition-colors"
-            />
+            <p className="text-gray-400 text-sm md:text-base leading-relaxed">
+              {s.desc}
+            </p>
           </motion.div>
         ))}
       </div>
