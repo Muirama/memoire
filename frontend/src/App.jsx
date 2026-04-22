@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,6 +11,7 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import CartDrawer from "./components/CartDrawer";
 import { CartProvider } from "./context/CartContext";
+import api from "./api/api";
 
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/shop/ShopPage";
@@ -34,8 +36,67 @@ import AdminTeamsPage from "./pages/admin/teams/AdminTeamsPage";
 function AdminRoute() {
   const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("userRole");
+  const [isChecking, setIsChecking] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
-  if (!token || userRole !== "admin") {
+  useEffect(() => {
+    let isMounted = true;
+
+    const verifyAdmin = async () => {
+      if (!token || userRole !== "admin") {
+        if (isMounted) {
+          setIsAuthorized(false);
+          setIsChecking(false);
+        }
+        return;
+      }
+
+      try {
+        const { data } = await api.get("/auth/me");
+        const authenticatedUser = data.user;
+        const isAdmin = authenticatedUser?.role === "admin";
+
+        if (isMounted) {
+          setIsAuthorized(isAdmin);
+
+          if (isAdmin) {
+            localStorage.setItem("userRole", authenticatedUser.role);
+            localStorage.setItem("adminName", authenticatedUser.name || "");
+          } else {
+            localStorage.removeItem("token");
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("adminName");
+          }
+
+          setIsChecking(false);
+        }
+      } catch {
+        if (isMounted) {
+          setIsAuthorized(false);
+          setIsChecking(false);
+        }
+      }
+    };
+
+    verifyAdmin();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [token, userRole]);
+
+  if (isChecking) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 mx-auto mb-4 border-4 border-white/20 border-t-[#E50914] rounded-full animate-spin" />
+          <p className="text-gray-400 text-sm">Verification de la session admin...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthorized) {
     return <Navigate to="/login" replace />;
   }
 

@@ -114,6 +114,43 @@ export default function ProductCard({ product, index = 0 }) {
           {product.description}
         </p>
 
+        {/* ── Indicateur de Stock ── */}
+        <div className="mb-4">
+          {product.stock > 0 ? (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1.5 text-green-400 font-medium">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  </span>
+                  En stock
+                </span>
+                <span className="text-gray-500">
+                  {product.stock} disponibles
+                </span>
+              </div>
+
+              {/* Barre de progression discrète (optionnelle mais très moderne) */}
+              <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-500 ${
+                    product.stock < 5 ? "bg-orange-500" : "bg-green-600/50"
+                  }`}
+                  style={{
+                    width: `${Math.min((product.stock / 20) * 100, 100)}%`,
+                  }}
+                ></div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 text-red-500 text-sm font-medium">
+              <span className="h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span>
+              Rupture de stock
+            </div>
+          )}
+        </div>
+
         <p className="text-xl md:text-2xl font-extrabold text-[#E50914] mb-3 md:mb-4">
           {formatPrice(product.price)}
         </p>
