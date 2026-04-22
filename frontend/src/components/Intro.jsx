@@ -31,7 +31,7 @@ export default function Intro() {
   return (
     <section
       id="intro"
-      className="relative bg-black text-white py-16 md:py-24 overflow-hidden"
+      className="relative text-white py-16 md:py-24 overflow-hidden"
     >
       {/* ── Hero principal ── */}
       <div
