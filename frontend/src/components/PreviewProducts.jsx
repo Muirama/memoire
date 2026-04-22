@@ -32,7 +32,7 @@ export default function PreviewProducts() {
   }, []);
 
   return (
-    <section className="py-10">
+    <section className="py-10 ml-10 mr-10">
       {/* Header */}
       <div className="flex justify-between items-center mb-6 px-2">
         <h2 className="text-xl md:text-2xl font-bold text-white">
