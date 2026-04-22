@@ -1,6 +1,9 @@
-const { Order, Product } = require("../models");
+const { Order, Product, sequelize } = require("../models");
 
-// ── POST passer une commande (public) ─────────────────────
+const formatPrice = (price) =>
+  new Intl.NumberFormat("fr-MG").format(price) + " Ar";
+
+// POST passer une commande (public)
 const createOrder = async (req, res) => {
   try {
     const {
@@ -8,16 +11,13 @@ const createOrder = async (req, res) => {
       customerEmail,
       customerPhone,
       customerAddress,
-      itemsSummary,
       items,
       notes,
-      totalAmount,
     } = req.body;
 
-    // ── Validation ───────────────────────────────────────
     if (!customerName || !customerEmail || !customerPhone) {
       return res.status(400).json({
-        message: "Nom, email et téléphone sont requis.",
+        message: "Nom, email et telephone sont requis.",
       });
     }
 
@@ -27,37 +27,62 @@ const createOrder = async (req, res) => {
       });
     }
 
-    if (!itemsSummary) {
-      return res.status(400).json({
-        message: "Le résumé des articles est requis.",
-      });
-    }
+    const normalizedItems = items.map((item) => ({
+      productId: Number(item.productId),
+      quantity: Number(item.quantity),
+    }));
 
-    // ── Vérifier que les produits existent ───────────────
-    for (const item of items) {
-      const product = await Product.findByPk(item.productId);
-      if (!product) {
-        return res.status(404).json({
-          message: `Produit ID ${item.productId} introuvable.`,
+    for (const item of normalizedItems) {
+      if (!Number.isInteger(item.productId) || item.productId <= 0) {
+        return res.status(400).json({
+          message: "Chaque article doit contenir un productId valide.",
+        });
+      }
+
+      if (!Number.isInteger(item.quantity) || item.quantity <= 0) {
+        return res.status(400).json({
+          message: "Chaque article doit contenir une quantite valide.",
         });
       }
     }
 
-    // ── Créer la commande ─────────────────────────────────
-    // createdAt est géré automatiquement par Sequelize (NOW)
-    const order = await Order.create({
-      customerName: customerName.trim(),
-      customerEmail: customerEmail.trim(),
-      customerPhone: customerPhone.trim(),
-      customerAddress: customerAddress || null,
-      itemsSummary,
-      totalAmount,
-      status: "En attente",
-      notes: notes || null,
+    const order = await sequelize.transaction(async (transaction) => {
+      let computedTotalAmount = 0;
+      const computedItemsSummary = [];
+
+      for (const item of normalizedItems) {
+        const product = await Product.findByPk(item.productId, { transaction });
+
+        if (!product) {
+          const error = new Error(`Produit ID ${item.productId} introuvable.`);
+          error.statusCode = 404;
+          throw error;
+        }
+
+        const lineTotal = product.price * item.quantity;
+        computedTotalAmount += lineTotal;
+        computedItemsSummary.push(
+          `${item.quantity}x ${product.name} (${formatPrice(lineTotal)})`,
+        );
+      }
+
+      return Order.create(
+        {
+          customerName: customerName.trim(),
+          customerEmail: customerEmail.trim(),
+          customerPhone: customerPhone.trim(),
+          customerAddress: customerAddress?.trim() || null,
+          itemsSummary: computedItemsSummary.join(" | "),
+          totalAmount: computedTotalAmount,
+          status: "En attente",
+          notes: notes?.trim() || null,
+        },
+        { transaction },
+      );
     });
 
     return res.status(201).json({
-      message: "Commande passée avec succès.",
+      message: "Commande passee avec succes.",
       order: {
         id: order.id,
         customerName: order.customerName,
@@ -69,11 +94,13 @@ const createOrder = async (req, res) => {
     });
   } catch (error) {
     console.error("Erreur createOrder :", error);
-    return res.status(500).json({ message: "Erreur serveur." });
+    return res.status(error.statusCode || 500).json({
+      message: error.statusCode ? error.message : "Erreur serveur.",
+    });
   }
 };
 
-// ── GET toutes les commandes (admin) ──────────────────────
+// GET toutes les commandes (admin)
 const getAllOrders = async (req, res) => {
   try {
     const { status } = req.query;
@@ -92,7 +119,7 @@ const getAllOrders = async (req, res) => {
   }
 };
 
-// ── GET une commande par ID (admin) ───────────────────────
+// GET une commande par ID (admin)
 const getOrderById = async (req, res) => {
   try {
     const order = await Order.findByPk(req.params.id);
@@ -106,7 +133,7 @@ const getOrderById = async (req, res) => {
   }
 };
 
-// ── PATCH mettre à jour le statut (admin) ─────────────────
+// PATCH mettre a jour le statut (admin)
 const updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -121,7 +148,7 @@ const updateOrderStatus = async (req, res) => {
 
     if (!status || !validStatuses.includes(status)) {
       return res.status(400).json({
-        message: `Statut invalide. Valeurs acceptées : ${validStatuses.join(", ")}`,
+        message: `Statut invalide. Valeurs acceptees : ${validStatuses.join(", ")}`,
       });
     }
 
@@ -133,7 +160,7 @@ const updateOrderStatus = async (req, res) => {
     await order.update({ status });
 
     return res.status(200).json({
-      message: "Statut mis à jour.",
+      message: "Statut mis a jour.",
       order: { id: order.id, status: order.status },
     });
   } catch (error) {
@@ -142,7 +169,7 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-// ── DELETE supprimer une commande (admin) ─────────────────
+// DELETE supprimer une commande (admin)
 const deleteOrder = async (req, res) => {
   try {
     const order = await Order.findByPk(req.params.id);
@@ -150,7 +177,7 @@ const deleteOrder = async (req, res) => {
       return res.status(404).json({ message: "Commande introuvable." });
     }
     await order.destroy();
-    return res.status(200).json({ message: "Commande supprimée avec succès." });
+    return res.status(200).json({ message: "Commande supprimee avec succes." });
   } catch (error) {
     console.error("Erreur deleteOrder :", error);
     return res.status(500).json({ message: "Erreur serveur." });
