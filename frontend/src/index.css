@@ -45,6 +45,7 @@ body {
     sans-serif;
 }
 
+<<<<<<< Updated upstream
 *,
 *::before,
 *::after {
@@ -183,3 +184,36 @@ li {
     scroll-behavior: auto !important;
   }
 }
+=======
+/* ── Hamburger Button ── */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  gap: 6px;
+  padding: 0;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background-color: #FFFFFF;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+>>>>>>> Stashed changes
