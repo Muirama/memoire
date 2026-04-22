@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 const items = [
   { id: 1, title: "BERU99",tag :" PUBG MOBILE", image: "/Photo Menu/Beru99.png" },
   { id: 2, title: "BONYKODAHY", tag: "EFOOTBALL MOBILE", image: "/Photo Menu/BonyKodahy.png" },
-  { id: 3, title: "BOUTA", tag: "MOBILE LEGENDS : BANG BANG", image: "/Photo Menu/Bouta.png" },
+  { id: 3, title: "BOUTA", tag: "MOBILE LEGENDS : BANG BANG",tag2: "Tekken 8", image: "/Photo Menu/Bouta.png" },
   { id: 4, title: "FAMENOG", tag: "NBA 2K", image: "/Photo Menu/FamenoG.png" },
   { id: 5, title: "GENESS", tag: "PUBG MOBILE", image: "/Photo Menu/Geness.png" },
   { id: 6, title: "JOG", tag: "MOBILE LEGENDS : BANG BANG", image: "/Photo Menu/Jog.png" },
@@ -21,11 +21,11 @@ const items = [
   { id: 11, title: "MAESTRR", tag: "MOBILE LEGENDS : BANG BANG / D.A", image: "/Photo Menu/Maestrr.png" },
   { id: 12, title: "MANOU", tag: "EA FC", image: "/Photo Menu/Manou.png" },
   { id: 13, title: "N4SH", tag: "PUBG MOBILE", image: "/Photo Menu/N4sh.png" },
-  { id: 14, title: "NGANJIN", tag: "MOBILE LEGENDS : BANG BANG / C.E.O", image: "/Photo Menu/Nganjin.png" },
+  { id: 14, title: "NGANJIN", tag: "MOBILE LEGENDS : BANG BANG", tag2: "CEO", image: "/Photo Menu/Nganjin.png" },
   { id: 15, title: "RANTOANGELO", tag: "EFOOTBALL", image: "/Photo Menu/RantoAngelo.png" },
-  { id: 16, title: "SATCHIO", tag: "MOBILE LEGENDS : BANG BANG / ADMIN", image: "/Photo Menu/Satchio.png" },
+  { id: 16, title: "SATCHIO", tag: "MOBILE LEGENDS : BANG BANG" , tag2: "ADMIN", image: "/Photo Menu/Satchio.png" },
   { id: 17, title: "SEIJURO", tag: "EFOOTBALL MOBILE", image: "/Photo Menu/Seijuro.png" },
-  { id: 18, title: "STEELISH360", tag: "PUBG MOBILE", image: "/Photo Menu/Steelish360.png" },
+  { id: 18, title: "STEELISH360", tag: "STREET FIGHTER",tag2: "Tekken 8", image: "/Photo Menu/Steelish360.png" },
   { id: 19, title: "VENDRAXX", tag: "PUBG MOBILE", image: "/Photo Menu/Vendraxx.png" },
   { id: 20, title: "VIDELOU", tag: "Manager PUBG", image: "/Photo Menu/Videlou.png" },
   { id: 21, title: "YONDAIME", tag: "Tekken 8", image: "/Photo Menu/Yondaime.png" },
@@ -92,14 +92,25 @@ export default function HeroCarousel() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.15 }}
                 >
-                  {/* Tag */}
-                  <span
-                    className="inline-block text-[10px] font-black tracking-[0.2em]
-                                   text-[#E50914] bg-[#E50914]/10 border border-[#E50914]/30
-                                   px-3 py-1 rounded-full mb-2 uppercase"
-                  >
-                    {item.tag}
-                  </span>
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <span
+                      className="inline-block text-[10px] font-black tracking-[0.2em]
+                                     text-[#E50914] bg-[#E50914]/10 border border-[#E50914]/30
+                                     px-3 py-1 rounded-full uppercase"
+                    >
+                      {item.tag}
+                    </span>
+                    {item.tag2 && (
+                      <span
+                        className="inline-block text-[10px] font-black tracking-[0.2em]
+                                       text-[#E50914] bg-[#E50914]/10 border border-[#E50914]/30
+                                       px-3 py-1 rounded-full uppercase"
+                      >
+                        {item.tag2}
+                      </span>
+                    )}
+                  </div>
                   {/* Titre */}
                   <h3
                     className="text-white font-extrabold text-2xl md:text-3xl
