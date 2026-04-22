@@ -139,11 +139,14 @@ export default function NavBar() {
 
         {/* Hamburger */}
         <button
-          className="text-2xl text-white"
+          className={`hamburger ${menuOpen ? "active" : ""}`}
           onClick={toggleMenu}
           aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-expanded={menuOpen}
         >
-          {menuOpen ? <FaTimes /> : <FaBars />}
+          <span></span>
+          <span></span>
+          <span></span>
         </button>
       </div>
 
