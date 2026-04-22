@@ -34,9 +34,21 @@ export default function LoginPage() {
         email: formData.email,
         password: formData.password,
       });
-      localStorage.setItem("adminToken", res.data.token);
-      localStorage.setItem("adminName", res.data.admin.name);
-      navigate("/admin");
+
+      const { token, role, admin, user } = res.data;
+
+      // Stocker le token
+      localStorage.setItem("token", token);
+      localStorage.setItem("userRole", role);
+
+      // Redirection selon le rôle
+      if (role === "admin") {
+        localStorage.setItem("adminName", admin.name);
+        navigate("/admin");
+      } else {
+        localStorage.setItem("userName", user.name);
+        navigate("/");
+      }
     } catch (err) {
       setErrors({
         global:
@@ -121,7 +133,7 @@ export default function LoginPage() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="admin@gascom.mg"
+                  placeholder="votre@email.com"
                   autoComplete="email"
                   className={`w-full pl-12 pr-4 py-3 bg-[#0D0D0D] text-white
                               rounded-lg border transition-all focus:outline-none
@@ -236,7 +248,7 @@ export default function LoginPage() {
                 title="Bientôt disponible"
                 className="flex items-center justify-center gap-2 py-2.5 px-3
                            bg-[#0D0D0D] border border-white/10 rounded-xl
-                           opacity-60 cursor-not-allowed transition-all"
+                           opacity-60 cursor-not-allowed"
               >
                 <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0">
                   <path
@@ -267,7 +279,7 @@ export default function LoginPage() {
                 title="Bientôt disponible"
                 className="flex items-center justify-center gap-2 py-2.5 px-3
                            bg-[#0D0D0D] border border-white/10 rounded-xl
-                           opacity-60 cursor-not-allowed transition-all"
+                           opacity-60 cursor-not-allowed"
               >
                 <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0">
                   <path
@@ -286,7 +298,7 @@ export default function LoginPage() {
                 title="Bientôt disponible"
                 className="flex items-center justify-center gap-2 py-2.5 px-3
                            bg-[#0D0D0D] border border-white/10 rounded-xl
-                           opacity-60 cursor-not-allowed transition-all"
+                           opacity-60 cursor-not-allowed"
               >
                 <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0">
                   <path
@@ -316,7 +328,7 @@ export default function LoginPage() {
               className="text-[#E50914] font-bold text-sm hover:text-[#FF1E56]
                          hover:underline transition-all"
             >
-              S'inscrire
+              S'inscrire →
             </Link>
           </div>
         </motion.div>

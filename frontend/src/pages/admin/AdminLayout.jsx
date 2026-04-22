@@ -29,8 +29,10 @@ export default function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("adminToken");
+    localStorage.removeItem("token");
+    localStorage.removeItem("userRole");
     localStorage.removeItem("adminName");
+    localStorage.removeItem("userName");
     navigate("/login");
   };
 

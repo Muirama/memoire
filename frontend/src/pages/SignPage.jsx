@@ -8,9 +8,9 @@ import {
   FaUser,
   FaEye,
   FaEyeSlash,
-  FaGamepad,
   FaCheckCircle,
 } from "react-icons/fa";
+import api from "../api/api";
 
 export default function SignPage() {
   const navigate = useNavigate();
@@ -73,16 +73,28 @@ export default function SignPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
-    if (validateForm()) {
-      setIsLoading(true);
-      // Simuler une requête API
-      setTimeout(() => {
-        console.log("Sign up:", formData);
-        setIsLoading(false);
-        // Redirection après inscription réussie
-        navigate("/login");
-      }, 1500);
+    setIsLoading(true);
+    try {
+      const response = await api.post("/auth/register", {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      console.log("Inscription réussie:", response.data);
+
+      navigate("/login");
+    } catch (error) {
+      console.error("Erreur lors de l'inscription:", error);
+
+      setErrors((prev) => ({
+        ...prev,
+        global: error.response?.data?.message || "Erreur lors de l'inscription",
+      }));
+    } finally {
+      setIsLoading(false);
     }
   };
 

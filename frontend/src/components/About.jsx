@@ -19,7 +19,7 @@ const values = [
   {
     icon: <FaUsers size={28} className="text-[#E50914]" />,
     title: "Communauté",
-    desc: "Gascom c'est avant tout une famille de joueurs unis par la même passion à Madagascar.",
+    desc: "Gascom esports est avant tout une famille de joueurs unis par la même passion à Madagascar.",
   },
   {
     icon: <FaShieldAlt size={28} className="text-[#E50914]" />,
@@ -51,7 +51,7 @@ export default function About() {
           transition={{ duration: 0.5 }}
           className="text-[#E50914] text-sm font-bold tracking-[0.3em] uppercase mb-3"
         >
-          Qui sommes-nous
+          Qui sommes-nous ?
         </motion.p>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -88,8 +88,8 @@ export default function About() {
             <div className="relative bg-[#1A1A1A]/70 border border-[#E50914]/30 rounded-2xl p-8 md:p-10 backdrop-blur-md">
               <div className="text-7xl md:text-8xl mb-6 text-center">🏆</div>
               <p className="text-center text-gray-300 text-sm md:text-base leading-relaxed italic">
-                "Nous croyons que chaque joueur malgache mérite une plateforme à
-                la hauteur de son talent."
+                "Nous croyons que chaque joueur malgache mérite une plateforme
+                et un appui à la hauteur de son talent."
               </p>
               <p className="text-center text-[#E50914] font-bold mt-4 text-sm tracking-wide">
                 — L'équipe Gascom
@@ -129,9 +129,9 @@ export default function About() {
           <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-4">
             Fondée à{" "}
             <span className="text-white font-semibold">Antananarivo</span>,
-            Gascom est née d'un constat simple : la scène gaming malgache
-            regorge de talents qui manquent d'une plateforme sérieuse pour
-            s'exprimer.
+            Gascom esports est née d'un constat simple : la scène gaming
+            malgache regorge de talents qui manquent d'une plateforme sérieuse
+            pour s'exprimer.
           </p>
           <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-4">
             Depuis nos débuts, nous avons organisé des{" "}

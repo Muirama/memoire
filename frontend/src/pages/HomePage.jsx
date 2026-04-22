@@ -1,14 +1,14 @@
 import Intro from "../components/Intro";
-import About from "../components/About";
 import Carousel from "../components/Carousel";
 import PreviewProducts from "../components/PreviewProducts";
+import About from "../components/About";
 
 export default function HomePage() {
   return (
     <>
       <Intro />
-      <PreviewProducts />
       <About />
+      <PreviewProducts />
       <Carousel />
     </>
   );

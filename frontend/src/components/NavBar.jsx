@@ -10,6 +10,8 @@ import {
   FaSignInAlt,
   FaShoppingCart,
 } from "react-icons/fa";
+
+import logo_GES_blanc from "/LOGO/Logo_GES_blanc.svg";
 import logo_GES_rouge from "/LOGO/Logo_GES_blanc.svg";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
@@ -32,7 +34,7 @@ export default function NavBar() {
   return (
     <nav
       className="shadow-md px-6 py-4 flex justify-between items-center sticky top-0 z-[60]
-                 backdrop-blur-md bg-[#0D0D0D]/90"
+                 backdrop-blur-md bg-[#000000]"
       role="navigation"
       aria-label="Navigation principale"
     >
@@ -43,6 +45,8 @@ export default function NavBar() {
         aria-label="Retour à l'accueil"
       >
         <img
+          src={logo_GES_blanc}
+          alt="Logo GasCom e-Sport"
           src={logo_GES_rouge}
           alt="Logo Gascom e-Sport"
           width="45"
@@ -66,7 +70,7 @@ export default function NavBar() {
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
                     isActive
                       ? "text-white bg-[#E50914] shadow-[0_0_15px_rgba(229,9,20,0.6)]"
-                      : "text-[#B3B3B3] hover:text-white hover:bg-[#E50914]/80 hover:shadow-[0_0_12px_rgba(229,9,20,0.4)]"
+                      : "text-white hover:text-white hover:bg-[#E50914]/80 hover:shadow-[0_0_12px_rgba(229,9,20,0.4)]"
                   }`}
                 >
                   {link.icon}
@@ -82,7 +86,7 @@ export default function NavBar() {
           type="button"
           onClick={toggleCart}
           aria-label="Ouvrir le panier"
-          className="relative flex items-center gap-2 px-4 py-2 text-[#B3B3B3]
+          className="relative flex items-center gap-2 px-4 py-2 text-white
                      hover:text-white hover:bg-[#E50914]/80 rounded-lg
                      transition-all duration-300 hover:shadow-[0_0_12px_rgba(229,9,20,0.4)]"
         >

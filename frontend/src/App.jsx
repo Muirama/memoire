@@ -1,16 +1,18 @@
+import { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
+  Navigate,
+  Outlet,
 } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
-import Aurora from "./animations/Aurora";
 import CartDrawer from "./components/CartDrawer";
 import { CartProvider } from "./context/CartContext";
+import api from "./api/api";
 
-// ── Pages publiques ──────────────────────────────────────
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/shop/ShopPage";
 import ShopDetailPage from "./pages/shop/ShopDetailPage";
@@ -24,7 +26,6 @@ import EventDetailPage from "./pages/events/EventDetailPage";
 import LoginPage from "./pages/LoginPage";
 import SignPage from "./pages/SignPage";
 
-// ── Pages admin ──────────────────────────────────────────
 import AdminHome from "./pages/admin/AdminHome";
 import AdminOrders from "./pages/admin/orders/AdminOrders";
 import AdminProductsPage from "./pages/admin/products/AdminProductsPage";
@@ -32,18 +33,82 @@ import AdminEvents from "./pages/admin/events/AdminEvents";
 import AdminNewsPage from "./pages/admin/news/AdminNewsPage";
 import AdminTeamsPage from "./pages/admin/teams/AdminTeamsPage";
 
+function AdminRoute() {
+  const token = localStorage.getItem("token");
+  const userRole = localStorage.getItem("userRole");
+  const [isChecking, setIsChecking] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const verifyAdmin = async () => {
+      if (!token || userRole !== "admin") {
+        if (isMounted) {
+          setIsAuthorized(false);
+          setIsChecking(false);
+        }
+        return;
+      }
+
+      try {
+        const { data } = await api.get("/auth/me");
+        const authenticatedUser = data.user;
+        const isAdmin = authenticatedUser?.role === "admin";
+
+        if (isMounted) {
+          setIsAuthorized(isAdmin);
+
+          if (isAdmin) {
+            localStorage.setItem("userRole", authenticatedUser.role);
+            localStorage.setItem("adminName", authenticatedUser.name || "");
+          } else {
+            localStorage.removeItem("token");
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("adminName");
+          }
+
+          setIsChecking(false);
+        }
+      } catch {
+        if (isMounted) {
+          setIsAuthorized(false);
+          setIsChecking(false);
+        }
+      }
+    };
+
+    verifyAdmin();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [token, userRole]);
+
+  if (isChecking) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 mx-auto mb-4 border-4 border-white/20 border-t-[#E50914] rounded-full animate-spin" />
+          <p className="text-gray-400 text-sm">Verification de la session admin...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthorized) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+}
+
 function Layout({ children }) {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
+
   return (
     <>
-      {!isAdmin && (
-        <Aurora
-          colorStops={["#E50914", "#730b0b", "#1a1a1a"]}
-          amplitude={0.5}
-          blend={0.7}
-        />
-      )}
       {!isAdmin && <NavBar />}
       {!isAdmin && <CartDrawer />}
       {children}
@@ -58,7 +123,6 @@ function App() {
       <Router>
         <Layout>
           <Routes>
-            {/* ── Public ── */}
             <Route path="/" element={<HomePage />} />
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/shop/:id" element={<ShopDetailPage />} />
@@ -71,14 +135,15 @@ function App() {
             <Route path="/events/:id" element={<EventDetailPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/sign" element={<SignPage />} />
-            
-            {/* ── Admin ── */}
-            <Route path="/admin" element={<AdminHome />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
-            <Route path="/admin/products" element={<AdminProductsPage />} />
-            <Route path="/admin/events" element={<AdminEvents />} />
-            <Route path="/admin/news" element={<AdminNewsPage />} />
-            <Route path="/admin/teams" element={<AdminTeamsPage />} />
+
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<AdminHome />} />
+              <Route path="/admin/orders" element={<AdminOrders />} />
+              <Route path="/admin/products" element={<AdminProductsPage />} />
+              <Route path="/admin/events" element={<AdminEvents />} />
+              <Route path="/admin/news" element={<AdminNewsPage />} />
+              <Route path="/admin/teams" element={<AdminTeamsPage />} />
+            </Route>
           </Routes>
         </Layout>
       </Router>
