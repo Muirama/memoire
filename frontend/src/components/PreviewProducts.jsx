@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import api from "../api/api";
@@ -13,6 +13,7 @@ import "swiper/css/pagination";
 
 export default function PreviewProducts() {
   const [products, setProducts] = useState([]);
+  const swiperRef = useRef(null); // ✅ IMPORTANT
 
   useEffect(() => {
     const fetchPreview = async () => {
@@ -29,7 +30,11 @@ export default function PreviewProducts() {
   }, []);
 
   return (
-    <section className="py-10 px-4 sm:px-6 md:px-10">
+    <section
+      className="py-10 px-4 sm:px-6 md:px-10"
+      onMouseEnter={() => swiperRef.current?.autoplay.stop()} // ✅ pause
+      onMouseLeave={() => swiperRef.current?.autoplay.start()} // ✅ reprise
+    >
       {/* Header */}
       <div className="flex justify-between items-center mb-6 px-2">
         <h2 className="text-xl md:text-2xl font-bold text-white">
@@ -47,7 +52,6 @@ export default function PreviewProducts() {
       <Swiper
         modules={[Autoplay, Pagination]}
         spaceBetween={16}
-        slidesPerGroup={4}
         slidesPerView={1}
         breakpoints={{
           640: { slidesPerView: 2 },
@@ -56,15 +60,12 @@ export default function PreviewProducts() {
         }}
         autoplay={{ delay: 3000, disableOnInteraction: false }}
         loop={true}
-        // Force les slides à la même hauteur
         style={{ alignItems: "stretch" }}
         className="preview-swiper"
+        onSwiper={(swiper) => (swiperRef.current = swiper)} // ✅ capture instance
       >
         {products.map((product, index) => (
-          <SwiperSlide
-            key={product.id}
-            className="!h-auto flex"
-          >
+          <SwiperSlide key={product.id} className="!h-auto flex">
             <div className="w-full flex">
               <ProductCard product={product} index={index} />
             </div>
