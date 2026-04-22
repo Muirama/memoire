@@ -8,24 +8,14 @@ import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import { motion, AnimatePresence } from "framer-motion";
 
 const items = [
-  { id: 1, title: "League of Legends", tag: "MOBA", image: "/images/lol.jpg" },
-  { id: 2, title: "Counter-Strike 2", tag: "FPS", image: "/images/CS2.jpg" },
-  {
-    id: 3,
-    title: "Valorant",
-    tag: "FPS TACTIC",
-    image: "/images/valorant.jpg",
-  },
-  { id: 4, title: "FIFA", tag: "SPORT", image: "/images/fifa.jpg" },
-  { id: 5, title: "PUBG", tag: "BATTLE ROYALE", image: "/images/pubg.jpg" },
-  { id: 6, title: "Call of Duty", tag: "FPS", image: "/images/cod.jpg" },
-  { id: 7, title: "Dota 2", tag: "MOBA", image: "/images/dota.jpg" },
-  {
-    id: 8,
-    title: "Apex Legends",
-    tag: "BATTLE ROYALE",
-    image: "/images/apex.jpg",
-  },
+  { id: 1, title: "NGANJIN", tag: "CEO", image: "/Photo Menu/Nganjin.png" },
+  { id: 2, title: "YONDAIME", tag: "Tekken 8", image: "/Photo Menu/Yondaime.png" },
+  { id: 3, title: "KIMI", tag: "Tekken 8", image: "/Photo Menu/Kimi.png" },
+  { id: 4, title: "VIDELOU", tag: "Manager PUBG", image: "/Photo Menu/Videlou.png" },
+  { id: 5, title: "MANOU", tag: "EA FC", image: "/Photo Menu/Manou.png" },
+  { id: 6, title: "KNIGHT", image: "/Photo Menu/Knight.png" },
+  { id: 7, title: "STEELISH360", image: "/Photo Menu/Steelish360.png" },
+  { id: 8, title: "SEIJURO", image: "/Photo Menu/Seijuro.png" },
 ];
 
 export default function HeroCarousel() {
