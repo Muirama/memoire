@@ -31,49 +31,79 @@ export default function Intro() {
   return (
     <section
       id="intro"
-      className="relative text-white py-12 md:py-24 overflow-hidden"
+      className="relative text-white py-16 md:py-24 overflow-hidden"
     >
+      {/* ── Hero principal ── */}
       <div
-        className="relative z-20 max-w-7xl mx-auto px-4 md:px-8 
-                      grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+        className="relative z-20 max-w-7xl mx-auto px-4 md:px-6
+                      grid md:grid-cols-2 gap-10 md:gap-16 items-center"
       >
-        {/* Texte : On réduit les paddings et on centre sur mobile uniquement */}
+        {/* Texte */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center lg:text-left order-2 lg:order-1"
+          className="text-center md:text-left"
         >
-          {/* Badge localisation : Plus compact sur mobile */}
-          <motion.div className="inline-flex items-center gap-2 bg-[#E50914]/10 border border-[#E50914]/25 rounded-full px-3 py-1 mb-4">
-            <FaMapMarkerAlt className="text-[#E50914]" size={10} />
-            <span className="text-[#E50914] text-[10px] md:text-xs font-bold tracking-widest uppercase">
+          {/* Badge localisation */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="inline-flex items-center gap-2 bg-[#E50914]/10 border
+                       border-[#E50914]/25 rounded-full px-4 py-1.5 mb-5"
+          >
+            <FaMapMarkerAlt className="text-[#E50914]" size={11} />
+            <span className="text-[#E50914] text-xs font-bold tracking-widest uppercase">
               Antananarivo, Madagascar
             </span>
           </motion.div>
 
-          {/* Titre : Taille de police adaptative (clamp) */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] text-white">
+          {/* Titre — blanc sur fond sombre, gris foncé sur fond clair */}
+          <h1
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl
+                         font-extrabold leading-tight
+                         text-white [text-shadow:0_2px_20px_rgba(0,0,0,0.5)]"
+          >
             Bienvenue chez{" "}
-            <span className="text-[#E50914] block sm:inline drop-shadow-[0_0_20px_rgba(229,9,20,0.6)]">
+            <span
+              className="text-[#E50914]
+                             drop-shadow-[0_0_25px_rgba(229,9,20,0.8)]"
+            >
               Gascom Esports
             </span>
           </h1>
 
-          <p className="mt-6 text-gray-300 text-sm md:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
+          <p
+            className="mt-5 text-gray-200 text-base md:text-lg max-w-lg
+                        mx-auto md:mx-0 leading-relaxed
+                        [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]"
+          >
             Nous connectons les passionnés de jeux vidéo à travers des{" "}
             <span className="text-[#FF4D6A] font-semibold">
               tournois épiques
+            </span>
+            , des{" "}
+            <span className="text-[#FF4D6A] font-semibold">
+              événements communautaires
             </span>{" "}
-            et les meilleurs titres à Madagascar.
+            et les meilleurs titres gaming à Madagascar.
           </p>
 
-          {/* Boutons : Full width sur très petit mobile */}
-          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          {/* CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mt-8 flex flex-wrap gap-3 justify-center md:justify-start"
+          >
             <a
               href="/events"
-              className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-8 py-4 bg-[#E50914] hover:bg-[#FF1E56] text-white font-bold rounded-xl transition-all text-sm group shadow-lg shadow-red-900/20"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#E50914]
+                         hover:bg-[#FF1E56] text-white font-bold rounded-xl
+                         transition-all hover:shadow-[0_0_20px_rgba(229,9,20,0.5)]
+                         text-sm group"
             >
               Voir les tournois
               <FaArrowRight
@@ -83,32 +113,54 @@ export default function Intro() {
             </a>
             <a
               href="/shop"
-              className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-8 py-4 border border-white/20 hover:bg-white/10 text-white font-bold rounded-xl transition-all text-sm backdrop-blur-sm"
+              className="inline-flex items-center gap-2 px-6 py-3
+                         border border-white/30 hover:border-white/60
+                         text-white font-bold rounded-xl transition-all
+                         backdrop-blur-sm hover:bg-white/10 text-sm"
             >
               Boutique
             </a>
-          </div>
+          </motion.div>
         </motion.div>
 
-        {/* Carrousel : Priorité visuelle sur mobile (order-1) */}
-        <motion.div className="relative order-1 lg:order-2 w-full max-w-[500px] lg:max-w-none mx-auto">
-          <div className="absolute -inset-6 bg-[#E50914]/15 rounded-full blur-[80px] pointer-events-none" />
-          <HeroCarousel />
+        {/* Carrousel */}
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2, duration: 0.8 }}
+          className="relative"
+        >
+          {/* Glow derrière le carousel */}
+          <div
+            className="absolute -inset-4 bg-[#E50914]/10 rounded-3xl
+                          blur-2xl pointer-events-none"
+          />
+          <div className="relative z-10">
+            <HeroCarousel />
+          </div>
         </motion.div>
       </div>
 
-      {/* Services : Grille adaptative */}
-      <div className="relative z-20 mt-20 max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* ── Services ── */}
+      <div className="relative z-20 mt-12 md:mt-20 max-w-6xl mx-auto px-4 md:px-6 grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
         {services.map((s, i) => (
           <motion.div
             key={i}
-            className="bg-[#1A1A1A]/40 p-8 rounded-2xl border border-white/5 hover:border-[#E50914]/50 backdrop-blur-xl transition-all duration-500"
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: i * 0.2 }}
+            whileHover={{ scale: 1.05, y: -5 }}
+            className="bg-[#1A1A1A]/50 p-6 md:p-8 rounded-2xl text-center border border-red-800/40 hover:border-[#E50914]/80 hover:shadow-[0_0_35px_rgba(229,9,20,0.6)] backdrop-blur-md transition-all duration-500"
+            style={{ cursor: "pointer" }}
           >
-            <div className="mb-6 inline-block p-4 bg-red-950/20 rounded-xl">
-              {s.icon}
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-white">{s.title}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
+            <div className="mb-4 md:mb-5 flex justify-center">{s.icon}</div>
+            <h3 className="text-xl md:text-2xl font-semibold mb-2 md:mb-3">
+              {s.title}
+            </h3>
+            <p className="text-gray-400 text-sm md:text-base leading-relaxed">
+              {s.desc}
+            </p>
           </motion.div>
         ))}
       </div>
