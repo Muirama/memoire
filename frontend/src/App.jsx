@@ -3,13 +3,14 @@ import {
   Routes,
   Route,
   useLocation,
+  Navigate,
+  Outlet,
 } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import CartDrawer from "./components/CartDrawer";
 import { CartProvider } from "./context/CartContext";
 
-// ── Pages publiques ──────────────────────────────────────
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/shop/ShopPage";
 import ShopDetailPage from "./pages/shop/ShopDetailPage";
@@ -23,7 +24,6 @@ import EventDetailPage from "./pages/events/EventDetailPage";
 import LoginPage from "./pages/LoginPage";
 import SignPage from "./pages/SignPage";
 
-// ── Pages admin ──────────────────────────────────────────
 import AdminHome from "./pages/admin/AdminHome";
 import AdminOrders from "./pages/admin/orders/AdminOrders";
 import AdminProductsPage from "./pages/admin/products/AdminProductsPage";
@@ -31,9 +31,21 @@ import AdminEvents from "./pages/admin/events/AdminEvents";
 import AdminNewsPage from "./pages/admin/news/AdminNewsPage";
 import AdminTeamsPage from "./pages/admin/teams/AdminTeamsPage";
 
+function AdminRoute() {
+  const adminToken = localStorage.getItem("adminToken");
+  const userRole = localStorage.getItem("userRole");
+
+  if (!adminToken || userRole !== "admin") {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+}
+
 function Layout({ children }) {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
+
   return (
     <>
       {!isAdmin && <NavBar />}
@@ -50,7 +62,6 @@ function App() {
       <Router>
         <Layout>
           <Routes>
-            {/* ── Public ── */}
             <Route path="/" element={<HomePage />} />
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/shop/:id" element={<ShopDetailPage />} />
@@ -63,14 +74,15 @@ function App() {
             <Route path="/events/:id" element={<EventDetailPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/sign" element={<SignPage />} />
-            
-            {/* ── Admin ── */}
-            <Route path="/admin" element={<AdminHome />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
-            <Route path="/admin/products" element={<AdminProductsPage />} />
-            <Route path="/admin/events" element={<AdminEvents />} />
-            <Route path="/admin/news" element={<AdminNewsPage />} />
-            <Route path="/admin/teams" element={<AdminTeamsPage />} />
+
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<AdminHome />} />
+              <Route path="/admin/orders" element={<AdminOrders />} />
+              <Route path="/admin/products" element={<AdminProductsPage />} />
+              <Route path="/admin/events" element={<AdminEvents />} />
+              <Route path="/admin/news" element={<AdminNewsPage />} />
+              <Route path="/admin/teams" element={<AdminTeamsPage />} />
+            </Route>
           </Routes>
         </Layout>
       </Router>
