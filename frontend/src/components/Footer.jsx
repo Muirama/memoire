@@ -1,5 +1,6 @@
 import React from "react";
 import { FaFacebook, FaDiscord, FaInstagram } from "react-icons/fa";
+import { FaFacebook, FaDiscord, FaTwitch, FaInstagram } from "react-icons/fa";
 
 export default function Footer() {
   return (
@@ -8,9 +9,14 @@ export default function Footer() {
       className="bg-[#0D0D0D]/80 backdrop-blur-sm text-gray-400 py-8 text-center border-t border-[#E50914]/20 relative z-20"
       role="contentinfo"
     >
+
       <p className="mb-4 px-4 text-sm md:text-base">
         &copy; {new Date().getFullYear()} Gascom esports Madagascar. Tous droits
         réservés.
+
+      <p className="mb-4">
+        &copy; {new Date().getFullYear()} Gascom esports Madagascar. Tous droits réservés.
+
       </p>
       <nav aria-label="Réseaux sociaux" className="mt-4">
         <ul className="flex flex-wrap justify-center items-center gap-x-6 gap-y-3 px-4">
@@ -43,7 +49,10 @@ export default function Footer() {
               href="https://www.instagram.com/gascomesports/"
               target="_blank"
               rel="noopener noreferrer"
+
               aria-label="Abonnez-vous à notre compte Instagram"
+              aria-label="Suivez-nous sur Instagram"
+
               className="inline-flex items-center gap-2 hover:text-[#E50914] transition duration-300"
             >
               <FaInstagram size={20} />
