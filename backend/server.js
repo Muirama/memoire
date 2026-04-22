@@ -37,11 +37,11 @@ app.use("/api/registrations", registrationRoutes);
 sequelize
   .sync({ alter: true })
   .then(() => {
-    console.log("✅ Base de données synchronisée.");
+    console.log(" Base de données synchronisée.");
     app.listen(PORT, () => {
-      console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
+      console.log(` Serveur démarré sur http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
-    console.error("❌ Erreur de connexion DB :", err);
+    console.error(" Erreur de connexion DB :", err);
   });
