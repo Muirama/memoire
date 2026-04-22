@@ -51,7 +51,7 @@ export default function About() {
           transition={{ duration: 0.5 }}
           className="text-[#E50914] text-sm font-bold tracking-[0.3em] uppercase mb-3"
         >
-          Qui sommes-nous
+          Qui sommes-nous ?
         </motion.p>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
