@@ -11,7 +11,6 @@ export default function ProductCard({ product, index = 0 }) {
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
 
-  // Vérifie si le produit est déjà dans le panier
   const isInCart = items.some((item) => item.id === product.id);
 
   const formatPrice = (price) =>
@@ -34,13 +33,14 @@ export default function ProductCard({ product, index = 0 }) {
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ delay: index * 0.04, duration: 0.3 }}
       whileHover={{ scale: 1.03, y: -5 }}
-      className="bg-[#1A1A1A] rounded-xl overflow-hidden border border-[#E50914]/20
+      // w-full + h-full garantit que la card remplit toujours son slide Swiper
+      className="w-full h-full bg-[#1A1A1A] rounded-xl overflow-hidden border border-[#E50914]/20
                  hover:border-[#E50914] hover:shadow-[0_0_25px_rgba(229,9,20,0.4)]
                  transition-all duration-300 flex flex-col"
     >
       {/* ── Image ── */}
       <div
-        className="relative h-40 md:h-48 overflow-hidden cursor-pointer bg-[#0D0D0D]"
+        className="relative h-40 md:h-48 overflow-hidden cursor-pointer bg-[#0D0D0D] shrink-0"
         onClick={goToDetail}
         role="button"
         tabIndex={0}
@@ -49,10 +49,7 @@ export default function ProductCard({ product, index = 0 }) {
       >
         {/* Skeleton */}
         {!imgLoaded && !imgError && product.image && (
-          <div
-            className="absolute inset-0 bg-[#1A1A1A] animate-pulse
-                          flex items-center justify-center"
-          >
+          <div className="absolute inset-0 bg-[#1A1A1A] animate-pulse flex items-center justify-center">
             <FaImage className="text-gray-700 text-4xl" />
           </div>
         )}
@@ -71,10 +68,7 @@ export default function ProductCard({ product, index = 0 }) {
                         duration-500 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
           />
         ) : (
-          <div
-            className="w-full h-full flex flex-col items-center
-                          justify-center bg-[#111111] gap-2"
-          >
+          <div className="w-full h-full flex flex-col items-center justify-center bg-[#111111] gap-2">
             <FaImage className="text-gray-600 text-4xl" />
             <span className="text-gray-600 text-xs">Image non disponible</span>
           </div>
@@ -110,12 +104,13 @@ export default function ProductCard({ product, index = 0 }) {
           {product.name}
         </h3>
 
-        <p className="text-gray-400 text-xs md:text-sm mb-3 line-clamp-2 h-10">
+        {/* Description — hauteur fixe pour aligner le contenu dessous */}
+        <p className="text-gray-400 text-xs md:text-sm mb-3 line-clamp-2 h-10 shrink-0">
           {product.description}
         </p>
 
         {/* ── Indicateur de Stock ── */}
-        <div className="mb-4">
+        <div className="mb-4 shrink-0">
           {product.stock > 0 ? (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-xs">
@@ -130,17 +125,15 @@ export default function ProductCard({ product, index = 0 }) {
                   {product.stock} disponibles
                 </span>
               </div>
-
-              {/* Barre de progression discrète (optionnelle mais très moderne) */}
               <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
                 <div
                   className={`h-full transition-all duration-500 ${
-                    product.stock < 5 ? "bg-orange-500" : "bg-green-600/50"
+                    product.stock <= 5 ? "bg-orange-500" : "bg-green-600/50"
                   }`}
                   style={{
                     width: `${Math.min((product.stock / 20) * 100, 100)}%`,
                   }}
-                ></div>
+                />
               </div>
             </div>
           ) : (
@@ -151,12 +144,13 @@ export default function ProductCard({ product, index = 0 }) {
           )}
         </div>
 
-        <p className="text-xl md:text-2xl font-extrabold text-[#E50914] mb-3 md:mb-4">
+        {/* Prix — poussé vers le bas grâce à flex-1 sur le conteneur parent */}
+        <p className="text-xl md:text-2xl font-extrabold text-[#E50914] mb-3 md:mb-4 mt-auto">
           {formatPrice(product.price)}
         </p>
 
         {/* ── Actions ── */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 shrink-0">
           <button
             type="button"
             onClick={goToDetail}
@@ -168,8 +162,6 @@ export default function ProductCard({ product, index = 0 }) {
           </button>
 
           {isInCart ? (
-            // Déjà dans le panier → bouton vert "Ajouté"
-            // Un clic supplémentaire ajoute +1 à la quantité
             <button
               type="button"
               onClick={handleAddToCart}
