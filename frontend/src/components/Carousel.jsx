@@ -9,14 +9,14 @@ import Tilt from "react-parallax-tilt";
 import { motion } from "framer-motion";
 
 const items = [
-  { id: 1, title: "NGANJIN", tag: "CEO", image: "/Photo Menu/Nganjin.png" },
-  { id: 2, title: "YONDAIME", tag: "Tekken 8", image: "/Photo Menu/Yondaime.png" },
-  { id: 3, title: "KIMI", tag: "Tekken 8", image: "/Photo Menu/Kimi.png" },
-  { id: 4, title: "VIDEL", tag: "Manager PUBG", image: "/Photo Menu/Videl.png" },
-  { id: 5, title: "MANOU", tag: "EA FC", image: "/Photo Menu/Manou.png" },
-  { id: 6, title: "Call of Duty", tag: "FPS", image: "/images/cod.jpg" },
-  { id: 7, title: "Dota 2", tag: "MOBA", image: "/images/dota.jpg" },
-  { id: 8, title: "Apex Legends", tag: "BATTLE ROYALE", image: "/images/apex.jpg" },
+  { id: 1, title: "Call of Duty", tag: "FPS", image: "/images/cod.jpg" },
+  { id: 2, title: "Dota 2", tag: "MOBA", image: "/images/dota.jpg" },
+  { id: 3, title: "Apex Legends", tag: "Battle Royale", image: "/images/apex.jpg" },
+  { id: 4, title: "FIFA", tag: "Sports", image: "/images/fifa.jpg" },
+  { id: 5, title: "Free Fire", tag: "Battle Royale", image: "/images/freefire.jpg" },
+  { id: 6, title: "League of Legends", tag: "MOBA", image: "/images/lol.jpg" },
+  { id: 7, title: "MLBB", tag: "MOBA", image: "/images/mlbb.jpg" },
+  { id: 8, title: "PUBG", tag: "Battle Royale", image: "/images/pubg.jpg" },
 ];
 
 export default function Carousel() {
