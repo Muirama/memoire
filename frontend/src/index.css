@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap");
 
 html {
   scroll-behavior: smooth;
@@ -7,4 +8,14 @@ html {
 body {
   overflow-x: hidden;
   background: #000000;
+    font-family:
+    "Geologica",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
 }
+
