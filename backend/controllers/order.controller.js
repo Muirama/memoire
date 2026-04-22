@@ -51,7 +51,10 @@ const createOrder = async (req, res) => {
       const computedItemsSummary = [];
 
       for (const item of normalizedItems) {
-        const product = await Product.findByPk(item.productId, { transaction });
+        const product = await Product.findByPk(item.productId, {
+          transaction,
+          lock: transaction.LOCK.UPDATE,
+        });
 
         if (!product) {
           const error = new Error(`Produit ID ${item.productId} introuvable.`);
@@ -59,10 +62,23 @@ const createOrder = async (req, res) => {
           throw error;
         }
 
+        if (product.stock < item.quantity) {
+          const error = new Error(
+            `Stock insuffisant pour ${product.name}. Stock disponible : ${product.stock}.`,
+          );
+          error.statusCode = 400;
+          throw error;
+        }
+
         const lineTotal = product.price * item.quantity;
         computedTotalAmount += lineTotal;
         computedItemsSummary.push(
           `${item.quantity}x ${product.name} (${formatPrice(lineTotal)})`,
+        );
+
+        await product.update(
+          { stock: product.stock - item.quantity },
+          { transaction },
         );
       }
 

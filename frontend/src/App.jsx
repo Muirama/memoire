@@ -32,10 +32,10 @@ import AdminNewsPage from "./pages/admin/news/AdminNewsPage";
 import AdminTeamsPage from "./pages/admin/teams/AdminTeamsPage";
 
 function AdminRoute() {
-  const adminToken = localStorage.getItem("adminToken");
+  const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("userRole");
 
-  if (!adminToken || userRole !== "admin") {
+  if (!token || userRole !== "admin") {
     return <Navigate to="/login" replace />;
   }
 
