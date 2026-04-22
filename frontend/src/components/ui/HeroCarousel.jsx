@@ -8,14 +8,27 @@ import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import { motion, AnimatePresence } from "framer-motion";
 
 const items = [
-  { id: 1, title: "NGANJIN", tag: "CEO", image: "/Photo Menu/Nganjin.png" },
-  { id: 2, title: "YONDAIME", tag: "Tekken 8", image: "/Photo Menu/Yondaime.png" },
-  { id: 3, title: "KIMI", tag: "Tekken 8", image: "/Photo Menu/Kimi.png" },
-  { id: 4, title: "VIDELOU", tag: "Manager PUBG", image: "/Photo Menu/Videlou.png" },
-  { id: 5, title: "MANOU", tag: "EA FC", image: "/Photo Menu/Manou.png" },
-  { id: 6, title: "KNIGHT", image: "/Photo Menu/Knight.png" },
-  { id: 7, title: "STEELISH360", image: "/Photo Menu/Steelish360.png" },
-  { id: 8, title: "SEIJURO", image: "/Photo Menu/Seijuro.png" },
+  { id: 1, title: "BERU99",tag :" PUBG MOBILE", image: "/Photo Menu/Beru99.png" },
+  { id: 2, title: "BONYKODAHY", tag: "EFOOTBALL MOBILE", image: "/Photo Menu/BonyKodahy.png" },
+  { id: 3, title: "BOUTA", tag: "MOBILE LEGENDS : BANG BANG", image: "/Photo Menu/Bouta.png" },
+  { id: 4, title: "FAMENOG", tag: "NBA 2K", image: "/Photo Menu/FamenoG.png" },
+  { id: 5, title: "GENESS", tag: "PUBG MOBILE", image: "/Photo Menu/Geness.png" },
+  { id: 6, title: "JOG", tag: "MOBILE LEGENDS : BANG BANG", image: "/Photo Menu/Jog.png" },
+  { id: 7, title: "JOHANN52", tag: "EFOOTBALL", image: "/Photo Menu/Johann52.png" },
+  { id: 8, title: "KIMI", tag: "Tekken 8", image: "/Photo Menu/Kimi.png" },
+  { id: 9, title: "KNIGHT", tag: "PUBG MOBILE", image: "/Photo Menu/Knight.png" },
+  { id: 10, title: "LOGAN", tag: "PUBG MOBILE", image: "/Photo Menu/Logan.png" },
+  { id: 11, title: "MAESTRR", tag: "MOBILE LEGENDS : BANG BANG / D.A", image: "/Photo Menu/Maestrr.png" },
+  { id: 12, title: "MANOU", tag: "EA FC", image: "/Photo Menu/Manou.png" },
+  { id: 13, title: "N4SH", tag: "PUBG MOBILE", image: "/Photo Menu/N4sh.png" },
+  { id: 14, title: "NGANJIN", tag: "MOBILE LEGENDS : BANG BANG / C.E.O", image: "/Photo Menu/Nganjin.png" },
+  { id: 15, title: "RANTOANGELO", tag: "EFOOTBALL", image: "/Photo Menu/RantoAngelo.png" },
+  { id: 16, title: "SATCHIO", tag: "MOBILE LEGENDS : BANG BANG / ADMIN", image: "/Photo Menu/Satchio.png" },
+  { id: 17, title: "SEIJURO", tag: "EFOOTBALL MOBILE", image: "/Photo Menu/Seijuro.png" },
+  { id: 18, title: "STEELISH360", tag: "PUBG MOBILE", image: "/Photo Menu/Steelish360.png" },
+  { id: 19, title: "VENDRAXX", tag: "PUBG MOBILE", image: "/Photo Menu/Vendraxx.png" },
+  { id: 20, title: "VIDELOU", tag: "Manager PUBG", image: "/Photo Menu/Videlou.png" },
+  { id: 21, title: "YONDAIME", tag: "Tekken 8", image: "/Photo Menu/Yondaime.png" },
 ];
 
 export default function HeroCarousel() {
