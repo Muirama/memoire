@@ -14,6 +14,7 @@ import {
   FaChevronRight,
   FaUsers,
 } from "react-icons/fa";
+import logo_GES_blanc from "/LOGO/Logo_GES_blanc.svg";
 
 const navItems = [
   { label: "Dashboard", icon: <FaTachometerAlt />, to: "/admin", end: true },
@@ -42,12 +43,12 @@ export default function AdminLayout({ children }) {
       {/* Logo */}
       <div className="px-6 py-6 border-b border-white/5">
         <div className="flex items-center gap-3">
-          <div
+          <img
+            src={logo_GES_blanc}
+            alt="G"
             className="w-9 h-9 bg-[#E50914] rounded-lg flex items-center
                           justify-center font-extrabold text-white text-lg shadow-lg"
-          >
-            G
-          </div>
+          />
           <div>
             <p className="text-white font-extrabold text-base leading-none">
               Gascom

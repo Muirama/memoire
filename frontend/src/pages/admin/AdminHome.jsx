@@ -188,10 +188,10 @@ export default function AdminHome() {
         className="mb-8"
       >
         <h1 className="text-2xl md:text-3xl font-extrabold text-white">
-          {greeting}, <span className="text-[#E50914]">{adminName}</span> 👋
+          {greeting}, <span className="text-[#E50914]">{adminName}</span>
         </h1>
         <p className="text-gray-500 mt-1">
-          Voici un aperçu complet de votre activité Gascom.
+          Voici un aperçu complet de vos activités
         </p>
       </motion.div>
 
