@@ -216,15 +216,7 @@ export default function TeamDropdown() {
                         </div>
 
                         {/* Logo équipe */}
-                        {team.logo && (
-                          <img
-                            src={team.logo}
-                            alt={`Logo ${team.name}`}
-                            referrerPolicy="no-referrer"
-                            className="w-6 h-6 rounded-full object-cover flex-shrink-0
-                                     border border-[#E50914]/20 group-hover:border-[#E50914]/50"
-                          />
-                        )}
+                        
                       </Link>
                     </li>
                   ))}
