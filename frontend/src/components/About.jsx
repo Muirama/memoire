@@ -2,7 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaRocket, FaFire, FaShieldAlt, FaUsers } from "react-icons/fa";
-
+import { GiCrown } from "react-icons/gi";
 const stats = [
   { value: "500+", label: "Joueurs actifs" },
   { value: "30+", label: "Tournois organisés" },
@@ -86,13 +86,15 @@ export default function About() {
             {/* Glow derrière */}
             <div className="absolute -inset-2 rounded-2xl bg-[#E50914]/20 blur-2xl" />
             <div className="relative bg-[#1A1A1A]/70 border border-[#E50914]/30 rounded-2xl p-8 md:p-10 backdrop-blur-md">
-              <div className="text-7xl md:text-8xl mb-6 text-center">🏆</div>
+              <div className="h-24 md:h-32 mb-6 flex items-center justify-center">
+                <GiCrown className="text-7xl md:text-8xl text-[#E50914]" />
+              </div>
               <p className="text-center text-gray-300 text-sm md:text-base leading-relaxed italic">
                 "Nous croyons que chaque joueur malgache mérite une plateforme
                 et un appui à la hauteur de son talent."
               </p>
               <p className="text-center text-[#E50914] font-bold mt-4 text-sm tracking-wide">
-                — L'équipe Gascom
+                — L'équipe Gascom esports
               </p>
 
               {/* Stats mini */}
