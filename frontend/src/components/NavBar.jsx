@@ -9,17 +9,25 @@ import {
   FaCalendarAlt,
   FaSignInAlt,
   FaShoppingCart,
+  FaSignOutAlt,
 } from "react-icons/fa";
 
 import logo_GES_blanc from "/LOGO/Logo_GES_blanc.svg";
 import logo_GES_rouge from "/LOGO/Logo_GES_blanc.svg";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import {
+  clearAuthSession,
+  getUserRole,
+  isUserLoggedIn,
+} from "../utils/auth";
 
 export default function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const { totalItems, toggleCart } = useCart();
+  const [userLoggedIn, setUserLoggedIn] = useState(isUserLoggedIn());
+  const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -44,6 +52,18 @@ export default function NavBar() {
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    setUserLoggedIn(isUserLoggedIn());
+    setUserName(localStorage.getItem("userName") || "");
+  }, [location.pathname]);
+
+  const handleLogout = () => {
+    clearAuthSession();
+    setUserLoggedIn(false);
+    setUserName("");
+    setMenuOpen(false);
+  };
 
   const pageLinks = [
     { name: "Home", href: "/", icon: <FaHome /> },
@@ -132,15 +152,33 @@ export default function NavBar() {
         </button>
 
         {/* ── Login ── */}
-        <Link
-          to="/login"
-          className="flex items-center gap-2 px-4 lg:px-6 py-2 bg-[#E50914] hover:bg-[#FF1E56]
-                     text-white font-semibold rounded-lg transition-all duration-300 text-sm lg:text-base
-                     hover:shadow-[0_0_15px_rgba(229,9,20,0.6)] whitespace-nowrap"
-        >
-          <FaSignInAlt />
-          Login
-        </Link>
+        {userLoggedIn && getUserRole() === "user" ? (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-300 hidden lg:block">
+              {userName}
+            </span>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 lg:px-6 py-2 bg-[#E50914] hover:bg-[#FF1E56]
+                         text-white font-semibold rounded-lg transition-all duration-300 text-sm lg:text-base
+                         hover:shadow-[0_0_15px_rgba(229,9,20,0.6)] whitespace-nowrap"
+            >
+              <FaSignOutAlt />
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            className="flex items-center gap-2 px-4 lg:px-6 py-2 bg-[#E50914] hover:bg-[#FF1E56]
+                       text-white font-semibold rounded-lg transition-all duration-300 text-sm lg:text-base
+                       hover:shadow-[0_0_15px_rgba(229,9,20,0.6)] whitespace-nowrap"
+          >
+            <FaSignInAlt />
+            Login
+          </Link>
+        )}
       </div>
 
       {/* ── Mobile : panier + hamburger ── */}
@@ -204,14 +242,26 @@ export default function NavBar() {
           );
         })}
 
-        <Link
-          to="/login"
-          className="flex items-center gap-3 px-4 py-3 bg-[#E50914]
-                     text-white font-semibold rounded-lg mt-2 text-sm sm:text-base
-                     hover:bg-[#FF1E56] transition-all duration-300"
-        >
-          <FaSignInAlt /> Login
-        </Link>
+        {userLoggedIn && getUserRole() === "user" ? (
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-4 py-3 bg-[#E50914]
+                       text-white font-semibold rounded-lg mt-2 text-sm sm:text-base
+                       hover:bg-[#FF1E56] transition-all duration-300"
+          >
+            <FaSignOutAlt /> Logout
+          </button>
+        ) : (
+          <Link
+            to="/login"
+            className="flex items-center gap-3 px-4 py-3 bg-[#E50914]
+                       text-white font-semibold rounded-lg mt-2 text-sm sm:text-base
+                       hover:bg-[#FF1E56] transition-all duration-300"
+          >
+            <FaSignInAlt /> Login
+          </Link>
+        )}
       </div>
     </nav>
   );

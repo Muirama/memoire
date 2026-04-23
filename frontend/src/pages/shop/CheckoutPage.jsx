@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,10 +12,12 @@ import {
   FaSpinner,
   FaArrowLeft,
   FaFilePdf,
+  FaLock,
 } from "react-icons/fa";
 import { useCart } from "../../context/CartContext";
 import api from "../../api/api";
 import { generateReceipt } from "../../utils/generateReceipt";
+import { buildLoginRedirect, isUserLoggedIn } from "../../utils/auth";
 
 const formatPrice = (price) =>
   new Intl.NumberFormat("fr-MG").format(price) + " Ar";
@@ -24,13 +26,8 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const { items, totalAmount, clearCart } = useCart();
 
-  const [formData, setFormData] = useState({
-    customerName: "",
-    customerEmail: "",
-    customerPhone: "",
-    customerAddress: "",
-    notes: "",
-  });
+  const [profile, setProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -38,8 +35,43 @@ export default function CheckoutPage() {
   const [savedOrder, setSavedOrder] = useState(null);
   const [savedItems, setSavedItems] = useState([]);
   const [savedCustomer, setSavedCustomer] = useState(null);
+  const [notes, setNotes] = useState("");
 
-  // ── Panier vide ───────────────────────────────────
+  useEffect(() => {
+    if (!isUserLoggedIn()) {
+      navigate(buildLoginRedirect("/checkout"), { replace: true });
+      return;
+    }
+
+    let active = true;
+
+    const fetchProfile = async () => {
+      try {
+        setProfileLoading(true);
+        const res = await api.get("/auth/me");
+        if (active) {
+          setProfile(res.data.user);
+        }
+      } catch (err) {
+        if (active) {
+          setErrors({
+            global:
+              err.response?.data?.message ||
+              "Impossible de charger votre profil.",
+          });
+        }
+      } finally {
+        if (active) setProfileLoading(false);
+      }
+    };
+
+    fetchProfile();
+
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
+
   if (items.length === 0 && !success) {
     return (
       <section className="relative bg-transparent min-h-screen flex items-center justify-center z-10">
@@ -51,74 +83,58 @@ export default function CheckoutPage() {
             className="px-6 py-3 bg-[#E50914] text-white rounded-lg
                        hover:bg-[#FF1E56] transition font-semibold"
           >
-            Retour à la boutique
+            Retour a la boutique
           </button>
         </div>
       </section>
     );
   }
 
-  // ── Validation ────────────────────────────────────
-  const validate = () => {
-    const newErrors = {};
-    if (!formData.customerName.trim())
-      newErrors.customerName = "Le nom est requis.";
-    if (!formData.customerEmail.trim())
-      newErrors.customerEmail = "L'email est requis.";
-    else if (!/\S+@\S+\.\S+/.test(formData.customerEmail))
-      newErrors.customerEmail = "Email invalide.";
-    if (!formData.customerPhone.trim())
-      newErrors.customerPhone = "Le téléphone est requis.";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const profileIncomplete =
+    profile && (!profile.name || !profile.email || !profile.phone);
 
-  // ── Soumission ────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
 
-    // Sauvegarder les items AVANT clearCart
+    if (profileIncomplete) {
+      setErrors({
+        global:
+          "Votre profil est incomplet. Nom, email et telephone sont requis.",
+      });
+      return;
+    }
+
     const itemsSnapshot = [...items];
-    const customerSnapshot = { ...formData };
+    const customerSnapshot = {
+      customerName: profile.name,
+      customerEmail: profile.email,
+      customerPhone: profile.phone,
+      customerAddress: profile.address || "",
+      notes,
+    };
 
     try {
       setLoading(true);
-
-      const itemsSummary = items
-        .map(
-          (item) =>
-            `${item.quantity}x ${item.name} (${formatPrice(item.price * item.quantity)})`,
-        )
-        .join(" | ");
+      setErrors({});
 
       const orderPayload = {
-        customerName: formData.customerName.trim(),
-        customerEmail: formData.customerEmail.trim(),
-        customerPhone: formData.customerPhone.trim(),
-        customerAddress: formData.customerAddress.trim() || null,
-        notes: formData.notes.trim() || null,
-        itemsSummary,
         items: items.map((item) => ({
           productId: item.id,
           quantity: item.quantity,
         })),
-        totalAmount,
+        notes: notes.trim() || null,
       };
 
       const res = await api.post("/orders", orderPayload);
       const order = res.data.order;
 
-      // ── Sauvegarder pour re-téléchargement ────────
       setSavedOrder(order);
       setSavedItems(itemsSnapshot);
       setSavedCustomer(customerSnapshot);
       setOrderId(order.id);
 
-      // ── Vider le panier ───────────────────────────
       clearCart();
 
-      // ── Générer et télécharger le PDF ─────────────
       generateReceipt({
         order,
         items: itemsSnapshot,
@@ -127,20 +143,16 @@ export default function CheckoutPage() {
 
       setSuccess(true);
     } catch (err) {
-      console.error("Erreur commande :", err);
-      setErrors({ global: "Une erreur est survenue. Veuillez réessayer." });
+      setErrors({
+        global:
+          err.response?.data?.message ||
+          "Une erreur est survenue. Veuillez reessayer.",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
-  };
-
-  // ── Re-télécharger le reçu ────────────────────────
   const handleRedownload = () => {
     if (savedOrder && savedItems && savedCustomer) {
       generateReceipt({
@@ -151,13 +163,22 @@ export default function CheckoutPage() {
     }
   };
 
-  // ── Page de succès ────────────────────────────────
+  if (profileLoading) {
+    return (
+      <section className="relative bg-transparent min-h-screen flex items-center justify-center z-10">
+        <div className="text-center">
+          <FaSpinner className="text-[#E50914] text-5xl animate-spin mx-auto mb-4" />
+          <p className="text-gray-400 text-lg">
+            Chargement de votre profil...
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   if (success) {
     return (
-      <section
-        className="relative bg-transparent min-h-screen flex items-center
-                          justify-center z-10 px-4"
-      >
+      <section className="relative bg-transparent min-h-screen flex items-center justify-center z-10 px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -173,33 +194,27 @@ export default function CheckoutPage() {
           </motion.div>
 
           <h2 className="text-2xl font-extrabold text-white mb-3">
-            Commande confirmée !
+            Commande confirmee !
           </h2>
           <p className="text-gray-400 mb-2">Merci pour votre commande.</p>
           <p className="text-gray-500 text-sm mb-2">
-            Commande n°{" "}
-            <span className="text-[#E50914] font-bold">#{orderId}</span>
+            Commande n° <span className="text-[#E50914] font-bold">#{orderId}</span>
           </p>
           <p className="text-gray-500 text-sm mb-8">
-            Vous serez contacté prochainement.
+            Vous serez contacte prochainement.
           </p>
 
-          {/* Reçu téléchargé */}
-          <div
-            className="bg-green-500/10 border border-green-500/20 rounded-xl
-                          px-4 py-3 mb-6 flex items-center gap-3"
-          >
+          <div className="bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-3 mb-6 flex items-center gap-3">
             <FaFilePdf className="text-green-400 text-2xl flex-shrink-0" />
             <div className="text-left">
               <p className="text-green-400 font-semibold text-sm">
-                Reçu téléchargé !
+                Recu telecharge !
               </p>
               <p className="text-gray-500 text-xs">Recu_Gascom_{orderId}.pdf</p>
             </div>
           </div>
 
           <div className="space-y-3">
-            {/* Re-télécharger */}
             <button
               type="button"
               onClick={handleRedownload}
@@ -207,10 +222,9 @@ export default function CheckoutPage() {
                          hover:bg-[#E50914]/10 font-bold rounded-xl transition-all
                          flex items-center justify-center gap-2"
             >
-              <FaFilePdf /> Retélécharger le reçu
+              <FaFilePdf /> Retelecharger le recu
             </button>
 
-            {/* Continuer */}
             <button
               type="button"
               onClick={() => navigate("/shop")}
@@ -225,14 +239,12 @@ export default function CheckoutPage() {
     );
   }
 
-  // ── Formulaire ────────────────────────────────────
   return (
     <section
       className="relative bg-transparent min-h-screen py-12 md:py-20
                         px-4 md:px-6 z-10"
     >
       <div className="max-w-5xl mx-auto">
-        {/* Retour */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -241,7 +253,7 @@ export default function CheckoutPage() {
                      transition mb-8 font-semibold group"
         >
           <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
-          Retour à la boutique
+          Retour a la boutique
         </motion.button>
 
         <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-10">
@@ -249,14 +261,13 @@ export default function CheckoutPage() {
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* ── Formulaire ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-[#1A1A1A] rounded-2xl p-6 md:p-8 border border-white/5"
           >
             <h2 className="text-white font-bold text-xl mb-6 flex items-center gap-2">
-              <FaUser className="text-[#E50914]" /> Vos informations
+              <FaLock className="text-[#E50914]" /> Informations du compte
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -266,141 +277,38 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              {/* Nom */}
-              <div>
-                <label className="text-gray-400 text-sm font-semibold mb-1 block">
-                  Nom complet *
-                </label>
-                <div className="relative">
-                  <FaUser
-                    className="absolute left-4 top-1/2 -translate-y-1/2
-                                     text-gray-500 text-sm pointer-events-none"
-                  />
-                  <input
-                    type="text"
-                    name="customerName"
-                    value={formData.customerName}
-                    onChange={handleChange}
-                    placeholder="Jean Dupont"
-                    autoComplete="name"
-                    className={`w-full pl-11 pr-4 py-3 bg-[#0D0D0D] text-white
-                                rounded-lg border transition-all focus:outline-none
-                                focus:ring-2 ${
-                                  errors.customerName
-                                    ? "border-red-500 focus:ring-red-500/30"
-                                    : "border-white/10 focus:border-[#E50914] focus:ring-[#E50914]/30"
-                                }`}
-                  />
-                </div>
-                {errors.customerName && (
-                  <p className="text-red-400 text-xs mt-1">
-                    {errors.customerName}
-                  </p>
-                )}
-              </div>
+              <ReadOnlyField
+                label="Nom complet"
+                value={profile?.name || "Non renseigne"}
+                icon={<FaUser />}
+              />
+              <ReadOnlyField
+                label="Email"
+                value={profile?.email || "Non renseigne"}
+                icon={<FaEnvelope />}
+              />
+              <ReadOnlyField
+                label="Telephone"
+                value={profile?.phone || "Non renseigne"}
+                icon={<FaPhone />}
+              />
+              <ReadOnlyField
+                label="Adresse de livraison"
+                value={profile?.address || "Aucune adresse enregistree"}
+                icon={<FaMapMarkerAlt />}
+                multiline
+              />
 
-              {/* Email */}
-              <div>
-                <label className="text-gray-400 text-sm font-semibold mb-1 block">
-                  Email *
-                </label>
-                <div className="relative">
-                  <FaEnvelope
-                    className="absolute left-4 top-1/2 -translate-y-1/2
-                                          text-gray-500 text-sm pointer-events-none"
-                  />
-                  <input
-                    type="email"
-                    name="customerEmail"
-                    value={formData.customerEmail}
-                    onChange={handleChange}
-                    placeholder="jean@email.com"
-                    autoComplete="email"
-                    className={`w-full pl-11 pr-4 py-3 bg-[#0D0D0D] text-white
-                                rounded-lg border transition-all focus:outline-none
-                                focus:ring-2 ${
-                                  errors.customerEmail
-                                    ? "border-red-500 focus:ring-red-500/30"
-                                    : "border-white/10 focus:border-[#E50914] focus:ring-[#E50914]/30"
-                                }`}
-                  />
-                </div>
-                {errors.customerEmail && (
-                  <p className="text-red-400 text-xs mt-1">
-                    {errors.customerEmail}
-                  </p>
-                )}
-              </div>
-
-              {/* Téléphone */}
-              <div>
-                <label className="text-gray-400 text-sm font-semibold mb-1 block">
-                  Téléphone *
-                </label>
-                <div className="relative">
-                  <FaPhone
-                    className="absolute left-4 top-1/2 -translate-y-1/2
-                                       text-gray-500 text-sm pointer-events-none"
-                  />
-                  <input
-                    type="tel"
-                    name="customerPhone"
-                    value={formData.customerPhone}
-                    onChange={handleChange}
-                    placeholder="034 00 000 00"
-                    autoComplete="tel"
-                    className={`w-full pl-11 pr-4 py-3 bg-[#0D0D0D] text-white
-                                rounded-lg border transition-all focus:outline-none
-                                focus:ring-2 ${
-                                  errors.customerPhone
-                                    ? "border-red-500 focus:ring-red-500/30"
-                                    : "border-white/10 focus:border-[#E50914] focus:ring-[#E50914]/30"
-                                }`}
-                  />
-                </div>
-                {errors.customerPhone && (
-                  <p className="text-red-400 text-xs mt-1">
-                    {errors.customerPhone}
-                  </p>
-                )}
-              </div>
-
-              {/* Adresse */}
-              <div>
-                <label className="text-gray-400 text-sm font-semibold mb-1 block">
-                  Adresse de livraison
-                </label>
-                <div className="relative">
-                  <FaMapMarkerAlt
-                    className="absolute left-4 top-4
-                                              text-gray-500 text-sm pointer-events-none"
-                  />
-                  <textarea
-                    name="customerAddress"
-                    value={formData.customerAddress}
-                    onChange={handleChange}
-                    placeholder="Antananarivo, Madagascar..."
-                    rows={2}
-                    autoComplete="street-address"
-                    className="w-full pl-11 pr-4 py-3 bg-[#0D0D0D] text-white
-                               rounded-lg border border-white/10 focus:border-[#E50914]
-                               focus:ring-2 focus:ring-[#E50914]/30 focus:outline-none
-                               transition-all resize-none"
-                  />
-                </div>
-              </div>
-
-              {/* Notes */}
               <div>
                 <label className="text-gray-400 text-sm font-semibold mb-1 block">
                   Notes (optionnel)
                 </label>
                 <textarea
                   name="notes"
-                  value={formData.notes}
-                  onChange={handleChange}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
                   rows={2}
-                  placeholder="Instructions spéciales, heure de livraison..."
+                  placeholder="Instructions speciales, heure de livraison..."
                   className="w-full px-4 py-3 bg-[#0D0D0D] text-white rounded-lg
                              border border-white/10 focus:border-[#E50914]
                              focus:ring-2 focus:ring-[#E50914]/30 focus:outline-none
@@ -408,19 +316,14 @@ export default function CheckoutPage() {
                 />
               </div>
 
-              {/* Info PDF */}
-              <div
-                className="flex items-center gap-2 text-gray-500 text-xs
-                              bg-white/3 rounded-lg px-3 py-2 border border-white/5"
-              >
+              <div className="flex items-center gap-2 text-gray-500 text-xs bg-white/3 rounded-lg px-3 py-2 border border-white/5">
                 <FaFilePdf className="text-[#E50914]" />
-                Un reçu PDF sera téléchargé automatiquement après confirmation.
+                Un recu PDF sera telecharge automatiquement apres confirmation.
               </div>
 
-              {/* Submit */}
               <motion.button
                 type="submit"
-                disabled={loading}
+                disabled={loading || profileIncomplete}
                 whileTap={{ scale: 0.97 }}
                 className="w-full py-4 bg-[#E50914] hover:bg-[#FF1E56] text-white
                            font-bold rounded-xl transition-all duration-300
@@ -434,14 +337,13 @@ export default function CheckoutPage() {
                   </>
                 ) : (
                   <>
-                    <FaCheckCircle /> Confirmer — {formatPrice(totalAmount)}
+                    <FaCheckCircle /> Confirmer - {formatPrice(totalAmount)}
                   </>
                 )}
               </motion.button>
             </form>
           </motion.div>
 
-          {/* ── Récapitulatif ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -450,21 +352,16 @@ export default function CheckoutPage() {
           >
             <h2 className="text-white font-bold text-xl mb-6 flex items-center gap-2">
               <FaShoppingCart className="text-[#E50914]" />
-              Récapitulatif ({items.length} article{items.length > 1 ? "s" : ""}
-              )
+              Recapitulatif ({items.length} article{items.length > 1 ? "s" : ""})
             </h2>
 
             <div className="space-y-4 mb-6">
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex gap-4 items-center pb-4
-                             border-b border-white/5 last:border-0"
+                  className="flex gap-4 items-center pb-4 border-b border-white/5 last:border-0"
                 >
-                  <div
-                    className="w-14 h-14 rounded-lg overflow-hidden
-                                  bg-[#0D0D0D] flex-shrink-0"
-                  >
+                  <div className="w-14 h-14 rounded-lg overflow-hidden bg-[#0D0D0D] flex-shrink-0">
                     {item.image ? (
                       <img
                         src={item.image}
@@ -473,10 +370,7 @@ export default function CheckoutPage() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div
-                        className="w-full h-full flex items-center
-                                      justify-center text-xl"
-                      >
+                      <div className="w-full h-full flex items-center justify-center text-xl">
                         🎮
                       </div>
                     )}
@@ -499,7 +393,7 @@ export default function CheckoutPage() {
             <div className="bg-[#0D0D0D] rounded-xl p-4">
               <div className="flex justify-between items-center">
                 <span className="text-gray-400 font-semibold">
-                  Total à payer
+                  Total a payer
                 </span>
                 <span className="text-[#E50914] font-extrabold text-2xl">
                   {formatPrice(totalAmount)}
@@ -510,5 +404,27 @@ export default function CheckoutPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+function ReadOnlyField({ label, value, icon, multiline = false }) {
+  return (
+    <div>
+      <label className="text-gray-400 text-sm font-semibold mb-1 block">
+        {label}
+      </label>
+      <div
+        className={`relative w-full pl-11 pr-4 py-3 bg-[#0D0D0D] text-white rounded-lg border border-white/10 ${
+          multiline ? "min-h-[76px]" : ""
+        }`}
+      >
+        <span className="absolute left-4 top-4 text-gray-500 text-sm">
+          {icon}
+        </span>
+        <span className={`block ${multiline ? "whitespace-pre-line" : ""}`}>
+          {value}
+        </span>
+      </div>
+    </div>
   );
 }

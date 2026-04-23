@@ -47,7 +47,7 @@ export default function HeroCarousel() {
         fadeEffect={{ crossFade: true }}
         slidesPerView={1}
         loop={true}
-        autoplay={{ delay: 3000, disableOnInteraction: false }}
+        autoplay={{ delay: 2000, disableOnInteraction: false }}
         pagination={{
           clickable: true,
           bulletClass: "swiper-bullet",

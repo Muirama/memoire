@@ -66,6 +66,8 @@ function AdminRoute() {
             localStorage.removeItem("token");
             localStorage.removeItem("userRole");
             localStorage.removeItem("adminName");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("userPseudo");
           }
 
           setIsChecking(false);

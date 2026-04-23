@@ -16,6 +16,7 @@ import {
 } from "react-icons/fa";
 import api from "../../api/api";
 import RegistrationModal from "../../components/RegistrationModal";
+import { buildLoginRedirect, isUserLoggedIn } from "../../utils/auth";
 
 const formatDate = (dateStr) =>
   new Date(dateStr).toLocaleDateString("fr-FR", {
@@ -57,6 +58,14 @@ export default function EventDetailPage() {
   // Le modal se ferme seulement quand l'utilisateur clique "Parfait, merci !"
   const handleSuccess = () => {
     setEvent((prev) => ({ ...prev, registered: (prev.registered || 0) + 1 }));
+  };
+
+  const handleOpenRegistration = () => {
+    if (!isUserLoggedIn()) {
+      navigate(buildLoginRedirect(`/events/${id}`));
+      return;
+    }
+    setShowModal(true);
   };
 
   if (loading)
@@ -303,7 +312,7 @@ export default function EventDetailPage() {
                   <motion.button
                     type="button"
                     whileTap={{ scale: 0.97 }}
-                    onClick={() => setShowModal(true)}
+                    onClick={handleOpenRegistration}
                     className="w-full py-4 bg-[#E50914] hover:bg-[#FF1E56] text-white
                                font-bold rounded-xl transition-all duration-300
                                hover:shadow-[0_0_20px_rgba(229,9,20,0.6)]

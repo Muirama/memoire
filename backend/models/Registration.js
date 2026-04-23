@@ -19,6 +19,12 @@ const Registration = sequelize.define(
     },
 
     // ── Infos participant ─────────────────────────────────
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: { model: "users", key: "id" },
+      onDelete: "CASCADE",
+    },
     name: {
       type: DataTypes.STRING(100),
       allowNull: false,
