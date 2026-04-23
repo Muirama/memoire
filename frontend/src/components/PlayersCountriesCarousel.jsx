@@ -149,7 +149,7 @@ export default function PlayersCountriesCarousel() {
                       {country.subtitle}
                     </p>
                     <p className="mt-3 text-sm text-gray-400 leading-relaxed">
-                      La scene Gascom rassemble aussi des joueurs presents dans cette zone.
+                     
                     </p>
                   </div>
                 </div>
