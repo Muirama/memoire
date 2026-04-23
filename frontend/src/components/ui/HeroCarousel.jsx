@@ -37,7 +37,7 @@ export default function HeroCarousel() {
 
   return (
     <div
-      className="relative w-full"
+      className="relative w-full min-w-0 max-w-full"
       onMouseEnter={() => swiperRef.current?.autoplay.stop()}
       onMouseLeave={() => swiperRef.current?.autoplay.start()}
     >
@@ -55,18 +55,21 @@ export default function HeroCarousel() {
         }}
         onSwiper={(swiper) => (swiperRef.current = swiper)}
         onSlideChange={(swiper) => setActiveIdx(swiper.realIndex)}
-        className="w-full rounded-2xl overflow-hidden hero-swiper"
+        className="w-full min-w-0 max-w-full rounded-2xl overflow-hidden hero-swiper"
       >
         {items.map((item, index) => (
           <SwiperSlide key={item.id}>
             <div
-              className="relative w-full h-[340px] sm:h-[400px] md:h-[460px]
+              className="relative w-full max-w-full h-[340px] sm:h-[400px] md:h-[460px]
                             overflow-hidden rounded-2xl"
             >
               {/* Image */}
               <img
                 src={item.image}
                 alt={item.title}
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : "auto"}
+                decoding="async"
                 className="w-full h-full object-cover scale-105
                            transition-transform duration-[6000ms] ease-out
                            data-[swiper-slide-active]:scale-100"
@@ -152,6 +155,12 @@ export default function HeroCarousel() {
       </div>
 
       <style>{`
+        .hero-swiper,
+        .hero-swiper .swiper-wrapper,
+        .hero-swiper .swiper-slide {
+          min-width: 0;
+          max-width: 100%;
+        }
         .hero-swiper .swiper-pagination { display: none; }
       `}</style>
     </div>

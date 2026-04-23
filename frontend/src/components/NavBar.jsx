@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  FaBars,
-  FaTimes,
   FaHome,
   FaStore,
   FaUsers,
@@ -13,9 +11,9 @@ import {
 } from "react-icons/fa";
 
 import logo_GES_blanc from "/LOGO/Logo_GES_blanc.svg";
-import logo_GES_rouge from "/LOGO/Logo_GES_blanc.svg";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import TeamDropdown from "./TeamDropdown";
 import {
   clearAuthSession,
   getUserRole,
@@ -30,6 +28,7 @@ export default function NavBar() {
   const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+  const closeMenu = () => setMenuOpen(false);
 
   // Ferme le menu mobile lors d'un resize vers desktop
   useEffect(() => {
@@ -88,8 +87,6 @@ export default function NavBar() {
       >
         <img
           src={logo_GES_blanc}
-          alt="Logo GasCom e-Sport"
-          src={logo_GES_rouge}
           alt="Logo Gascom e-Sport"
           width="38"
           height="38"
@@ -105,8 +102,13 @@ export default function NavBar() {
 
       {/* ── Desktop Links ── */}
       <div className="hidden md:flex items-center gap-3 lg:gap-6">
-        <ul className="flex space-x-1 lg:space-x-4 font-medium">
+        <ul className="flex space-x-1 lg:space-x-4 font-medium items-center">
           {pageLinks.map((link, i) => {
+            // Affiche TeamDropdown au lieu d'un lien simple pour "Team"
+            if (link.name === "Team") {
+              return <li key={i}><TeamDropdown /></li>;
+            }
+
             const isActive = location.pathname === link.href;
             return (
               <li key={i}>
@@ -205,18 +207,24 @@ export default function NavBar() {
 
         {/* Hamburger — icône React Icons pour cohérence */}
         <button
+          type="button"
           onClick={toggleMenu}
           aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
           aria-expanded={menuOpen}
-          className="text-white text-2xl p-1.5 transition-transform duration-200
-                     active:scale-90"
+          aria-controls="navLinks"
+          className={`hamburger p-1.5 transition-transform duration-200 active:scale-90 ${
+            menuOpen ? "active" : ""
+          }`}
         >
-          {menuOpen ? <FaTimes /> : <FaBars />}
+          <span />
+          <span />
+          <span />
         </button>
       </div>
 
       {/* ── Menu mobile ── */}
       <div
+        id="navLinks"
         className={`md:hidden absolute top-full left-0 w-full bg-[#0D0D0D]/95
                     backdrop-blur-md border-t border-[#E50914]/20 px-4 sm:px-6
                     flex flex-col gap-2 z-50 overflow-hidden
@@ -229,6 +237,7 @@ export default function NavBar() {
             <Link
               key={i}
               to={link.href}
+              onClick={closeMenu}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg
                           font-semibold transition-all text-sm sm:text-base ${
                             isActive
@@ -255,6 +264,7 @@ export default function NavBar() {
         ) : (
           <Link
             to="/login"
+            onClick={closeMenu}
             className="flex items-center gap-3 px-4 py-3 bg-[#E50914]
                        text-white font-semibold rounded-lg mt-2 text-sm sm:text-base
                        hover:bg-[#FF1E56] transition-all duration-300"

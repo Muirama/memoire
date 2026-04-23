@@ -21,6 +21,11 @@ const Team = sequelize.define(
       type: DataTypes.STRING(500),
       allowNull: true,
     },
+    gameLogo: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+      comment: "Logo du jeu associé à l'équipe",
+    },
     banner: {
       type: DataTypes.STRING(500),
       allowNull: true,

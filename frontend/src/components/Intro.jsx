@@ -41,10 +41,9 @@ export default function Intro() {
         {/* Texte */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center md:text-left"
+          className="min-w-0 text-center md:text-left"
         >
           {/* Badge localisation */}
           <motion.div
@@ -126,10 +125,9 @@ export default function Intro() {
         {/* Carrousel */}
         <motion.div
           initial={{ opacity: 0, x: 40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2, duration: 0.8 }}
-          className="relative"
+          className="relative min-w-0"
         >
           {/* Glow derrière le carousel */}
           <div

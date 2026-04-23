@@ -8,7 +8,7 @@ html {
 body {
   overflow-x: hidden;
   background: #000000;
-    font-family:
+  font-family:
     "Geologica",
     system-ui,
     -apple-system,
@@ -19,26 +19,26 @@ body {
     sans-serif;
 }
 
-/* ── Hamburger Button ── */
+/* Hamburger Button */
 .hamburger {
-  display: none;
+  display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background: transparent;
   border: none;
   cursor: pointer;
   gap: 6px;
   padding: 0;
-  align-items: center;
-  justify-content: center;
 }
 
 .hamburger span {
+  display: block;
   width: 25px;
   height: 3px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-radius: 3px;
   transition: all 0.3s ease;
-  display: block;
 }
 
 .hamburger.active span:nth-child(1) {
@@ -52,10 +52,3 @@ body {
 .hamburger.active span:nth-child(3) {
   transform: rotate(-45deg) translate(7px, -6px);
 }
-
-@media (max-width: 768px) {
-  .hamburger {
-    display: flex;
-  }
-}
-

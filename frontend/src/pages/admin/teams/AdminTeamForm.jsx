@@ -33,6 +33,7 @@ const EMPTY = {
   name: "",
   game: "",
   logo: "",
+  gameLogo: "",
   banner: "",
   description: "",
   palmares: "",
@@ -55,6 +56,7 @@ export default function AdminTeamForm({ team, onClose, onSaved }) {
         name: team.name || "",
         game: team.game || "",
         logo: team.logo || "",
+        gameLogo: team.gameLogo || "",
         banner: team.banner || "",
         description: team.description || "",
         palmares: team.palmares || "",
@@ -92,6 +94,7 @@ export default function AdminTeamForm({ team, onClose, onSaved }) {
       const payload = {
         ...form,
         logo: form.logo || null,
+        gameLogo: form.gameLogo || null,
         banner: form.banner || null,
         twitter: form.twitter || null,
         facebook: form.facebook || null,
@@ -241,6 +244,31 @@ export default function AdminTeamForm({ team, onClose, onSaved }) {
                   className="w-12 h-12 rounded-xl object-cover"
                 />
                 <p className="text-gray-400 text-xs">Aperçu du logo</p>
+              </div>
+            )}
+          </Field>
+
+          {/* Logo du Jeu */}
+          <Field label="Logo du Jeu (URL)" icon={<FaGamepad />}>
+            <input
+              type="url"
+              value={form.gameLogo}
+              onChange={set("gameLogo")}
+              placeholder="https://... (Logo du jeu pour le menu)"
+              className={inputCls()}
+            />
+            {form.gameLogo && (
+              <div
+                className="mt-2 flex items-center gap-3 p-3 bg-[#0D0D0D]
+                              rounded-xl border border-white/5"
+              >
+                <img
+                  src={form.gameLogo}
+                  alt="game logo"
+                  referrerPolicy="no-referrer"
+                  className="w-12 h-12 rounded-lg object-cover"
+                />
+                <p className="text-gray-400 text-xs">Aperçu du logo du jeu</p>
               </div>
             )}
           </Field>
