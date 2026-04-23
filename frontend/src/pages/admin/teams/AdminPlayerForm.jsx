@@ -15,13 +15,6 @@ import api from "../../../api/api";
 
 const STATUSES = ["Titulaire", "Remplaçant", "Coach", "Manager"];
 
-const STATUS_COLORS = {
-  Titulaire: "border-green-500 bg-green-500",
-  Remplaçant: "border-yellow-500 bg-yellow-500",
-  Coach: "border-blue-500 bg-blue-500",
-  Manager: "border-purple-500 bg-purple-500",
-};
-
 const EMPTY = {
   pseudo: "",
   realName: "",

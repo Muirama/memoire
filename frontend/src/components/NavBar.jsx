@@ -17,6 +17,7 @@ import {
 import logo_GES_blanc from "/LOGO/Logo_GES_blanc.svg";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import TeamDropdown from "./TeamDropdown";
 import { clearAuthSession, getUserRole, isUserLoggedIn } from "../utils/auth";
 
 export default function NavBar() {
@@ -25,7 +26,7 @@ export default function NavBar() {
   const location = useLocation();
   const { totalItems, toggleCart } = useCart();
   const [userLoggedIn, setUserLoggedIn] = useState(isUserLoggedIn());
-  const accountMenuRef = useRef(null); // ← nouveau
+  const accountMenuRef = useRef(null);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -46,7 +47,6 @@ export default function NavBar() {
     };
   }, [menuOpen]);
 
-  // Ferme le menu au changement de route
   useEffect(() => {
     setMenuOpen(false);
     setAccountMenuOpen(false);
@@ -56,7 +56,6 @@ export default function NavBar() {
     setUserLoggedIn(isUserLoggedIn());
   }, [location.pathname]);
 
-  // ← nouveau : ferme le dropdown au clic en dehors
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -120,6 +119,13 @@ export default function NavBar() {
       <div className="hidden md:flex items-center gap-2 lg:gap-4">
         <ul className="flex space-x-0.5 lg:space-x-2 font-medium">
           {pageLinks.map((link, i) => {
+            if (link.name === "Team") {
+              return (
+                <li key={i}>
+                  <TeamDropdown />
+                </li>
+              );
+            }
             const isActive = location.pathname === link.href;
             return (
               <li key={i}>

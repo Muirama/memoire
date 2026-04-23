@@ -2,29 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import {
-  FaUsers,
-  FaGamepad,
-  FaSearch,
-  FaSpinner,
-  FaArrowRight,
-  FaTwitter,
-  FaFacebook,
-  FaDiscord,
-} from "react-icons/fa";
+import { FaUsers, FaGamepad, FaSpinner, FaArrowRight } from "react-icons/fa";
 import api from "../../api/api";
-
-const GAMES = [
-  "Tous",
-  "League of Legends",
-  "CS2",
-  "Valorant",
-  "EA FC 24",
-  "PUBG Mobile",
-  "Free Fire",
-  "Mobile Legends",
-  "Autre",
-];
 
 export default function TeamPage() {
   const navigate = useNavigate();
@@ -69,83 +48,6 @@ export default function TeamPage() {
                         px-4 md:px-6 z-10"
     >
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-3">
-            Nos <span className="text-[#E50914]">Équipes</span>
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto">
-            Découvrez les équipes professionnelles Gascom qui représentent
-            Madagascar dans les compétitions e-sport.
-          </p>
-        </motion.div>
-
-        {/* Stats globales */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex items-center justify-center gap-8 mb-10"
-        >
-          {[
-            { label: "Équipes", value: teams.length },
-            {
-              label: "Joueurs",
-              value: teams.reduce((a, t) => a + (t.players?.length || 0), 0),
-            },
-            { label: "Jeux", value: new Set(teams.map((t) => t.game)).size },
-          ].map((s) => (
-            <div key={s.label} className="text-center">
-              <p className="text-3xl font-extrabold text-[#E50914]">
-                {s.value}
-              </p>
-              <p className="text-gray-500 text-sm">{s.label}</p>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Filtres */}
-        <div className="flex flex-col md:flex-row gap-3 mb-8">
-          <div className="relative flex-1">
-            <FaSearch
-              className="absolute left-4 top-1/2 -translate-y-1/2
-                                 text-gray-500 pointer-events-none"
-            />
-            <input
-              type="text"
-              placeholder="Rechercher une équipe..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-[#1A1A1A] text-white rounded-xl
-                         border border-[#E50914]/30 focus:border-[#E50914] focus:outline-none
-                         focus:ring-2 focus:ring-[#E50914]/50 transition-all"
-            />
-          </div>
-        </div>
-
-        {/* Filtres jeux */}
-        <div className="flex gap-2 flex-wrap justify-center mb-10">
-          {gamesPresent.map((g) => (
-            <button
-              key={g}
-              type="button"
-              onClick={() => setGame(g)}
-              className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all
-                          ${
-                            game === g
-                              ? "bg-[#E50914] text-white shadow-[0_0_15px_rgba(229,9,20,0.5)] scale-105"
-                              : "bg-[#1A1A1A] text-gray-400 hover:bg-[#E50914]/20 hover:text-white"
-                          }`}
-            >
-              {g}
-            </button>
-          ))}
-        </div>
-
         {/* Grille équipes */}
         {filtered.length === 0 ? (
           <div className="text-center py-16">
@@ -273,45 +175,6 @@ export default function TeamPage() {
                       {(team.players || []).length} joueur(s)
                     </span>
                   </div>
-
-                  {/* Réseaux sociaux */}
-                  {(team.twitter || team.facebook || team.discord) && (
-                    <div className="flex items-center justify-center gap-3 mb-4">
-                      {team.twitter && (
-                        <a
-                          href={team.twitter}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="text-sky-400 hover:text-sky-300 transition"
-                        >
-                          <FaTwitter size={14} />
-                        </a>
-                      )}
-                      {team.facebook && (
-                        <a
-                          href={team.facebook}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="text-blue-500 hover:text-blue-400 transition"
-                        >
-                          <FaFacebook size={14} />
-                        </a>
-                      )}
-                      {team.discord && (
-                        <a
-                          href={team.discord}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="text-indigo-400 hover:text-indigo-300 transition"
-                        >
-                          <FaDiscord size={14} />
-                        </a>
-                      )}
-                    </div>
-                  )}
 
                   <div className="mt-auto pt-3 border-t border-white/5">
                     <span
