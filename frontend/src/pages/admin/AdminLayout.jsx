@@ -33,6 +33,7 @@ export default function AdminLayout({ children }) {
     localStorage.removeItem("userRole");
     localStorage.removeItem("adminName");
     localStorage.removeItem("userName");
+    localStorage.removeItem("userPseudo");
     navigate("/login");
   };
 

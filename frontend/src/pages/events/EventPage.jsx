@@ -16,6 +16,7 @@ import {
 } from "react-icons/fa";
 import api from "../../api/api";
 import RegistrationModal from "../../components/RegistrationModal";
+import { buildLoginRedirect, isUserLoggedIn } from "../../utils/auth";
 
 const CATEGORIES = [
   "Tous",
@@ -75,6 +76,14 @@ export default function EventPage() {
         e.id === eventId ? { ...e, registered: (e.registered || 0) + 1 } : e,
       ),
     );
+  };
+
+  const handleOpenRegistration = (event) => {
+    if (!isUserLoggedIn()) {
+      navigate(buildLoginRedirect("/events"));
+      return;
+    }
+    setSelectedEvent(event);
   };
 
   const filtered = useMemo(() => {
@@ -331,7 +340,7 @@ export default function EventPage() {
                       {event.registrationOpen ? (
                         <button
                           type="button"
-                          onClick={() => setSelectedEvent(event)}
+                          onClick={() => handleOpenRegistration(event)}
                           className="flex-1 py-2.5 bg-[#E50914] hover:bg-[#FF1E56]
                                      text-white text-sm font-bold rounded-lg transition
                                      hover:shadow-[0_0_15px_rgba(229,9,20,0.6)]

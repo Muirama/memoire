@@ -54,6 +54,9 @@ const login = async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
+        address: user.address,
+        pseudo: user.pseudo,
       },
     });
   } catch (error) {
@@ -66,12 +69,12 @@ const login = async (req, res) => {
 // Inscription publique — crée toujours un "user", jamais un admin
 const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, phone, address, pseudo, password } = req.body;
 
-    if (!name || !email || !password)
-      return res
-        .status(400)
-        .json({ message: "Nom, email et mot de passe requis." });
+    if (!name || !email || !phone || !pseudo || !password)
+      return res.status(400).json({
+        message: "Nom, email, telephone, pseudo et mot de passe requis.",
+      });
 
     if (password.length < 6)
       return res
@@ -85,8 +88,11 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const newUser = await User.create({
-      name,
-      email,
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone.trim(),
+      address: address?.trim() || null,
+      pseudo: pseudo.trim(),
       password: hashedPassword,
       role: "user",
     });
@@ -105,6 +111,9 @@ const register = async (req, res) => {
         id: newUser.id,
         name: newUser.name,
         email: newUser.email,
+        phone: newUser.phone,
+        address: newUser.address,
+        pseudo: newUser.pseudo,
       },
     });
   } catch (error) {

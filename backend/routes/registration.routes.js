@@ -9,6 +9,7 @@ const {
 } = require("../controllers/registration.controller");
 const authMiddleware = require("../middleware/auth.middleware");
 const adminMiddleware = require("../middleware/admin.middleware");
+const userMiddleware = require("../middleware/user.middleware");
 
 // ⚠️ ORDRE IMPORTANT : les routes spécifiques avant les routes génériques (:id)
 
@@ -24,7 +25,7 @@ router.get(
 );
 
 // POST /api/registrations/:eventId           → s'inscrire (public)
-router.post("/:eventId", createRegistration);
+router.post("/:eventId", authMiddleware, userMiddleware, createRegistration);
 
 // PATCH /api/registrations/:id/status        → modifier statut (admin)
 router.patch(
