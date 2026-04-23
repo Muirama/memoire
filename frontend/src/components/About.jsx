@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 import { FaRocket, FaFire, FaShieldAlt, FaUsers } from "react-icons/fa";
 import { GiCrown } from "react-icons/gi";
 const stats = [
-  { value: "500+", label: "Joueurs actifs" },
+  { value: "550+", label: "Joueurs actifs" },
   { value: "30+", label: "Tournois organisés" },
-  { value: "200+", label: "Jeux disponibles" },
-  { value: "3", label: "Ans d'expérience" },
+  { value: "14", label: "Rosters Compétitifs" },
+  { value: "5", label: "Ans d'expérience" },
 ];
 
 const values = [

@@ -13,7 +13,7 @@ import "swiper/css/pagination";
 
 export default function PreviewProducts() {
   const [products, setProducts] = useState([]);
-  const swiperRef = useRef(null); // ✅ IMPORTANT
+  const swiperRef = useRef(null); //  IMPORTANT
 
   useEffect(() => {
     const fetchPreview = async () => {
