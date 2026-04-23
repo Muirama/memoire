@@ -9,14 +9,49 @@ import Tilt from "react-parallax-tilt";
 import { motion } from "framer-motion";
 
 const items = [
-  { id: 1, title: "League of Legends", image: "/images/lol.jpg" },
-  { id: 2, title: "Counter-Strike 2", image: "/images/CS2.jpg" },
-  { id: 3, title: "Valorant", image: "/images/valorant.jpg" },
-  { id: 4, title: "FIFA", image: "/images/fifa.jpg" },
-  { id: 5, title: "PUBG", image: "/images/pubg.jpg" },
-  { id: 6, title: "Call of Duty", image: "/images/cod.jpg" },
-  { id: 7, title: "Dota 2", image: "/images/dota.jpg" },
-  { id: 8, title: "Apex Legends", image: "/images/apex.jpg" },
+  { id: 1, title: "EA FC", tag: "Sports", image: "/games/EA FC.png" },
+  {
+    id: 2,
+    title: "EFOOTBALL",
+    tag: "Sports",
+    image: "/games/Efootball.png",
+  },
+  {
+    id: 3,
+    title: "MOBILE LEGENDS : BANG BANG",
+    tag: "MOBA",
+    image: "/games/MOBILE LEGENDS BANG BANG.png",
+  },
+  {
+    id: 4,
+    title: "NBA 2K",
+    tag: "Sports",
+    image: "/games/NBA 2K.png",
+  },
+  {
+    id: 5,
+    title: "PUBG Mobile",
+    tag: "Battle Royale",
+    image: "/games/PubgM.png",
+  },
+  {
+    id: 6,
+    title: "STREET FIGHTER VI",
+    tag: "Fighting",
+    image: "/games/Street Fighter VI.png",
+  },
+  {
+    id: 7,
+    title: "TEKKEN",
+    tag: "Fighting",
+    image: "/games/Tekken.png",
+  },
+  {
+    id: 8,
+    title: "VALORANT",
+    tag: "FPS",
+    image: "/games/Valorant.png",
+  },
 ];
 
 export default function Carousel() {
