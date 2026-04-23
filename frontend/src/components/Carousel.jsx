@@ -9,14 +9,24 @@ import Tilt from "react-parallax-tilt";
 import { motion } from "framer-motion";
 
 const items = [
-  { id: 1, title: "Call of Duty", tag: "FPS", image: "/images/cod.jpg" },
-  { id: 2, title: "Dota 2", tag: "MOBA", image: "/images/dota.jpg" },
-  { id: 3, title: "Apex Legends", tag: "Battle Royale", image: "/images/apex.jpg" },
-  { id: 4, title: "FIFA", tag: "Sports", image: "/images/fifa.jpg" },
-  { id: 5, title: "Free Fire", tag: "Battle Royale", image: "/images/freefire.jpg" },
-  { id: 6, title: "League of Legends", tag: "MOBA", image: "/images/lol.jpg" },
-  { id: 7, title: "MLBB", tag: "MOBA", image: "/images/mlbb.jpg" },
-  { id: 8, title: "PUBG", tag: "Battle Royale", image: "/images/pubg.jpg" },
+  { id: 1, title: "EA FC", tag: "Sports", image: "/Photo Carousel/EA FC.png" },
+  { id: 2, title: "EFOOTBALL", tag: "Sports", image: "/Photo Carousel/Efootball.png" },
+  {
+    id: 3,
+    title: "MOBILE LEGENDS : BANG BANG",
+    tag: "MOBA",
+    image: "/Photo Carousel/MOBILE LEGENDS BANG BANG.png",
+  },
+  { id: 4, title: "NBA 2K", tag: "Sports", image: "/Photo Carousel/NBA 2K.png" },
+  { id: 5, title: "PUBG Mobile", tag: "Battle Royale", image: "/Photo Carousel/PubgM.png" },
+  {
+    id: 6,
+    title: "STREET FIGHTER VI",
+    tag: "Fighting",
+    image: "/Photo Carousel/Street Fighter VI.png",
+  },
+  { id: 7, title: "TEKKEN", tag: "Fighting", image: "/Photo Carousel/Tekken.png" },
+  { id: 8, title: "VALORANT", tag: "FPS", image: "/Photo Carousel/Valorant.png" },
 ];
 
 export default function Carousel() {
