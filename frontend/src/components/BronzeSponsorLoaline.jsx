@@ -69,8 +69,8 @@ export default function BronzeSponsorLoaline() {
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: false, amount: 0.3 }}
-          transition={{ duration: 1 }}
+          viewport={{ once: false, amount: 0.2 }}
+          transition={{ duration: 0.8 }}
           className="relative overflow-hidden rounded-[40px] border border-white/5 bg-gradient-to-br from-[#12100e] via-[#0a0a0a] to-black px-6 py-10 md:px-12 md:py-16 shadow-2xl"
         >
           {/* Ligne décorative Bronze en haut */}
