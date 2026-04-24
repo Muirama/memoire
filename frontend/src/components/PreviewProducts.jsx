@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import api from "../api/api";
@@ -31,47 +31,51 @@ export default function PreviewProducts() {
 
   return (
     <section
-      className="py-10 px-4 sm:px-6 md:px-10"
+      className="relative py-16 md:py-24 overflow-hidden"
       onMouseEnter={() => swiperRef.current?.autoplay.stop()}
       onMouseLeave={() => swiperRef.current?.autoplay.start()}
     >
-      {/* Header */}
-      <div className="flex justify-between items-center mb-8 md:mb-12">
-        <h2 className="text-2xl md:text-3xl font-bold text-white">
-          Gascom Shop - Nos produits phares
-        </h2>
-        <Link
-          to="/shop"
-          className="text-[#E50914] hover:text-[#FF1E56] font-semibold transition"
-        >
-          Voir plus →
-        </Link>
-      </div>
+      <div className="relative max-w-7xl mx-auto px-4 md:px-6">
+        {/* Header */}
+        <div className="mb-8 md:mb-12 flex flex-col items-center gap-4 text-center md:flex-row md:items-center md:justify-between md:text-left">
+          <h2 className="text-2xl md:text-3xl font-bold text-white">
+            Gascom Shop - Nos produits phares
+          </h2>
+          <Link
+            to="/shop"
+            className="text-[#E50914] hover:text-[#FF1E56] font-semibold transition"
+          >
+            Voir plus &rarr;
+          </Link>
+        </div>
 
-      {/* Carrousel */}
-      <Swiper
-        modules={[Autoplay, Pagination]}
-        spaceBetween={16}
-        slidesPerView={1}
-        breakpoints={{
-          640: { slidesPerView: 2 },
-          768: { slidesPerView: 3 },
-          1024: { slidesPerView: 4 },
-        }}
-        autoplay={{ delay: 3000, disableOnInteraction: false }}
-        loop={true}
-        style={{ alignItems: "stretch" }}
-        className="preview-swiper"
-        onSwiper={(swiper) => (swiperRef.current = swiper)} // ✅ capture instance
-      >
-        {products.map((product, index) => (
-          <SwiperSlide key={product.id} className="!h-auto flex">
-            <div className="w-full flex">
-              <ProductCard product={product} index={index} />
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+        {/* Carrousel */}
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          spaceBetween={16}
+          slidesPerView={1}
+          breakpoints={{
+            640: { slidesPerView: 2 },
+            768: { slidesPerView: 3 },
+            1024: { slidesPerView: 4 },
+          }}
+          autoplay={{ delay: 3000, disableOnInteraction: false }}
+          loop={true}
+          style={{ alignItems: "stretch" }}
+          className="preview-swiper"
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+        >
+          {products.map((product, index) => (
+            <SwiperSlide key={product.id} className="!h-auto flex">
+              <div className="w-full flex">
+                <ProductCard product={product} index={index} />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
 
       <style>{`
         .preview-swiper .swiper-wrapper {
