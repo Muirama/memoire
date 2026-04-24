@@ -8,13 +8,8 @@ import {
   FaImage,
   FaAlignLeft,
   FaTrophy,
-  FaTwitter,
-  FaFacebook,
-  FaDiscord,
   FaCheck,
   FaSpinner,
-  FaEye,
-  FaEyeSlash,
 } from "react-icons/fa";
 import api from "../../../api/api";
 
@@ -286,54 +281,6 @@ export default function AdminTeamForm({ team, onClose, onSaved }) {
               className={`${inputCls()} resize-none`}
             />
           </Field>
-
-          {/* Réseaux sociaux */}
-          <div>
-            <p className="text-gray-400 text-xs font-semibold mb-2 uppercase tracking-wide">
-              Réseaux sociaux
-            </p>
-            <div className="space-y-3">
-              <div className="relative">
-                <FaTwitter
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2
-                                       text-sky-400 text-sm pointer-events-none"
-                />
-                <input
-                  type="url"
-                  value={form.twitter}
-                  onChange={set("twitter")}
-                  placeholder="https://twitter.com/gascom"
-                  className={`${inputCls()} pl-10`}
-                />
-              </div>
-              <div className="relative">
-                <FaFacebook
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2
-                                        text-blue-500 text-sm pointer-events-none"
-                />
-                <input
-                  type="url"
-                  value={form.facebook}
-                  onChange={set("facebook")}
-                  placeholder="https://facebook.com/gascom"
-                  className={`${inputCls()} pl-10`}
-                />
-              </div>
-              <div className="relative">
-                <FaDiscord
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2
-                                       text-indigo-400 text-sm pointer-events-none"
-                />
-                <input
-                  type="url"
-                  value={form.discord}
-                  onChange={set("discord")}
-                  placeholder="https://discord.gg/gascom"
-                  className={`${inputCls()} pl-10`}
-                />
-              </div>
-            </div>
-          </div>
 
           {/* Toggle actif */}
           <label

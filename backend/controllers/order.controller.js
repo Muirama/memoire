@@ -1,23 +1,27 @@
-const { Order, Product, sequelize } = require("../models");
+const { Order, Product, User, sequelize } = require("../models");
 
 const formatPrice = (price) =>
   new Intl.NumberFormat("fr-MG").format(price) + " Ar";
 
-// POST passer une commande (public)
+// POST passer une commande (user connecte)
 const createOrder = async (req, res) => {
   try {
-    const {
-      customerName,
-      customerEmail,
-      customerPhone,
-      customerAddress,
-      items,
-      notes,
-    } = req.body;
+    const { items, notes } = req.body;
 
-    if (!customerName || !customerEmail || !customerPhone) {
+    if (!req.user?.id || req.user.role !== "user") {
+      return res.status(403).json({
+        message: "Connexion utilisateur requise pour passer une commande.",
+      });
+    }
+
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur introuvable." });
+    }
+
+    if (!user.name || !user.email || !user.phone) {
       return res.status(400).json({
-        message: "Nom, email et telephone sont requis.",
+        message: "Profil incomplet. Nom, email et telephone sont requis.",
       });
     }
 
@@ -84,10 +88,11 @@ const createOrder = async (req, res) => {
 
       return Order.create(
         {
-          customerName: customerName.trim(),
-          customerEmail: customerEmail.trim(),
-          customerPhone: customerPhone.trim(),
-          customerAddress: customerAddress?.trim() || null,
+          userId: user.id,
+          customerName: user.name.trim(),
+          customerEmail: user.email.trim().toLowerCase(),
+          customerPhone: user.phone.trim(),
+          customerAddress: user.address?.trim() || null,
           itemsSummary: computedItemsSummary.join(" | "),
           totalAmount: computedTotalAmount,
           status: "En attente",
@@ -101,7 +106,11 @@ const createOrder = async (req, res) => {
       message: "Commande passee avec succes.",
       order: {
         id: order.id,
+        userId: order.userId,
         customerName: order.customerName,
+        customerEmail: order.customerEmail,
+        customerPhone: order.customerPhone,
+        customerAddress: order.customerAddress,
         itemsSummary: order.itemsSummary,
         totalAmount: order.totalAmount,
         status: order.status,

@@ -28,6 +28,12 @@ const Order = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: true,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: { model: "users", key: "id" },
+      onDelete: "CASCADE",
+    },
 
     // ── Produits en texte lisible ─────────────────────────
     // Ex: "2x League of Legends RP (100 000 Ar) | 1x CS2 Skins Pack (75 000 Ar)"

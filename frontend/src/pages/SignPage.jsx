@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaEnvelope,
   FaLock,
@@ -9,14 +9,23 @@ import {
   FaEye,
   FaEyeSlash,
   FaCheckCircle,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaGamepad,
 } from "react-icons/fa";
 import api from "../api/api";
+import { getRedirectAfterAuth, storeAuthSession } from "../utils/auth";
 
 export default function SignPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = getRedirectAfterAuth(location.search, "/");
   const [formData, setFormData] = useState({
     name: "",
+    pseudo: "",
     email: "",
+    phone: "",
+    address: "",
     password: "",
     confirmPassword: "",
     acceptTerms: false,
@@ -29,39 +38,44 @@ export default function SignPage() {
   const validateForm = () => {
     const newErrors = {};
 
-    // Validation nom
-    if (!formData.name) {
+    if (!formData.name.trim()) {
       newErrors.name = "Le nom est requis";
-    } else if (formData.name.length < 3) {
-      newErrors.name = "Le nom doit contenir au moins 3 caractères";
+    } else if (formData.name.trim().length < 3) {
+      newErrors.name = "Le nom doit contenir au moins 3 caracteres";
     }
 
-    // Validation email
+    if (!formData.pseudo.trim()) {
+      newErrors.pseudo = "Le pseudo est requis";
+    } else if (formData.pseudo.trim().length < 3) {
+      newErrors.pseudo = "Le pseudo doit contenir au moins 3 caracteres";
+    }
+
     if (!formData.email) {
       newErrors.email = "L'email est requis";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email invalide";
     }
 
-    // Validation password
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Le telephone est requis";
+    }
+
     if (!formData.password) {
       newErrors.password = "Le mot de passe est requis";
     } else if (formData.password.length < 8) {
       newErrors.password =
-        "Le mot de passe doit contenir au moins 8 caractères";
+        "Le mot de passe doit contenir au moins 8 caracteres";
     } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
       newErrors.password =
         "Le mot de passe doit contenir majuscule, minuscule et chiffre";
     }
 
-    // Validation confirmation password
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = "Veuillez confirmer votre mot de passe";
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
     }
 
-    // Validation terms
     if (!formData.acceptTerms) {
       newErrors.acceptTerms =
         "Vous devez accepter les conditions d'utilisation";
@@ -78,17 +92,17 @@ export default function SignPage() {
     setIsLoading(true);
     try {
       const response = await api.post("/auth/register", {
-        name: formData.name,
-        email: formData.email,
+        name: formData.name.trim(),
+        pseudo: formData.pseudo.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        address: formData.address.trim(),
         password: formData.password,
       });
 
-      console.log("Inscription réussie:", response.data);
-
-      navigate("/login");
+      storeAuthSession(response.data);
+      navigate(redirectTo);
     } catch (error) {
-      console.error("Erreur lors de l'inscription:", error);
-
       setErrors((prev) => ({
         ...prev,
         global: error.response?.data?.message || "Erreur lors de l'inscription",
@@ -104,11 +118,16 @@ export default function SignPage() {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    // Effacer l'erreur du champ modifié
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
+      }));
+    }
+    if (errors.global) {
+      setErrors((prev) => ({
+        ...prev,
+        global: "",
       }));
     }
   };
@@ -123,7 +142,7 @@ export default function SignPage() {
     if (/\d/.test(password)) strength++;
     if (/[^A-Za-z0-9]/.test(password)) strength++;
 
-    const labels = ["", "Faible", "Moyen", "Fort", "Très fort"];
+    const labels = ["", "Faible", "Moyen", "Fort", "Tres fort"];
     const colors = [
       "",
       "bg-red-500",
@@ -146,10 +165,8 @@ export default function SignPage() {
           transition={{ duration: 0.6 }}
           className="bg-[#1A1A1A] rounded-2xl border border-[#E50914]/30 p-8 md:p-10 shadow-[0_0_50px_rgba(229,9,20,0.3)]"
         >
-          {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-[#E50914] rounded-full mb-4">
-              {/* <FaGamepad className="text-3xl text-white" /> */}
               <img
                 src="/LOGO/Logo_GES_rouge.svg"
                 alt="Gascom Logo"
@@ -160,84 +177,92 @@ export default function SignPage() {
               Inscription
             </h1>
             <p className="text-gray-400">
-              Rejoignez la communauté{" "}
-              <span className="text-[#E50914]">Gascom</span>
+              Creez votre compte <span className="text-[#E50914]">Gascom</span>
             </p>
           </div>
 
-          {/* Formulaire */}
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Nom */}
+            {errors.global && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+                <p className="text-red-400 text-sm text-center font-semibold">
+                  {errors.global}
+                </p>
+              </div>
+            )}
+
+            <Field label="Nom complet" error={errors.name}>
+              <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Votre nom"
+                className={inputClass(errors.name)}
+              />
+            </Field>
+
+            <Field label="Pseudo gaming" error={errors.pseudo}>
+              <FaGamepad className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
+              <input
+                type="text"
+                id="pseudo"
+                name="pseudo"
+                value={formData.pseudo}
+                onChange={handleChange}
+                placeholder="Votre pseudo"
+                className={inputClass(errors.pseudo)}
+              />
+            </Field>
+
+            <Field label="Email" error={errors.email}>
+              <FaEnvelope className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="votre@email.com"
+                className={inputClass(errors.email)}
+              />
+            </Field>
+
+            <Field label="Telephone" error={errors.phone}>
+              <FaPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="034 00 000 00"
+                className={inputClass(errors.phone)}
+              />
+            </Field>
+
             <div>
               <label
-                htmlFor="name"
+                htmlFor="address"
                 className="block text-sm font-semibold text-gray-300 mb-2"
               >
-                Nom d'utilisateur <span className="text-[#E50914]">*</span>
+                Adresse
               </label>
               <div className="relative">
-                <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
+                <FaMapMarkerAlt className="absolute left-4 top-4 text-gray-500" />
+                <textarea
+                  id="address"
+                  name="address"
+                  value={formData.address}
                   onChange={handleChange}
-                  placeholder="Votre pseudo"
-                  className={`w-full pl-12 pr-4 py-3 bg-[#0D0D0D] text-white rounded-lg border ${
-                    errors.name
-                      ? "border-red-500 focus:border-red-500"
-                      : "border-[#E50914]/30 focus:border-[#E50914]"
-                  } focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 transition-all`}
+                  placeholder="Adresse de livraison"
+                  rows={2}
+                  className="w-full pl-12 pr-4 py-3 bg-[#0D0D0D] text-white rounded-lg border border-[#E50914]/30 focus:border-[#E50914] focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 transition-all resize-none"
                 />
               </div>
-              {errors.name && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-sm mt-2"
-                >
-                  {errors.name}
-                </motion.p>
-              )}
             </div>
 
-            {/* Email */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-semibold text-gray-300 mb-2"
-              >
-                Email <span className="text-[#E50914]">*</span>
-              </label>
-              <div className="relative">
-                <FaEnvelope className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="votre@email.com"
-                  className={`w-full pl-12 pr-4 py-3 bg-[#0D0D0D] text-white rounded-lg border ${
-                    errors.email
-                      ? "border-red-500 focus:border-red-500"
-                      : "border-[#E50914]/30 focus:border-[#E50914]"
-                  } focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 transition-all`}
-                />
-              </div>
-              {errors.email && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-sm mt-2"
-                >
-                  {errors.email}
-                </motion.p>
-              )}
-            </div>
-
-            {/* Password */}
             <div>
               <label
                 htmlFor="password"
@@ -254,11 +279,7 @@ export default function SignPage() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className={`w-full pl-12 pr-12 py-3 bg-[#0D0D0D] text-white rounded-lg border ${
-                    errors.password
-                      ? "border-red-500 focus:border-red-500"
-                      : "border-[#E50914]/30 focus:border-[#E50914]"
-                  } focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 transition-all`}
+                  className={inputClass(errors.password)}
                 />
                 <button
                   type="button"
@@ -268,7 +289,6 @@ export default function SignPage() {
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
-              {/* Indicateur de force du mot de passe */}
               {formData.password && (
                 <div className="mt-2">
                   <div className="flex gap-1 mb-1">
@@ -289,24 +309,16 @@ export default function SignPage() {
                 </div>
               )}
               {errors.password && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-sm mt-2"
-                >
-                  {errors.password}
-                </motion.p>
+                <p className="text-red-500 text-sm mt-2">{errors.password}</p>
               )}
             </div>
 
-            {/* Confirm Password */}
             <div>
               <label
                 htmlFor="confirmPassword"
                 className="block text-sm font-semibold text-gray-300 mb-2"
               >
-                Confirmer le mot de passe{" "}
-                <span className="text-[#E50914]">*</span>
+                Confirmer le mot de passe <span className="text-[#E50914]">*</span>
               </label>
               <div className="relative">
                 <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
@@ -317,11 +329,7 @@ export default function SignPage() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className={`w-full pl-12 pr-12 py-3 bg-[#0D0D0D] text-white rounded-lg border ${
-                    errors.confirmPassword
-                      ? "border-red-500 focus:border-red-500"
-                      : "border-[#E50914]/30 focus:border-[#E50914]"
-                  } focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 transition-all`}
+                  className={inputClass(errors.confirmPassword)}
                 />
                 <button
                   type="button"
@@ -332,17 +340,12 @@ export default function SignPage() {
                 </button>
               </div>
               {errors.confirmPassword && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-sm mt-2"
-                >
+                <p className="text-red-500 text-sm mt-2">
                   {errors.confirmPassword}
-                </motion.p>
+                </p>
               )}
             </div>
 
-            {/* Terms & Conditions */}
             <div>
               <label className="flex items-start gap-3 cursor-pointer group">
                 <div className="relative flex-shrink-0 mt-1">
@@ -366,35 +369,17 @@ export default function SignPage() {
                   </div>
                 </div>
                 <span className="text-sm text-gray-400">
-                  J'accepte les{" "}
-                  <Link
-                    to="/terms"
-                    className="text-[#E50914] hover:text-[#FF1E56] transition"
-                  >
-                    conditions d'utilisation
-                  </Link>{" "}
-                  et la{" "}
-                  <Link
-                    to="/privacy"
-                    className="text-[#E50914] hover:text-[#FF1E56] transition"
-                  >
-                    politique de confidentialité
-                  </Link>
+                  J'accepte les conditions d'utilisation
                   <span className="text-[#E50914]"> *</span>
                 </span>
               </label>
               {errors.acceptTerms && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-sm mt-2"
-                >
+                <p className="text-red-500 text-sm mt-2">
                   {errors.acceptTerms}
-                </motion.p>
+                </p>
               )}
             </div>
 
-            {/* Bouton Submit */}
             <button
               type="submit"
               disabled={isLoading}
@@ -402,21 +387,20 @@ export default function SignPage() {
             >
               {isLoading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Inscription...
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Creation du compte...
                 </>
               ) : (
-                "Créer mon compte"
+                "Creer mon compte"
               )}
             </button>
           </form>
 
-          {/* Lien vers connexion */}
           <div className="mt-6 text-center">
             <p className="text-gray-400">
-              Vous avez déjà un compte ?{" "}
+              Vous avez deja un compte ?{" "}
               <Link
-                to="/login"
+                to={`/login${location.search}`}
                 className="text-[#E50914] hover:text-[#FF1E56] font-semibold transition"
               >
                 Se connecter
@@ -427,4 +411,24 @@ export default function SignPage() {
       </div>
     </section>
   );
+}
+
+function Field({ label, error, children }) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-300 mb-2">
+        {label} <span className="text-[#E50914]">*</span>
+      </label>
+      <div className="relative">{children}</div>
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+    </div>
+  );
+}
+
+function inputClass(error) {
+  return `w-full pl-12 pr-12 py-3 bg-[#0D0D0D] text-white rounded-lg border ${
+    error
+      ? "border-red-500 focus:border-red-500"
+      : "border-[#E50914]/30 focus:border-[#E50914]"
+  } focus:outline-none focus:ring-2 focus:ring-[#E50914]/50 transition-all`;
 }

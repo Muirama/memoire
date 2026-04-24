@@ -13,6 +13,12 @@ const Registration = require("./Registration");
 Event.hasMany(Registration, { foreignKey: "eventId", onDelete: "CASCADE" });
 Registration.belongsTo(Event, { foreignKey: "eventId" });
 
+User.hasMany(Order, { foreignKey: "userId", onDelete: "CASCADE" });
+Order.belongsTo(User, { foreignKey: "userId", as: "user" });
+
+User.hasMany(Registration, { foreignKey: "userId", onDelete: "CASCADE" });
+Registration.belongsTo(User, { foreignKey: "userId", as: "user" });
+
 Team.hasMany(Player, {
   foreignKey: "teamId",
   onDelete: "CASCADE",

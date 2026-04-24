@@ -1,4 +1,5 @@
 import axios from "axios";
+import { clearAuthSession } from "../utils/auth";
 
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
@@ -27,7 +28,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token expiré ou invalide → déconnecter l'admin
-      localStorage.removeItem("token");
+      clearAuthSession();
       window.location.href = "/login";
     }
     return Promise.reject(error);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   FaBars,
   FaTimes,
@@ -9,16 +9,24 @@ import {
   FaCalendarAlt,
   FaSignInAlt,
   FaShoppingCart,
+  FaSignOutAlt,
+  FaUserCircle,
+  FaChevronDown,
 } from "react-icons/fa";
 
 import logo_GES_blanc from "/LOGO/Logo_GES_blanc.svg";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import TeamDropdown from "./TeamDropdown";
+import { clearAuthSession, getUserRole, isUserLoggedIn } from "../utils/auth";
 
 export default function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const location = useLocation();
   const { totalItems, toggleCart } = useCart();
+  const [userLoggedIn, setUserLoggedIn] = useState(isUserLoggedIn());
+  const accountMenuRef = useRef(null);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -39,10 +47,36 @@ export default function NavBar() {
     };
   }, [menuOpen]);
 
-  // Ferme le menu au changement de route
   useEffect(() => {
     setMenuOpen(false);
+    setAccountMenuOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    setUserLoggedIn(isUserLoggedIn());
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        accountMenuRef.current &&
+        !accountMenuRef.current.contains(e.target)
+      ) {
+        setAccountMenuOpen(false);
+      }
+    };
+    if (accountMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [accountMenuOpen]);
+
+  const handleLogout = () => {
+    clearAuthSession();
+    setUserLoggedIn(false);
+    setMenuOpen(false);
+    setAccountMenuOpen(false);
+  };
 
   const pageLinks = [
     { name: "Home", href: "/", icon: <FaHome /> },
@@ -72,32 +106,40 @@ export default function NavBar() {
           height="38"
           className="w-9 h-9 sm:w-11 sm:h-11"
         />
+        {/* ← visible dès 360px environ grâce à min-[360px] */}
         <span
-          className="text-lg sm:text-xl md:text-2xl font-extrabold tracking-wide text-white drop-shadow-lg
-                         hidden xs:block sm:block"
+          className="text-base min-[360px]:text-lg sm:text-xl md:text-2xl font-extrabold
+                     tracking-wide text-white drop-shadow-lg hidden min-[360px]:block"
         >
           Gascom Esports
         </span>
       </Link>
 
       {/* ── Desktop Links ── */}
-      <div className="hidden md:flex items-center gap-3 lg:gap-6">
-        <ul className="flex space-x-1 lg:space-x-4 font-medium">
+      <div className="hidden md:flex items-center gap-2 lg:gap-4">
+        <ul className="flex space-x-0.5 lg:space-x-2 font-medium">
           {pageLinks.map((link, i) => {
+            if (link.name === "Team") {
+              return (
+                <li key={i}>
+                  <TeamDropdown />
+                </li>
+              );
+            }
             const isActive = location.pathname === link.href;
             return (
               <li key={i}>
                 <Link
                   to={link.href}
                   aria-current={isActive ? "page" : undefined}
-                  className={`flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-4 py-2 rounded-lg
+                  className={`flex items-center gap-1 lg:gap-2 px-2 lg:px-3 xl:px-4 py-2 rounded-lg
                               transition-all duration-300 text-sm lg:text-base ${
                                 isActive
                                   ? "text-white bg-[#E50914] shadow-[0_0_15px_rgba(229,9,20,0.6)]"
                                   : "text-white hover:text-white hover:bg-[#E50914]/80 hover:shadow-[0_0_12px_rgba(229,9,20,0.4)]"
                               }`}
                 >
-                  <span className="hidden lg:inline">{link.icon}</span>
+                  <span className="hidden xl:inline">{link.icon}</span>
                   {link.name}
                 </Link>
               </li>
@@ -110,7 +152,7 @@ export default function NavBar() {
           type="button"
           onClick={toggleCart}
           aria-label="Ouvrir le panier"
-          className="relative flex items-center gap-2 px-2.5 lg:px-4 py-2 text-white
+          className="relative flex items-center gap-2 px-2 lg:px-3 xl:px-4 py-2 text-white
                      hover:text-white hover:bg-[#E50914]/80 rounded-lg
                      transition-all duration-300 hover:shadow-[0_0_12px_rgba(229,9,20,0.4)]"
         >
@@ -128,20 +170,70 @@ export default function NavBar() {
           )}
         </button>
 
-        {/* ── Login ── */}
-        <Link
-          to="/login"
-          className="flex items-center gap-2 px-4 lg:px-6 py-2 bg-[#E50914] hover:bg-[#FF1E56]
-                     text-white font-semibold rounded-lg transition-all duration-300 text-sm lg:text-base
-                     hover:shadow-[0_0_15px_rgba(229,9,20,0.6)] whitespace-nowrap"
-        >
-          <FaSignInAlt />
-          Login
-        </Link>
+        {/* ── Login / Compte ── */}
+        {userLoggedIn && getUserRole() === "user" ? (
+          <div className="relative" ref={accountMenuRef}>
+            <button
+              type="button"
+              onClick={() => setAccountMenuOpen((prev) => !prev)}
+              aria-label="Ouvrir le menu du compte"
+              aria-expanded={accountMenuOpen}
+              className="flex items-center gap-1.5 px-2 lg:px-3 py-2 text-white
+                         hover:text-white hover:bg-[#E50914]/80 rounded-lg
+                         transition-all duration-300 hover:shadow-[0_0_12px_rgba(229,9,20,0.4)]"
+            >
+              <FaUserCircle className="text-xl shrink-0" />
+              {/* Label visible seulement à partir de lg */}
+              <span className="hidden lg:inline text-sm font-semibold whitespace-nowrap">
+                Mon compte
+              </span>
+              <FaChevronDown
+                className={`text-xs transition-transform duration-200 ${
+                  accountMenuOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {accountMenuOpen && (
+              <div
+                className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10
+                           bg-[#111111] shadow-2xl overflow-hidden"
+              >
+                <div className="px-4 py-3 border-b border-white/5">
+                  <p className="text-white text-sm font-semibold">Mon compte</p>
+                  <p className="text-gray-500 text-xs">
+                    D'autres actions arriveront bientot
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-left
+                             text-gray-300 hover:text-red-400 hover:bg-red-400/10
+                             transition-all text-sm font-semibold"
+                >
+                  <FaSignOutAlt />
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            className="flex items-center gap-2 px-3 lg:px-5 py-2 bg-[#E50914] hover:bg-[#FF1E56]
+                       text-white font-semibold rounded-lg transition-all duration-300 text-sm lg:text-base
+                       hover:shadow-[0_0_15px_rgba(229,9,20,0.6)] whitespace-nowrap"
+          >
+            <FaSignInAlt />
+            <span className="hidden sm:inline">Login</span>
+          </Link>
+        )}
       </div>
 
       {/* ── Mobile : panier + hamburger ── */}
-      <div className="md:hidden flex items-center gap-4">
+      <div className="md:hidden flex items-center gap-3">
         {/* Panier mobile */}
         <button
           type="button"
@@ -162,7 +254,7 @@ export default function NavBar() {
           )}
         </button>
 
-        {/* Hamburger — icône React Icons pour cohérence */}
+        {/* Hamburger */}
         <button
           onClick={toggleMenu}
           aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
@@ -201,14 +293,44 @@ export default function NavBar() {
           );
         })}
 
-        <Link
-          to="/login"
-          className="flex items-center gap-3 px-4 py-3 bg-[#E50914]
-                     text-white font-semibold rounded-lg mt-2 text-sm sm:text-base
-                     hover:bg-[#FF1E56] transition-all duration-300"
-        >
-          <FaSignInAlt /> Login
-        </Link>
+        {/* ── Section compte mobile ── */}
+        {userLoggedIn && getUserRole() === "user" ? (
+          <div className="mt-2 flex flex-col gap-1 border-t border-white/10 pt-3">
+            {/* Info compte (non cliquable) */}
+            <div className="flex items-center gap-3 px-4 py-2">
+              <FaUserCircle className="text-2xl text-white shrink-0" />
+              <div>
+                <p className="text-white text-sm font-semibold leading-tight">
+                  Mon compte
+                </p>
+                <p className="text-gray-500 text-xs leading-tight">
+                  D'autres actions arriveront bientôt
+                </p>
+              </div>
+            </div>
+
+            {/* Bouton logout */}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-4 py-3 bg-[#E50914]
+                         text-white font-semibold rounded-lg text-sm sm:text-base
+                         hover:bg-[#FF1E56] transition-all duration-300"
+            >
+              <FaSignOutAlt />
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            className="flex items-center gap-3 px-4 py-3 bg-[#E50914]
+                       text-white font-semibold rounded-lg mt-2 text-sm sm:text-base
+                       hover:bg-[#FF1E56] transition-all duration-300"
+          >
+            <FaSignInAlt /> Login
+          </Link>
+        )}
       </div>
     </nav>
   );

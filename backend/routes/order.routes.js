@@ -9,9 +9,10 @@ const {
 } = require("../controllers/order.controller");
 const authMiddleware = require("../middleware/auth.middleware");
 const adminMiddleware = require("../middleware/admin.middleware");
+const userMiddleware = require("../middleware/user.middleware");
 
 // POST   /api/orders           → passer une commande (public, sans compte)
-router.post("/", createOrder);
+router.post("/", authMiddleware, userMiddleware, createOrder);
 
 // GET    /api/orders           → toutes les commandes (admin)
 router.get("/", authMiddleware, adminMiddleware, getAllOrders);

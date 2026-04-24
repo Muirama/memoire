@@ -13,7 +13,7 @@ import "swiper/css/pagination";
 
 export default function PreviewProducts() {
   const [products, setProducts] = useState([]);
-  const swiperRef = useRef(null); // ✅ IMPORTANT
+  const swiperRef = useRef(null);
 
   useEffect(() => {
     const fetchPreview = async () => {
@@ -32,13 +32,13 @@ export default function PreviewProducts() {
   return (
     <section
       className="py-10 px-4 sm:px-6 md:px-10"
-      onMouseEnter={() => swiperRef.current?.autoplay.stop()} // ✅ pause
-      onMouseLeave={() => swiperRef.current?.autoplay.start()} // ✅ reprise
+      onMouseEnter={() => swiperRef.current?.autoplay.stop()}
+      onMouseLeave={() => swiperRef.current?.autoplay.start()}
     >
       {/* Header */}
-      <div className="flex justify-between items-center mb-6 px-2">
-        <h2 className="text-xl md:text-2xl font-bold text-white">
-          Produits en vedette
+      <div className="flex justify-between items-center mb-8 md:mb-12">
+        <h2 className="text-2xl md:text-3xl font-bold text-white">
+          Gascom Shop - Nos produits phares
         </h2>
         <Link
           to="/shop"
