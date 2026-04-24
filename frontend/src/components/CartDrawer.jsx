@@ -9,8 +9,10 @@ import {
   FaMinus,
   FaPlus,
   FaCheck,
+  FaLock,
 } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
+import { isUserLoggedIn, buildLoginRedirect } from "../utils/auth";
 
 const formatPrice = (price) =>
   new Intl.NumberFormat("fr-MG").format(price) + " Ar";
@@ -29,6 +31,12 @@ export default function CartDrawer() {
   } = useCart();
 
   const handleCheckout = () => {
+    // ── Vérification connexion avant checkout ─────────
+    if (!isUserLoggedIn()) {
+      closeCart();
+      navigate(buildLoginRedirect("/checkout"));
+      return;
+    }
     closeCart();
     navigate("/checkout");
   };
@@ -37,7 +45,7 @@ export default function CartDrawer() {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* ── Overlay semi-transparent ── */}
+          {/* ── Overlay ── */}
           <motion.div
             key="overlay"
             initial={{ opacity: 0 }}
@@ -80,7 +88,6 @@ export default function CartDrawer() {
               </div>
 
               <div className="flex items-center gap-3">
-                {/* Vider tout */}
                 {items.length > 0 && (
                   <button
                     type="button"
@@ -93,8 +100,6 @@ export default function CartDrawer() {
                     <FaTrash size={11} /> Tout vider
                   </button>
                 )}
-
-                {/* Fermer */}
                 <button
                   type="button"
                   onClick={closeCart}
@@ -110,7 +115,6 @@ export default function CartDrawer() {
             {/* ══ LISTE ARTICLES ══ */}
             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
               {items.length === 0 ? (
-                /* Panier vide */
                 <div
                   className="flex flex-col items-center justify-center
                                 h-full gap-4 text-center pb-10"
@@ -143,7 +147,6 @@ export default function CartDrawer() {
                   </button>
                 </div>
               ) : (
-                /* Articles */
                 <AnimatePresence initial={false}>
                   {items.map((item) => (
                     <motion.div
@@ -156,7 +159,6 @@ export default function CartDrawer() {
                                  hover:border-[#E50914]/20 transition-colors"
                     >
                       <div className="flex gap-3">
-                        {/* Image */}
                         <div
                           className="w-16 h-16 rounded-lg overflow-hidden
                                         bg-[#0D0D0D] flex-shrink-0"
@@ -178,7 +180,6 @@ export default function CartDrawer() {
                           )}
                         </div>
 
-                        {/* Infos produit */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
                             <p
@@ -187,7 +188,6 @@ export default function CartDrawer() {
                             >
                               {item.name}
                             </p>
-                            {/* Supprimer */}
                             <button
                               type="button"
                               onClick={() => removeFromCart(item.id)}
@@ -198,20 +198,16 @@ export default function CartDrawer() {
                               <FaTimes size={13} />
                             </button>
                           </div>
-
-                          {/* Prix unitaire */}
                           <p className="text-[#E50914] font-bold text-sm mt-1">
                             {formatPrice(item.price)}
                           </p>
                         </div>
                       </div>
 
-                      {/* Quantité + Sous-total */}
                       <div
                         className="flex items-center justify-between mt-3 pt-3
                                       border-t border-white/5"
                       >
-                        {/* Contrôles quantité */}
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
@@ -226,14 +222,9 @@ export default function CartDrawer() {
                           >
                             <FaMinus size={9} />
                           </button>
-
-                          <span
-                            className="text-white font-bold text-sm
-                                           w-8 text-center"
-                          >
+                          <span className="text-white font-bold text-sm w-8 text-center">
                             {item.quantity}
                           </span>
-
                           <button
                             type="button"
                             onClick={() =>
@@ -250,8 +241,6 @@ export default function CartDrawer() {
                             <FaPlus size={9} />
                           </button>
                         </div>
-
-                        {/* Sous-total ligne */}
                         <div className="text-right">
                           <p className="text-xs text-gray-500">Sous-total</p>
                           <p className="text-white font-bold text-sm">
@@ -289,9 +278,28 @@ export default function CartDrawer() {
                   </div>
                 </div>
 
+                {/* Message si non connecté */}
+                {!isUserLoggedIn() && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-2 bg-yellow-500/10 border
+                               border-yellow-500/20 rounded-xl px-4 py-2.5"
+                  >
+                    <FaLock
+                      className="text-yellow-400 flex-shrink-0"
+                      size={13}
+                    />
+                    <p className="text-yellow-300 text-xs">
+                      Vous devez être{" "}
+                      <span className="font-bold">connecté</span> pour passer
+                      commande.
+                    </p>
+                  </motion.div>
+                )}
+
                 {/* Boutons */}
                 <div className="space-y-2">
-                  {/* Commander */}
                   <motion.button
                     type="button"
                     whileTap={{ scale: 0.97 }}
@@ -301,11 +309,17 @@ export default function CartDrawer() {
                                duration-300 hover:shadow-[0_0_20px_rgba(229,9,20,0.6)]
                                flex items-center justify-center gap-2"
                   >
-                    <FaCheck />
-                    Commander — {formatPrice(totalAmount)}
+                    {isUserLoggedIn() ? (
+                      <>
+                        <FaCheck /> Commander — {formatPrice(totalAmount)}
+                      </>
+                    ) : (
+                      <>
+                        <FaLock size={13} /> Se connecter pour commander
+                      </>
+                    )}
                   </motion.button>
 
-                  {/* Continuer les achats */}
                   <button
                     type="button"
                     onClick={closeCart}

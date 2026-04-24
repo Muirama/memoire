@@ -1,9 +1,16 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FaShoppingCart, FaEye, FaCheck, FaImage } from "react-icons/fa";
+import {
+  FaShoppingCart,
+  FaEye,
+  FaCheck,
+  FaImage,
+  FaLock,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { isUserLoggedIn, buildLoginRedirect } from "../utils/auth";
 
 export default function ProductCard({ product, index = 0 }) {
   const navigate = useNavigate();
@@ -18,6 +25,13 @@ export default function ProductCard({ product, index = 0 }) {
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
+
+    // ── Vérification connexion ────────────────────────
+    if (!isUserLoggedIn()) {
+      navigate(buildLoginRedirect("/shop"));
+      return;
+    }
+
     addToCart(product, 1);
   };
 
@@ -33,7 +47,6 @@ export default function ProductCard({ product, index = 0 }) {
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ delay: index * 0.04, duration: 0.3 }}
       whileHover={{ scale: 1.03, y: -5 }}
-      // w-full + h-full garantit que la card remplit toujours son slide Swiper
       className="w-full h-full bg-[#1A1A1A] rounded-xl overflow-hidden border border-[#E50914]/20
                  hover:border-[#E50914] hover:shadow-[0_0_25px_rgba(229,9,20,0.4)]
                  transition-all duration-300 flex flex-col"
@@ -104,12 +117,11 @@ export default function ProductCard({ product, index = 0 }) {
           {product.name}
         </h3>
 
-        {/* Description — hauteur fixe pour aligner le contenu dessous */}
         <p className="text-gray-400 text-xs md:text-sm mb-3 line-clamp-2 h-10 shrink-0">
           {product.description}
         </p>
 
-        {/* ── Indicateur de Stock ── */}
+        {/* ── Stock ── */}
         <div className="mb-4 shrink-0">
           {product.stock > 0 ? (
             <div className="space-y-1.5">
@@ -144,7 +156,7 @@ export default function ProductCard({ product, index = 0 }) {
           )}
         </div>
 
-        {/* Prix — poussé vers le bas grâce à flex-1 sur le conteneur parent */}
+        {/* Prix */}
         <p className="text-xl md:text-2xl font-extrabold text-[#E50914] mb-3 md:mb-4 mt-auto">
           {formatPrice(product.price)}
         </p>
@@ -183,11 +195,30 @@ export default function ProductCard({ product, index = 0 }) {
                          hover:shadow-[0_0_15px_rgba(229,9,20,0.6)] active:scale-95
                          disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <FaShoppingCart />
-              {product.stock === 0 ? "Rupture" : "Panier"}
+              {/* Icône cadenas si non connecté */}
+              {!isUserLoggedIn() ? (
+                <>
+                  <FaLock size={11} /> Connexion
+                </>
+              ) : product.stock === 0 ? (
+                <>
+                  <FaShoppingCart /> Rupture
+                </>
+              ) : (
+                <>
+                  <FaShoppingCart /> Panier
+                </>
+              )}
             </button>
           )}
         </div>
+
+        {/* Message connexion requis */}
+        {!isUserLoggedIn() && (
+          <p className="text-center text-gray-600 text-xs mt-2">
+            <span className="text-[#E50914]">Connectez-vous</span> pour acheter
+          </p>
+        )}
       </div>
     </motion.div>
   );

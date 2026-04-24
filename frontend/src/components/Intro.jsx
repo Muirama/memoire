@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
+import { useState } from "react";
 import {
   FaMapMarkerAlt,
   FaShoppingCart,
@@ -8,26 +9,32 @@ import {
   FaArrowRight,
 } from "react-icons/fa";
 import HeroCarousel from "./ui/HeroCarousel";
+import Service from "./ui/Service";
 
 const services = [
   {
     icon: <FaShoppingCart size={40} className="text-[#E50914]" />,
     title: "Vente de Matériel Gaming",
     desc: "Découvrez les meilleurs metériels et le meilleurs titres aux meilleurs prix, adaptés à tous les gamers.",
+    image: "/Magasin.JPEG",
   },
   {
     icon: <FaTrophy size={40} className="text-[#E50914]" />,
     title: "Tournois esports",
     desc: "Participez à des compétitions intenses avec des récompenses prestigieuses.",
+    image: "/Photo Contenu/IMG_5972.JPEG",
   },
   {
     icon: <FaUsers size={40} className="text-[#E50914]" />,
     title: "Communauté",
     desc: "Rejoignez une communauté passionnée et grandissante de joueurs à Madagascar.",
+    image: "/Photo Contenu/IMG_2894.JPEG",
   },
 ];
 
 export default function Intro() {
+  const [hovered, setHovered] = useState(null);
+
   return (
     <section
       id="intro"
@@ -143,23 +150,14 @@ export default function Intro() {
       {/* ── Services ── */}
       <div className="relative z-20 mt-12 md:mt-20 max-w-6xl mx-auto px-4 md:px-6 grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
         {services.map((s, i) => (
-          <motion.div
+          <Service
             key={i}
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: i * 0.2 }}
-            whileHover={{ scale: 1.05, y: -5 }}
-            className="bg-[#1A1A1A]/50 p-6 md:p-8 rounded-2xl text-center border border-red-800/40 hover:border-[#E50914]/80 hover:shadow-[0_0_35px_rgba(229,9,20,0.6)] backdrop-blur-md transition-all duration-500"
-            style={{ cursor: "pointer" }}
-          >
-            <div className="mb-4 md:mb-5 flex justify-center">{s.icon}</div>
-            <h3 className="text-xl md:text-2xl font-semibold mb-2 md:mb-3">
-              {s.title}
-            </h3>
-            <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-              {s.desc}
-            </p>
-          </motion.div>
+            index={i}
+            icon={s.icon}
+            title={s.title}
+            desc={s.desc}
+            image={s.image}
+          />
         ))}
       </div>
     </section>
