@@ -10,16 +10,30 @@ import {
   FaShieldAlt,
 } from "react-icons/fa";
 
+// Variantes pour l'apparition en cascade
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
+
 const supportPillars = [
   {
     icon: FaGem,
     title: "Soin premium",
-    desc: "Une approche haut de gamme pensee pour sublimer la beaute naturelle.",
+    desc: "Une approche haut de gamme pensée pour sublimer la beauté naturelle.",
   },
   {
     icon: FaShieldAlt,
     title: "Cadre rassurant",
-    desc: "Des soins innovants avec une promesse de securite et d'accompagnement.",
+    desc: "Des soins innovants avec une promesse de sécurité et d'accompagnement.",
   },
 ];
 
@@ -32,7 +46,7 @@ const contactCards = [
   {
     icon: FaRegClock,
     label: "Ouverture",
-    value: "Du lundi au dimanche, de 9h a 20h",
+    value: "Du lundi au dimanche, de 9h à 20h",
   },
   {
     icon: FaEnvelope,
@@ -45,153 +59,204 @@ export default function BronzeSponsorLoaline() {
   return (
     <section
       id="bronze-sponsor-loaline"
-      className="relative py-14 md:py-20 overflow-hidden"
+      className="relative py-16 md:py-24 overflow-hidden bg-[#050505]"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(182,160,112,0.14)_0%,transparent_68%)] pointer-events-none" />
+      {/* Lueurs d'arrière-plan couleur Bronze */}
+      <div className="absolute top-1/4 -right-20 w-96 h-96 bg-[#B6A070]/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-[#B6A070]/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="relative max-w-6xl mx-auto px-4 md:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.7 }}
-          className="relative overflow-hidden rounded-[30px] border border-[#B6A070]/22 bg-[linear-gradient(135deg,rgba(182,160,112,0.13),rgba(17,11,8,0.92)_38%,rgba(10,10,10,0.96))] px-6 py-7 md:px-10 md:py-10 backdrop-blur-md shadow-[0_0_30px_rgba(182,160,112,0.12)]"
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: false, amount: 0.3 }}
+          transition={{ duration: 1 }}
+          className="relative overflow-hidden rounded-[40px] border border-white/5 bg-gradient-to-br from-[#12100e] via-[#0a0a0a] to-black px-6 py-10 md:px-12 md:py-16 shadow-2xl"
         >
-          <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-[#B6A070] to-transparent opacity-70" />
-          <div className="absolute inset-y-10 right-0 w-px bg-gradient-to-b from-transparent via-[#B6A070]/60 to-transparent opacity-45 hidden md:block" />
+          {/* Ligne décorative Bronze en haut */}
+          <motion.div
+            initial={{ width: 0 }}
+            whileInView={{ width: "70%" }}
+            transition={{ duration: 1.5, delay: 0.5 }}
+            className="absolute inset-x-0 top-0 mx-auto h-[2px] bg-gradient-to-r from-transparent via-[#B6A070] to-transparent"
+          />
 
-          <div className="grid gap-8 md:grid-cols-[1.15fr_0.85fr] md:gap-10 items-center">
-            <div>
-              <div className="inline-flex items-center gap-3 rounded-full border border-[#B6A070]/30 bg-[#B6A070]/10 px-4 py-2 text-[#D9C28F]">
-                <FaMedal className="text-sm" />
-                <span className="text-[11px] md:text-xs font-bold tracking-[0.28em] uppercase">
+          <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
+            {/* GAUCHE : Contenu Textuel */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.div
+                variants={itemVariants}
+                className="inline-flex items-center gap-3 rounded-full border border-[#B6A070]/30 bg-[#B6A070]/5 px-4 py-2 text-[#D9C28F]"
+              >
+                <FaMedal className="animate-pulse text-sm" />
+                <span className="text-[11px] font-black uppercase tracking-[0.3em]">
                   Bronze Sponsor
                 </span>
-              </div>
+              </motion.div>
 
-              <h2 className="mt-5 text-3xl md:text-4xl font-extrabold text-white leading-tight">
-                Centre Loaline, un soutien bronze a l'image d'une marque
-                d'exception
-              </h2>
+              <motion.h2
+                variants={itemVariants}
+                className="mt-6 text-4xl font-black leading-[1.1] text-white md:text-5xl"
+              >
+                Centre Loaline, <br />
+                <span className="text-[#B6A070]">
+                  l'excellence esthétique
+                </span>{" "}
+                à Madagascar
+              </motion.h2>
 
-              <p className="mt-4 max-w-2xl text-sm md:text-base text-gray-300 leading-relaxed">
-                Premier centre de medecine esthetique a Madagascar, Loaline
-                accompagne une vision premium du bien-etre avec des soins
-                innovants, surs et personnalises dans un cadre elegant a
-                Ambatobe.
-              </p>
+              <motion.p
+                variants={itemVariants}
+                className="mt-6 max-w-2xl text-base leading-relaxed text-gray-400"
+              >
+                Premier centre de médecine esthétique à Madagascar, Loaline
+                accompagne une vision
+                <span className="text-white font-medium">
+                  {" "}
+                  premium du bien-être
+                </span>{" "}
+                avec des soins innovants et personnalisés dans un cadre élégant.
+              </motion.p>
 
-              <div className="mt-6 flex flex-wrap gap-3">
-                <span className="rounded-full border border-[#B6A070]/25 bg-white/[0.03] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#D9C28F]">
-                  Medecine esthetique
-                </span>
-                <span className="rounded-full border border-[#B6A070]/25 bg-white/[0.03] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#D9C28F]">
-                  Ambatobe
-                </span>
-                <span className="rounded-full border border-[#B6A070]/25 bg-white/[0.03] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#D9C28F]">
-                  7j / 7
-                </span>
-              </div>
+              {/* Tags de spécialités */}
+              <motion.div
+                variants={itemVariants}
+                className="mt-8 flex flex-wrap gap-3"
+              >
+                {["Médecine esthétique", "Bien-être", "Expertise Ambatobe"].map(
+                  (tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-lg border border-white/10 bg-white/5 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#B6A070] transition-colors hover:border-[#B6A070]/50"
+                    >
+                      {tag}
+                    </span>
+                  ),
+                )}
+              </motion.div>
 
-              <div className="mt-7 grid gap-4 sm:grid-cols-2">
+              {/* Grille des Piliers */}
+              <div className="mt-10 grid gap-4 sm:grid-cols-2">
                 {supportPillars.map((item) => {
                   const Icon = item.icon;
-
                   return (
-                    <div
+                    <motion.div
                       key={item.title}
-                      className="rounded-2xl border border-white/8 bg-black/25 p-4"
+                      variants={itemVariants}
+                      whileHover={{
+                        y: -5,
+                        borderColor: "rgba(182, 160, 112, 0.4)",
+                      }}
+                      className="group rounded-2xl border border-white/5 bg-white/[0.02] p-5 transition-all duration-300"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#B6A070]/12 text-[#D9C28F]">
-                          <Icon className="text-sm" />
-                        </div>
-                        <p className="text-white font-semibold">{item.title}</p>
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#B6A070]/10 text-[#B6A070] transition-colors group-hover:bg-[#B6A070] group-hover:text-[#16110C]">
+                        <Icon className="text-lg" />
                       </div>
-                      <p className="mt-3 text-sm leading-relaxed text-gray-400">
+                      <h3 className="mt-4 text-sm font-bold text-white uppercase tracking-wider">
+                        {item.title}
+                      </h3>
+                      <p className="mt-2 text-xs leading-relaxed text-gray-500 group-hover:text-gray-300 transition-colors">
                         {item.desc}
                       </p>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
 
-              <div className="mt-7 flex flex-wrap gap-3">
+              {/* Actions */}
+              <motion.div
+                variants={itemVariants}
+                className="mt-10 flex flex-wrap gap-4"
+              >
                 <motion.a
                   href="https://loaline.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.99 }}
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#B6A070] px-5 py-3 text-sm font-bold text-[#16110C] shadow-[0_0_24px_rgba(182,160,112,0.28)] transition-all hover:bg-[#c8b382]"
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 0 25px rgba(182,160,112,0.3)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center gap-3 rounded-xl bg-[#B6A070] px-8 py-4 text-sm font-black text-[#16110C] transition-all"
                 >
-                  <FaGlobe />
-                  Visiter loaline.com
+                  <FaGlobe className="text-lg" />
+                  VISITER LOALINE.COM
                 </motion.a>
 
                 <a
                   href="mailto:contact@centre-loaline.com"
-                  className="inline-flex items-center gap-2 rounded-xl border border-[#B6A070]/35 bg-transparent px-5 py-3 text-sm font-semibold text-white transition-all hover:border-[#B6A070]/65 hover:bg-[#B6A070]/10"
+                  className="inline-flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-sm font-bold text-white transition-all hover:bg-white/10 hover:border-[#B6A070]/50"
                 >
                   <FaEnvelope />
-                  Contacter le sponsor
+                  CONTACTER LE SPONSOR
                 </a>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
+            {/* DROITE : Image et Contact Cards */}
             <div className="relative">
-              <motion.a
-                href="https://loaline.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.02, y: -4 }}
-                whileTap={{ scale: 0.99 }}
-                className="group block"
-                aria-label="Visiter le site de Centre Loaline"
+              {/* Animation de flottement Image */}
+              <motion.div
+                animate={{ y: [0, -15, 0] }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="relative z-10"
               >
-                <div className="absolute inset-0 rounded-[30px] bg-[#B6A070]/18 blur-3xl opacity-80 transition-opacity duration-300 group-hover:opacity-100" />
-                <div className="relative rounded-[28px] border border-[#B6A070]/25 bg-[#090909]/88 p-6 md:p-7 shadow-[0_0_35px_rgba(182,160,112,0.16)]">
-                  <div className="rounded-[24px] border border-[#B6A070]/12 bg-[linear-gradient(180deg,rgba(182,160,112,0.08),rgba(255,255,255,0.01))] px-5 py-8">
+                <div className="absolute inset-0 bg-[#B6A070]/20 blur-[60px] opacity-40" />
+                <div className="relative rounded-[35px] border border-white/10 bg-black/40 p-2 backdrop-blur-sm">
+                  <div className="overflow-hidden rounded-[28px] bg-gradient-to-b from-[#B6A070]/10 to-transparent p-8 text-center">
                     <img
                       src="/loaline-bronze.png"
                       alt="Centre Loaline"
-                      className="mx-auto w-full max-w-[290px] object-contain transition-transform duration-300 group-hover:scale-[1.04]"
+                      className="mx-auto w-full max-w-[260px] object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
                     />
                   </div>
-
-                  <p className="mt-5 text-center text-sm leading-relaxed text-gray-300">
-                    Une adresse reconnue a Madagascar pour une experience
-                    esthetique sur mesure, elegante et attentive.
-                  </p>
                 </div>
-              </motion.a>
+              </motion.div>
 
-              <div className="mt-5 grid gap-3">
+              {/* Contact Cards décalées */}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="mt-8 space-y-3"
+              >
                 {contactCards.map((item) => {
                   const Icon = item.icon;
-
                   return (
-                    <div
+                    <motion.div
                       key={item.label}
-                      className="rounded-2xl border border-white/8 bg-black/28 px-4 py-4"
+                      variants={itemVariants}
+                      whileHover={{
+                        x: 10,
+                        backgroundColor: "rgba(182, 160, 112, 0.05)",
+                      }}
+                      className="flex items-start gap-4 rounded-2xl border border-white/5 bg-white/[0.02] p-4 transition-all"
                     >
-                      <div className="flex items-start gap-3">
-                        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#B6A070]/12 text-[#D9C28F]">
-                          <Icon className="text-sm" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#D9C28F]">
-                            {item.label}
-                          </p>
-                          <p className="mt-1 text-sm leading-relaxed text-gray-300">
-                            {item.value}
-                          </p>
-                        </div>
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#B6A070]/10 text-[#D9C28F]">
+                        <Icon size={14} />
                       </div>
-                    </div>
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#B6A070]">
+                          {item.label}
+                        </p>
+                        <p className="mt-1 text-sm leading-relaxed text-gray-300">
+                          {item.value}
+                        </p>
+                      </div>
+                    </motion.div>
                   );
                 })}
-              </div>
+              </motion.div>
             </div>
           </div>
         </motion.div>
