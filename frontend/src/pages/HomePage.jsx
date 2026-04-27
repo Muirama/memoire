@@ -5,16 +5,20 @@ import About from "../components/About";
 import PlayersCountriesCarousel from "../components/PlayersCountriesCarousel";
 import PoweredByOrange from "../components/PoweredByOrange";
 import BronzeSponsorLoaline from "../components/BronzeSponsorLoaline";
+import PreviewNews from "../components/PreviewNews";
+import SponsorsPartnersBanner from "../components/SponsorsPartnersBanner";
 
 export default function HomePage() {
   return (
     <>
       <Intro />
       <PoweredByOrange />
-      <BronzeSponsorLoaline />
+      <PreviewNews />
       <About />
+      <BronzeSponsorLoaline />
       <PlayersCountriesCarousel />
       <PreviewProducts />
+      <SponsorsPartnersBanner />
       <Carousel />
     </>
   );

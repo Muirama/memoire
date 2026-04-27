@@ -8,7 +8,7 @@ html {
 body {
   overflow-x: hidden;
   background: #000000;
-    font-family:
+  font-family:
     "Geologica",
     system-ui,
     -apple-system,
@@ -35,7 +35,7 @@ body {
 .hamburger span {
   width: 25px;
   height: 3px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-radius: 3px;
   transition: all 0.3s ease;
   display: block;
@@ -59,3 +59,70 @@ body {
   }
 }
 
+/* ── Sponsors & Partners Banner (white) ── */
+.spb-marquee:hover .spb-track {
+  animation-play-state: paused;
+}
+
+.spb-track {
+  display: flex;
+  width: 200%;
+  animation: spb-marquee 26s linear infinite;
+}
+
+.spb-segment {
+  flex: 0 0 50%;
+  width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 44px;
+  padding-right: 44px;
+}
+
+@keyframes spb-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.spb-logo {
+  height: 110px;
+  width: auto;
+  max-width: 360px;
+  object-fit: contain;
+}
+
+.spb-logo--loaline {
+  height: 138px;
+  max-width: 460px;
+}
+
+.spb-logo--syki {
+  height: 86px;
+  max-width: 260px;
+}
+
+@media (max-width: 640px) {
+  .spb-logo {
+    height: 92px;
+    max-width: 320px;
+  }
+
+  .spb-logo--loaline {
+    height: 116px;
+    max-width: 420px;
+  }
+
+  .spb-logo--syki {
+    height: 74px;
+    max-width: 240px;
+  }
+}
+
+/* Invert white logos to black on white bg */
+.spb-logo--invert {
+  filter: invert(1) brightness(0.18) contrast(1.1);
+}
