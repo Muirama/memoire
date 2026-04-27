@@ -61,7 +61,8 @@ const items = [
   {
     id: 11,
     title: "MAESTRR",
-    tag: "MOBILE LEGENDS : BANG BANG / D.A",
+    tag: "MOBILE LEGENDS : BANG BANG",
+    tag2: "D.A",
     image: "/players/Maestrr.png",
   },
   { id: 12, title: "MANOU", tag: "EA FC", image: "/players/Manou.png" },
@@ -69,7 +70,8 @@ const items = [
   {
     id: 14,
     title: "NGANJIN",
-    tag: "MOBILE LEGENDS : BANG BANG / C.E.O",
+    tag: "MOBILE LEGENDS : BANG BANG",
+    tag2: "C.E.O",
     image: "/players/Nganjin.png",
   },
   {
@@ -81,7 +83,8 @@ const items = [
   {
     id: 16,
     title: "SATCHIO",
-    tag: "MOBILE LEGENDS : BANG BANG / ADMIN",
+    tag: "MOBILE LEGENDS : BANG BANG",
+    tag2: "ADMIN",
     image: "/players/Satchio.png",
   },
   {
@@ -178,13 +181,25 @@ export default function HeroCarousel() {
                   transition={{ duration: 0.5, delay: 0.15 }}
                 >
                   {/* Tag */}
-                  <span
-                    className="inline-block text-[10px] font-black tracking-[0.2em]
-                                   text-[#E50914] bg-[#E50914]/10 border border-[#E50914]/30
-                                   px-3 py-1 rounded-full mb-2 uppercase"
-                  >
-                    {item.tag}
-                  </span>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span
+                      className="inline-block text-[10px] font-black tracking-[0.2em]
+               text-[#E50914] bg-[#E50914]/10 border border-[#E50914]/30
+               px-3 py-1 rounded-full uppercase"
+                    >
+                      {item.tag}
+                    </span>
+
+                    {item.tag2 && (
+                      <span
+                        className="inline-block text-[10px] font-black tracking-[0.2em]
+                 text-[#E50914] bg-[#E50914]/10 border border-[#E50914]/30
+                 px-3 py-1 rounded-full uppercase"
+                      >
+                        {item.tag2}
+                      </span>
+                    )}
+                  </div>
                   {/* Titre */}
                   <h3
                     className="text-white font-extrabold text-2xl md:text-3xl
