@@ -12,8 +12,8 @@ export default function HomePage() {
   return (
     <>
       <Intro />
-      <PoweredByOrange />
       <PreviewNews />
+      <PoweredByOrange />
       <About />
       <BronzeSponsorLoaline />
       <PlayersCountriesMap />
