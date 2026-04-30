@@ -111,6 +111,20 @@ export default function AdminProductsPage() {
   const lowStock = products.filter((p) => p.stock <= 5).length;
   const outOfStock = products.filter((p) => p.stock === 0).length;
 
+  useEffect(() => {
+    const isLocked = showForm || deleteId;
+
+    if (isLocked) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showForm, deleteId]);
+
   return (
     <AdminLayout>
       {/* ── Header ── */}

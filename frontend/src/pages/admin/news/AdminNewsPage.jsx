@@ -10,7 +10,6 @@ import {
   FaEye,
   FaEyeSlash,
   FaSpinner,
-  FaCheck,
 } from "react-icons/fa";
 import AdminLayout from "../AdminLayout";
 import api from "../../../api/api";
@@ -108,6 +107,18 @@ export default function AdminNewsPage() {
     "Produit",
     "Annonce",
   ];
+
+  useEffect(() => {
+    if (showForm || deleteId) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showForm, deleteId]);
 
   return (
     <AdminLayout>
