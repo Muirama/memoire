@@ -46,12 +46,12 @@ export default function AdminLayout({ children }) {
           <img
             src={logo_GES_blanc}
             alt="G"
-            className="w-9 h-9 bg-[#E50914] rounded-lg flex items-center
+            className="w-9 h-9 rounded-lg flex items-center
                           justify-center font-extrabold text-white text-lg shadow-lg"
           />
           <div>
             <p className="text-white font-extrabold text-base leading-none">
-              Gascom
+              Gascom Esport
             </p>
             <p className="text-gray-500 text-xs mt-0.5">Administration</p>
           </div>

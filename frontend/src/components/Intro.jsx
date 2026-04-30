@@ -77,7 +77,7 @@ export default function Intro() {
               className="text-[#E50914]
                              drop-shadow-[0_0_25px_rgba(229,9,20,0.8)]"
             >
-              Gascom Esports
+              Gascom eSports
             </span>
           </h1>
 

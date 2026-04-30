@@ -8,110 +8,110 @@ import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import { motion } from "framer-motion";
 
 const items = [
-  {
-    id: 1,
-    title: "BERU99",
-    tag: " PUBG MOBILE",
-    image: "/players/Beru99.png",
-  },
+  { id: 1, title: "KIMI", tags: ["Tekken 8"], image: "/players/Kimi.png" },
   {
     id: 2,
-    title: "BONYKODAHY",
-    tag: "EFOOTBALL MOBILE",
-    image: "/players/BonyKodahy.png",
+    title: "VIDELOU",
+    tags: ["Manager PUBG"],
+    image: "/players/Videlouu.png",
   },
   {
     id: 3,
     title: "BOUTA",
-    tag: "MOBILE LEGENDS : BANG BANG",
+    tags: ["MOBILE LEGENDS : BANG BANG", "Team Manager"],
     image: "/players/Bouta.png",
   },
-  { id: 4, title: "FAMENOG", tag: "NBA 2K", image: "/players/FamenoG.png" },
+  { id: 4, title: "FAMENOG", tags: ["NBA 2K"], image: "/players/FamenoG.png" },
   {
     id: 5,
     title: "GENESS",
-    tag: "PUBG MOBILE",
+    tags: ["PUBG MOBILE"],
     image: "/players/Geness.png",
   },
   {
     id: 6,
     title: "JOG",
-    tag: "MOBILE LEGENDS : BANG BANG",
+    tags: ["MOBILE LEGENDS : BANG BANG"],
     image: "/players/Jog.png",
   },
   {
     id: 7,
     title: "JOHANN52",
-    tag: "EFOOTBALL",
+    tags: ["EFOOTBALL"],
     image: "/players/Johann52.png",
   },
-  { id: 8, title: "KIMI", tag: "Tekken 8", image: "/players/Kimi.png" },
+  {
+    id: 8,
+    title: "BERU99",
+    tags: ["PUBG MOBILE"],
+    image: "/players/Beru99.png",
+  },
   {
     id: 9,
     title: "KNIGHT",
-    tag: "PUBG MOBILE",
+    tags: ["PUBG MOBILE"],
     image: "/players/Knight.png",
   },
   {
     id: 10,
     title: "LOGAN",
-    tag: "PUBG MOBILE",
-    image: "/players/Logan.png",
+    tags: ["PUBG MOBILE"],
+    image: "/players/loggan33.png",
   },
   {
     id: 11,
     title: "MAESTRR",
-    tag: "MOBILE LEGENDS : BANG BANG / D.A",
+    tags: ["MOBILE LEGENDS : BANG BANG", "D.A"],
     image: "/players/Maestrr.png",
   },
-  { id: 12, title: "MANOU", tag: "EA FC", image: "/players/Manou.png" },
-  { id: 13, title: "N4SH", tag: "PUBG MOBILE", image: "/players/N4sh.png" },
+  { id: 12, title: "MANOU", tags: ["EA FC"], image: "/players/Manou.png" },
+  { id: 13, title: "N4SH", tags: ["PUBG MOBILE"], image: "/players/N4sh.png" },
   {
     id: 14,
     title: "NGANJIN",
-    tag: "MOBILE LEGENDS : BANG BANG / C.E.O",
+    tags: ["MOBILE LEGENDS : BANG BANG", "C.E.O"],
     image: "/players/Nganjin.png",
   },
   {
     id: 15,
     title: "RANTOANGELO",
-    tag: "EFOOTBALL",
-    image: "/players/RantoAngelo.png",
+    tags: ["EFOOTBALL"],
+    image: "/players/Ranto Angelo.png",
   },
   {
     id: 16,
     title: "SATCHIO",
-    tag: "MOBILE LEGENDS : BANG BANG / ADMIN",
+    tags: ["MOBILE LEGENDS : BANG BANG", "ADMIN"],
     image: "/players/Satchio.png",
   },
   {
     id: 17,
     title: "SEIJURO",
-    tag: "EFOOTBALL MOBILE",
+    tags: ["EFOOTBALL MOBILE"],
     image: "/players/Seijuro.png",
   },
   {
     id: 18,
     title: "STEELISH360",
-    tag: "PUBG MOBILE",
-    image: "/players/Steelish360.png",
+    tags: ["Tekken 8", "Street Fighter VI", "2XKO"],
+    image: "/players/Steelish.png",
   },
   {
     id: 19,
     title: "VENDRAXX",
-    tag: "PUBG MOBILE",
+    tags: ["PUBG MOBILE"],
     image: "/players/Vendraxx.png",
   },
   {
     id: 20,
-    title: "VIDELOU",
-    tag: "Manager PUBG",
-    image: "/players/Videlou.png",
+    title: "BONYKODAHY",
+    tags: ["EFOOTBALL MOBILE"],
+    image: "/players/BonyKodahy.png",
   },
   {
     id: 21,
     title: "YONDAIME",
-    tag: "Tekken 8",
+    tags: ["Tekken 8"],
     image: "/players/Yondaime.png",
   },
 ];
@@ -177,14 +177,19 @@ export default function HeroCarousel() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.15 }}
                 >
-                  {/* Tag */}
-                  <span
-                    className="inline-block text-[10px] font-black tracking-[0.2em]
-                                   text-[#E50914] bg-[#E50914]/10 border border-[#E50914]/30
-                                   px-3 py-1 rounded-full mb-2 uppercase"
-                  >
-                    {item.tag}
-                  </span>
+                  {/* Tags */}
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
+                    {item.tags.map((tag, tagIdx) => (
+                      <span
+                        key={tagIdx}
+                        className="inline-block text-[10px] font-black tracking-[0.2em]
+                 text-[#E50914] bg-[#E50914]/10 border border-[#E50914]/30
+                 px-3 py-1 rounded-full uppercase"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                   {/* Titre */}
                   <h3
                     className="text-white font-extrabold text-2xl md:text-3xl
