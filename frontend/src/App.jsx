@@ -112,6 +112,23 @@ function Layout({ children }) {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
 
+  const getPageTitle = (pathname) => {
+    if (pathname === "/") return "Gascom";
+
+    if (pathname.startsWith("/shop")) return "Gascom eShop";
+    if (pathname.startsWith("/team")) return "Gascom eSport";
+    if (pathname.startsWith("/news")) return "Gascom News";
+    if (pathname.startsWith("/events")) return "Gascom Events";
+
+    if (pathname.startsWith("/admin")) return "Gascom Admin";
+
+    return "Gascom";
+  };
+
+  useEffect(() => {
+    document.title = getPageTitle(location.pathname);
+  }, [location.pathname]);
+
   return (
     <>
       {!isAdmin && <NavBar />}
