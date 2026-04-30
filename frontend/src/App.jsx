@@ -119,6 +119,8 @@ function Layout({ children }) {
     if (pathname.startsWith("/team")) return "Gascom eSport";
     if (pathname.startsWith("/news")) return "Gascom News";
     if (pathname.startsWith("/events")) return "Gascom Events";
+    if (pathname.startsWith("/login")) return "Gascom Login";
+    if (pathname.startsWith("/sign")) return "Gascom Sign Up";
 
     if (pathname.startsWith("/admin")) return "Gascom Admin";
 
