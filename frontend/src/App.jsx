@@ -25,6 +25,7 @@ import EventPage from "./pages/events/EventPage";
 import EventDetailPage from "./pages/events/EventDetailPage";
 import LoginPage from "./pages/LoginPage";
 import SignPage from "./pages/SignPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 import AdminHome from "./pages/admin/AdminHome";
 import AdminOrders from "./pages/admin/orders/AdminOrders";
@@ -92,7 +93,9 @@ function AdminRoute() {
       <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
         <div className="text-center">
           <div className="w-10 h-10 mx-auto mb-4 border-4 border-white/20 border-t-[#E50914] rounded-full animate-spin" />
-          <p className="text-gray-400 text-sm">Verification de la session admin...</p>
+          <p className="text-gray-400 text-sm">
+            Verification de la session admin...
+          </p>
         </div>
       </div>
     );
@@ -123,6 +126,7 @@ function App() {
   return (
     <CartProvider>
       <Router>
+        <ScrollToTop />
         <Layout>
           <Routes>
             <Route path="/" element={<HomePage />} />
