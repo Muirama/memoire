@@ -30,6 +30,23 @@ export default function NavBar() {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
+  const getPageTitle = (pathname) => {
+    switch (pathname) {
+      case "/":
+        return "Gascom";
+      case "/shop":
+        return "Gascom eShop";
+      case "/team":
+        return "Gascom eSport";
+      case "/news":
+        return "Gascom News";
+      case "/events":
+        return "Gascom Events";
+      default:
+        return "Gascom";
+    }
+  };
+
   // Ferme le menu mobile lors d'un resize vers desktop
   useEffect(() => {
     const handleResize = () => {
@@ -106,12 +123,8 @@ export default function NavBar() {
           height="38"
           className="w-9 h-9 sm:w-11 sm:h-11"
         />
-        {/* ← visible dès 360px environ grâce à min-[360px] */}
-        <span
-          className="text-base min-[360px]:text-lg sm:text-xl md:text-2xl font-extrabold
-                     tracking-wide text-white drop-shadow-lg hidden min-[360px]:block"
-        >
-          Gascom Esports
+        <span className="text-base min-[360px]:text-lg sm:text-xl md:text-2xl font-extrabold tracking-wide text-white drop-shadow-lg hidden min-[360px]:block">
+          {getPageTitle(location.pathname)}
         </span>
       </Link>
 
