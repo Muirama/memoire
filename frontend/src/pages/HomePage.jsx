@@ -2,7 +2,7 @@ import Intro from "../components/Intro";
 import Carousel from "../components/Carousel";
 import PreviewProducts from "../components/PreviewProducts";
 import About from "../components/About";
-import PlayersCountriesCarousel from "../components/PlayersCountriesCarousel";
+import PlayersCountriesMap from "../components/PlayersCountriesMap";
 import PoweredByOrange from "../components/PoweredByOrange";
 import BronzeSponsorLoaline from "../components/BronzeSponsorLoaline";
 import PreviewNews from "../components/PreviewNews";
@@ -16,7 +16,7 @@ export default function HomePage() {
       <PreviewNews />
       <About />
       <BronzeSponsorLoaline />
-      <PlayersCountriesCarousel />
+      <PlayersCountriesMap />
       <PreviewProducts />
       <SponsorsPartnersBanner />
       <Carousel />

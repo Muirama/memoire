@@ -8,17 +8,12 @@ import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import { motion } from "framer-motion";
 
 const items = [
-  {
-    id: 1,
-    title: "BERU99",
-    tags: ["PUBG MOBILE"],
-    image: "/players/Beru99.png",
-  },
+  { id: 1, title: "KIMI", tags: ["Tekken 8"], image: "/players/Kimi.png" },
   {
     id: 2,
-    title: "BONYKODAHY",
-    tags: ["EFOOTBALL MOBILE"],
-    image: "/players/BonyKodahy.png",
+    title: "VIDELOU",
+    tags: ["Manager PUBG"],
+    image: "/players/Videlouu.png",
   },
   {
     id: 3,
@@ -45,7 +40,12 @@ const items = [
     tags: ["EFOOTBALL"],
     image: "/players/Johann52.png",
   },
-  { id: 8, title: "KIMI", tags: ["Tekken 8"], image: "/players/Kimi.png" },
+  {
+    id: 8,
+    title: "BERU99",
+    tags: ["PUBG MOBILE"],
+    image: "/players/Beru99.png",
+  },
   {
     id: 9,
     title: "KNIGHT",
@@ -104,9 +104,9 @@ const items = [
   },
   {
     id: 20,
-    title: "VIDELOU",
-    tags: ["Manager PUBG"],
-    image: "/players/Videlouu.png",
+    title: "BONYKODAHY",
+    tags: ["EFOOTBALL MOBILE"],
+    image: "/players/BonyKodahy.png",
   },
   {
     id: 21,
