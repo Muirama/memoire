@@ -1,19 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FaCalendarAlt,
-  FaSearch,
-  FaUsers,
-  FaLock,
-  FaLockOpen,
-  FaChevronDown,
-  FaChevronUp,
-  FaSpinner,
-  FaPlus,
-  FaEdit,
-  FaTrash,
-} from "react-icons/fa";
+import { FaCalendarAlt, FaSpinner, FaPlus, FaTrash } from "react-icons/fa";
 import AdminLayout from "../AdminLayout";
 import api from "../../../api/api";
 import EventCard from "./EventCard";
@@ -186,6 +174,21 @@ export default function AdminEvents() {
           : !e.registrationOpen;
     return matchSearch && matchFilter;
   });
+
+  useEffect(() => {
+    const isLocked =
+      showForm || deleteEventId || viewReg || editReg || deleteRegId;
+
+    if (isLocked) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showForm, deleteEventId, viewReg, editReg, deleteRegId]);
 
   return (
     <AdminLayout>

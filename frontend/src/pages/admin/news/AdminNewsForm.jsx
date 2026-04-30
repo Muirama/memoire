@@ -11,8 +11,6 @@ import {
   FaFileAlt,
   FaCheck,
   FaSpinner,
-  FaEye,
-  FaEyeSlash,
 } from "react-icons/fa";
 import api from "../../../api/api";
 

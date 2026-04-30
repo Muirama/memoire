@@ -44,7 +44,7 @@ export default function AdminTeamsPage() {
 
   // Suppression
   const [deleteTeamId, setDeleteTeamId] = useState(null);
-  const [deletePlayer, setDeletePlayer] = useState(null); // { id, teamId }
+  const [deletePlayer, setDeletePlayer] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
   // ── Fetch ──────────────────────────────────────────────
@@ -130,6 +130,22 @@ export default function AdminTeamsPage() {
 
   const totalPlayers = teams.reduce((a, t) => a + (t.players?.length || 0), 0);
 
+  useEffect(() => {
+    const isLocked =
+      showTeamForm || showPlayerForm || deleteTeamId || deletePlayer;
+
+    if (isLocked) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showTeamForm, showPlayerForm, deleteTeamId, deletePlayer]);
+
+  
   return (
     <AdminLayout>
       {/* Header */}
