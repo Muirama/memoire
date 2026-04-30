@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import {
   FaMapMarkerAlt,
   FaShoppingCart,
@@ -33,7 +34,17 @@ const services = [
 ];
 
 export default function Intro() {
-  const [hovered, setHovered] = useState(null);
+  // const [hovered, setHovered] = useState(null);
+  const titles = ["Tongasoa eto @", "Bienvenue chez", "Welcome to"];
+  const [currentTitle, setCurrentTitle] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTitle((prev) => (prev + 1) % titles.length);
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section
@@ -66,17 +77,20 @@ export default function Intro() {
             </span>
           </motion.div>
 
-          {/* Titre — blanc sur fond sombre, gris foncé sur fond clair */}
-          <h1
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl
-                         font-extrabold leading-tight
-                         text-white [text-shadow:0_2px_20px_rgba(0,0,0,0.5)]"
-          >
-            Bienvenue chez{" "}
-            <span
-              className="text-[#E50914]
-                             drop-shadow-[0_0_25px_rgba(229,9,20,0.8)]"
-            >
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-white [text-shadow:0_2px_20px_rgba(0,0,0,0.5)]">
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={currentTitle}
+                initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -20, filter: "blur(8px)" }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="inline-block"
+              >
+                {titles[currentTitle]}
+              </motion.span>
+            </AnimatePresence>{" "}
+            <span className="text-[#E50914] drop-shadow-[0_0_25px_rgba(229,9,20,0.8)]">
               Gascom eSports
             </span>
           </h1>
