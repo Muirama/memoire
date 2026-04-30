@@ -31,20 +31,14 @@ export default function NavBar() {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const getPageTitle = (pathname) => {
-    switch (pathname) {
-      case "/":
-        return "Gascom";
-      case "/shop":
-        return "Gascom eShop";
-      case "/team":
-        return "Gascom eSport";
-      case "/news":
-        return "Gascom News";
-      case "/events":
-        return "Gascom Events";
-      default:
-        return "Gascom";
-    }
+    if (pathname === "/") return "Gascom";
+
+    if (pathname.startsWith("/shop")) return "Gascom eShop";
+    if (pathname.startsWith("/team")) return "Gascom eSport";
+    if (pathname.startsWith("/news")) return "Gascom News";
+    if (pathname.startsWith("/events")) return "Gascom Events";
+
+    return "Gascom";
   };
 
   // Ferme le menu mobile lors d'un resize vers desktop
