@@ -32,6 +32,7 @@ import AdminOrders from "./pages/admin/orders/AdminOrders";
 import AdminProductsPage from "./pages/admin/products/AdminProductsPage";
 import AdminEvents from "./pages/admin/events/AdminEvents";
 import AdminNewsPage from "./pages/admin/news/AdminNewsPage";
+import AdminUsersPage from "./pages/admin/users/AdminUsersPage";
 
 function AdminRoute() {
   const token = localStorage.getItem("token");
@@ -166,6 +167,7 @@ function App() {
               <Route path="/admin/products" element={<AdminProductsPage />} />
               <Route path="/admin/events" element={<AdminEvents />} />
               <Route path="/admin/news" element={<AdminNewsPage />} />
+              <Route path="/admin/users" element={<AdminUsersPage />} />
             </Route>
           </Routes>
         </Layout>

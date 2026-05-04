@@ -17,16 +17,12 @@ import AdminLayout from "../AdminLayout";
 import api from "../../../api/api";
 
 // ── Constantes ────────────────────────────────────────────
-const STATUS_OPTIONS = [
-  "En attente",
-  "Déjà récupérée",
-  "Annulée",
-];
+const STATUS_OPTIONS = ["En attente", "Déjà récupérée", "Annulée"];
 
 const STATUS_STYLES = {
   "En attente": "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
   "Déjà récupérée": "bg-green-500/20 text-green-400 border-green-500/30",
-  "Annulée": "bg-red-500/20 text-red-400 border-red-500/30",
+  Annulée: "bg-red-500/20 text-red-400 border-red-500/30",
 };
 
 const formatPrice = (price) =>

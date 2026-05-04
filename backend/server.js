@@ -14,6 +14,7 @@ const orderRoutes = require("./routes/order.routes");
 const newsRoutes = require("./routes/news.routes");
 const eventRoutes = require("./routes/event.routes");
 const registrationRoutes = require("./routes/registration.routes");
+const userRoutes = require("./routes/user.routes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -30,6 +31,7 @@ app.use("/api/shop", shopRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/registrations", registrationRoutes);
+app.use("/api/users", userRoutes);
 
 // ── Sync DB + démarrage ───────────────────────────────────
 sequelize

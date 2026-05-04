@@ -12,6 +12,7 @@ import {
   FaTimes,
   FaSignOutAlt,
   FaChevronRight,
+  FaUsers,
 } from "react-icons/fa";
 import logo_GES_blanc from "/LOGO/Logo_GES_blanc.svg";
 
@@ -21,6 +22,7 @@ const navItems = [
   { label: "Produits", icon: <FaStore />, to: "/admin/products" },
   { label: "Événements", icon: <FaCalendarAlt />, to: "/admin/events" },
   { label: "News", icon: <FaNewspaper />, to: "/admin/news" },
+  { label: "Utilisateurs", icon: <FaUsers />, to: "/admin/users" },
 ];
 
 export default function AdminLayout({ children }) {
