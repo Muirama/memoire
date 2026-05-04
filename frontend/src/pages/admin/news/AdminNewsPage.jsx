@@ -15,6 +15,15 @@ import AdminLayout from "../AdminLayout";
 import api from "../../../api/api";
 import AdminNewsForm from "./AdminNewsForm";
 
+  const CATEGORIES = [
+    "Toutes",
+    "Actualité",
+    "Tournoi",
+    "Communauté",
+    "Produit",
+    "Annonce",
+  ];
+
 const CATEGORY_COLORS = {
   Actualité: "bg-blue-500/20 text-blue-400 border-blue-500/30",
   Tournoi: "bg-[#E50914]/20 text-[#E50914] border-[#E50914]/30",
@@ -98,15 +107,6 @@ export default function AdminNewsPage() {
     const matchCat = filterCat === "Toutes" || n.category === filterCat;
     return matchSearch && matchCat;
   });
-
-  const CATEGORIES = [
-    "Toutes",
-    "Actualité",
-    "Tournoi",
-    "Communauté",
-    "Produit",
-    "Annonce",
-  ];
 
   useEffect(() => {
     if (showForm || deleteId) {

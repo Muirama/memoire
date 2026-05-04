@@ -52,9 +52,7 @@ const Order = sequelize.define(
     status: {
       type: DataTypes.ENUM(
         "En attente",
-        "Confirmée",
-        "En cours de livraison",
-        "Livrée",
+        "Déjà récupérée",
         "Annulée",
       ),
       defaultValue: "En attente",

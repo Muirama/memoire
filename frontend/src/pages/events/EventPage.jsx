@@ -22,10 +22,8 @@ import { buildLoginRedirect, isUserLoggedIn } from "../../utils/auth";
 
 const CATEGORIES = [
   "Tous",
-  "Tournoi",
-  "Championnat",
-  "Qualificatif",
-  "Exhibition",
+  "Solo",
+  "Squad",
 ];
 const SORT_OPTIONS = [
   { value: "date-asc", label: "Date (prochains)" },

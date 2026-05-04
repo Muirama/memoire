@@ -34,12 +34,10 @@ const Event = sequelize.define(
     },
     category: {
       type: DataTypes.ENUM(
-        "Tournoi",
-        "Championnat",
-        "Qualificatif",
-        "Exhibition",
+        "Solo",
+        "Squad",
       ),
-      defaultValue: "Tournoi",
+      defaultValue: "Solo",
     },
 
     // Date & Lieu

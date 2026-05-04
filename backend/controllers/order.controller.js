@@ -165,9 +165,7 @@ const updateOrderStatus = async (req, res) => {
 
     const validStatuses = [
       "En attente",
-      "Confirmée",
-      "En cours de livraison",
-      "Livrée",
+      "Déjà récupérée",
       "Annulée",
     ];
 

@@ -17,16 +17,23 @@ import {
 } from "react-icons/fa";
 import api from "../../../api/api";
 
-const CATEGORIES = ["Tournoi", "Championnat", "Qualificatif", "Exhibition"];
+const CATEGORIES = ["Solo", "Squad"];
 const GAMES = [
-  "League of Legends",
-  "CS2",
-  "Valorant",
-  "EA FC 24",
-  "PUBG Mobile",
-  "Free Fire",
-  "Mobile Legends",
-  "Autre",
+  "EA FC",
+  "NBA 2K",
+  "TEKKEN 8",
+  "STREET FIGHTER VI",
+  "MORTAL KOMBAT 1",
+  "MOBILE LEGENDS : BANG BANG",
+  "2XKO",
+  "EA FC MOBILE",
+  "PUBG MOBILE",
+  "EFOOTBALL MOBILE",
+  "EFOOTBALL",
+  "PUBG MOBILE",
+  "GUILTY GEAR STRIVE",
+  "CLASH ROYAL",
+  "SUPER SMASH",
 ];
 
 const EMPTY = {
