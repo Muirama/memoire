@@ -18,7 +18,8 @@ const createRegistration = async (req, res) => {
 
     if (!user.name || !user.email || !user.phone || !user.pseudo) {
       return res.status(400).json({
-        message: "Profil incomplet. Nom, email, telephone et pseudo sont requis.",
+        message:
+          "Profil incomplet. Nom, email, telephone et pseudo sont requis.",
       });
     }
 
@@ -71,10 +72,42 @@ const createRegistration = async (req, res) => {
     });
   } catch (error) {
     console.error("Erreur createRegistration :", error);
-    return res.status(500).json({
-      message: "Erreur serveur.",
-      detail: error.message,
+    return res
+      .status(500)
+      .json({ message: "Erreur serveur.", detail: error.message });
+  }
+};
+
+// ── GET vérifier si l'user connecté est inscrit à un event ──
+// GET /api/registrations/check/:eventId
+const checkRegistration = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    if (!req.user?.id) {
+      return res.status(200).json({ registered: false });
+    }
+
+    const existing = await Registration.findOne({
+      where: {
+        eventId: parseInt(eventId, 10),
+        userId: req.user.id,
+      },
     });
+
+    return res.status(200).json({
+      registered: Boolean(existing),
+      registration: existing
+        ? {
+            id: existing.id,
+            status: existing.status,
+            createdAt: existing.createdAt,
+          }
+        : null,
+    });
+  } catch (error) {
+    console.error("Erreur checkRegistration :", error);
+    return res.status(500).json({ message: "Erreur serveur." });
   }
 };
 
@@ -161,6 +194,7 @@ const deleteRegistration = async (req, res) => {
 
 module.exports = {
   createRegistration,
+  checkRegistration,
   getEventRegistrations,
   getAllRegistrations,
   updateRegistrationStatus,

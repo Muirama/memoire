@@ -6,12 +6,11 @@ const {
   getAllRegistrations,
   updateRegistrationStatus,
   deleteRegistration,
+  checkRegistration,
 } = require("../controllers/registration.controller");
 const authMiddleware = require("../middleware/auth.middleware");
 const adminMiddleware = require("../middleware/admin.middleware");
 const userMiddleware = require("../middleware/user.middleware");
-
-// ⚠️ ORDRE IMPORTANT : les routes spécifiques avant les routes génériques (:id)
 
 // GET  /api/registrations                    → toutes les inscriptions (admin)
 router.get("/", authMiddleware, adminMiddleware, getAllRegistrations);
@@ -37,5 +36,13 @@ router.patch(
 
 // DELETE /api/registrations/:id              → supprimer (admin)
 router.delete("/:id", authMiddleware, adminMiddleware, deleteRegistration);
+
+// GET  /api/registrations/check/:eventId     → vérifier inscription (public)
+router.get(
+  "/check/:eventId",
+  authMiddleware,
+  userMiddleware,
+  checkRegistration,
+);
 
 module.exports = router;

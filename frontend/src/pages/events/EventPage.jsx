@@ -13,6 +13,7 @@ import {
   FaSpinner,
   FaTrophy,
   FaUsers,
+  FaCheckCircle,
 } from "react-icons/fa";
 import api from "../../api/api";
 import EventIntroSection from "../../components/EventIntroSection";
@@ -26,144 +27,169 @@ const CATEGORIES = [
   "Qualificatif",
   "Exhibition",
 ];
-
 const SORT_OPTIONS = [
   { value: "date-asc", label: "Date (prochains)" },
-  { value: "date-desc", label: "Date (recents)" },
+  { value: "date-desc", label: "Date (récents)" },
   { value: "title-asc", label: "Nom (A-Z)" },
   { value: "prize-desc", label: "Prize pool" },
 ];
 
-const formatDate = (dateStr) =>
-  new Date(dateStr).toLocaleDateString("fr-FR", {
+const formatDate = (d) =>
+  new Date(d).toLocaleDateString("fr-FR", {
     day: "2-digit",
     month: "long",
     year: "numeric",
   });
+const formatPrice = (p) =>
+  p ? `${new Intl.NumberFormat("fr-MG").format(p)} Ar` : null;
 
-const formatPrice = (price) =>
-  price ? `${new Intl.NumberFormat("fr-MG").format(price)} Ar` : null;
-
-function EventsGrid({ events, navigate, onOpenRegistration }) {
+// ── Card d'un événement ───────────────────────────────────
+function EventCard({ event, navigate, onOpenRegistration, isRegistered }) {
   return (
     <motion.div
-      key="grid"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col overflow-hidden rounded-2xl border border-[#E50914]/20
+                 bg-[#1A1A1A] transition-all duration-300
+                 hover:border-[#E50914] hover:shadow-[0_0_25px_rgba(229,9,20,0.3)]"
     >
-      {events.map((event, index) => (
-        <motion.div
-          key={event.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.05 }}
-          className="flex flex-col overflow-hidden rounded-2xl border border-[#E50914]/20 bg-[#1A1A1A] transition-all duration-300 hover:border-[#E50914] hover:shadow-[0_0_25px_rgba(229,9,20,0.3)]"
+      {/* Image */}
+      <div
+        className="relative h-44 cursor-pointer overflow-hidden bg-[#0D0D0D]"
+        onClick={() => navigate(`/events/${event.id}`)}
+      >
+        {event.image ? (
+          <img
+            src={event.image}
+            alt={event.title}
+            referrerPolicy="no-referrer"
+            className="h-full w-full object-cover transition duration-500 hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <FaCalendarAlt className="text-5xl text-gray-700" />
+          </div>
+        )}
+        <span
+          className="absolute left-3 top-3 rounded-full bg-[#E50914]
+                         px-2 py-1 text-xs font-semibold text-white"
         >
-          <div
-            className="relative h-44 cursor-pointer overflow-hidden bg-[#0D0D0D]"
-            onClick={() => navigate(`/events/${event.id}`)}
+          {event.category}
+        </span>
+        {/* Badge déjà inscrit OU statut inscriptions */}
+        {isRegistered ? (
+          <span
+            className="absolute right-3 top-3 rounded-full border
+                           border-green-500/40 bg-green-500/20 text-green-400
+                           px-2 py-1 text-xs font-semibold flex items-center gap-1"
           >
-            {event.image ? (
-              <img
-                src={event.image}
-                alt={event.title}
-                referrerPolicy="no-referrer"
-                className="h-full w-full object-cover transition duration-500 hover:scale-105"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center">
-                <FaCalendarAlt className="text-5xl text-gray-700" />
-              </div>
-            )}
+            <FaCheckCircle size={9} /> Inscrit
+          </span>
+        ) : (
+          <span
+            className={`absolute right-3 top-3 rounded-full border
+                           px-2 py-1 text-xs font-semibold
+                           ${
+                             event.registrationOpen
+                               ? "border-green-500/30 bg-green-500/20 text-green-400"
+                               : "border-gray-500/30 bg-gray-500/20 text-gray-400"
+                           }`}
+          >
+            {event.registrationOpen ? "Inscriptions ouvertes" : "Fermées"}
+          </span>
+        )}
+      </div>
 
-            <span className="absolute left-3 top-3 rounded-full bg-[#E50914] px-2 py-1 text-xs font-semibold text-white">
-              {event.category}
-            </span>
-            <span
-              className={`absolute right-3 top-3 rounded-full border px-2 py-1 text-xs font-semibold ${
-                event.registrationOpen
-                  ? "border-green-500/30 bg-green-500/20 text-green-400"
-                  : "border-gray-500/30 bg-gray-500/20 text-gray-400"
-              }`}
-            >
-              {event.registrationOpen ? "Inscriptions ouvertes" : "Fermees"}
-            </span>
+      {/* Contenu */}
+      <div className="flex flex-1 flex-col p-5">
+        <h3
+          className="mb-3 cursor-pointer text-lg font-bold text-white
+                       hover:text-[#E50914] transition line-clamp-2"
+          onClick={() => navigate(`/events/${event.id}`)}
+        >
+          {event.title}
+        </h3>
+
+        <div className="mb-4 flex-1 space-y-2 text-sm text-gray-400">
+          <div className="flex items-center gap-2">
+            <FaGamepad className="flex-shrink-0 text-[#E50914]" />
+            <span>{event.game}</span>
           </div>
-
-          <div className="flex flex-1 flex-col p-5">
-            <h3
-              className="mb-3 cursor-pointer text-lg font-bold text-white transition hover:text-[#E50914] line-clamp-2"
-              onClick={() => navigate(`/events/${event.id}`)}
-            >
-              {event.title}
-            </h3>
-
-            <div className="mb-4 flex-1 space-y-2 text-sm text-gray-400">
-              <div className="flex items-center gap-2">
-                <FaGamepad className="flex-shrink-0 text-[#E50914]" />
-                <span>{event.game}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaCalendarAlt className="flex-shrink-0 text-[#E50914]" />
-                <span>{formatDate(event.date)}</span>
-              </div>
-              {event.time && (
-                <div className="flex items-center gap-2">
-                  <FaClock className="flex-shrink-0 text-[#E50914]" />
-                  <span>{event.time}</span>
-                </div>
-              )}
-              {event.location && (
-                <div className="flex items-center gap-2">
-                  <FaMapMarkerAlt className="flex-shrink-0 text-[#E50914]" />
-                  <span className="truncate">{event.location}</span>
-                </div>
-              )}
-              <div className="flex items-center gap-2">
-                <FaUsers className="flex-shrink-0 text-[#E50914]" />
-                <span>{event.registered || 0} participant(s) inscrit(s)</span>
-              </div>
-              {formatPrice(event.prizePool) && (
-                <div className="flex items-center gap-2">
-                  <FaTrophy className="flex-shrink-0 text-yellow-500" />
-                  <span className="font-bold text-yellow-400">
-                    {formatPrice(event.prizePool)}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => navigate(`/events/${event.id}`)}
-                className="flex-1 rounded-lg border border-[#E50914] py-2.5 text-sm font-semibold text-white transition hover:bg-[#E50914]/10"
-              >
-                Details
-              </button>
-              {event.registrationOpen ? (
-                <button
-                  type="button"
-                  onClick={() => onOpenRegistration(event)}
-                  className="flex-1 rounded-lg bg-[#E50914] py-2.5 text-sm font-bold text-white transition hover:bg-[#FF1E56] hover:shadow-[0_0_15px_rgba(229,9,20,0.6)] active:scale-95"
-                >
-                  S'inscrire
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  disabled
-                  className="flex flex-1 cursor-not-allowed items-center justify-center gap-1.5 rounded-lg bg-gray-800 py-2.5 text-sm font-semibold text-gray-500"
-                >
-                  <FaLock size={11} />
-                  Ferme
-                </button>
-              )}
-            </div>
+          <div className="flex items-center gap-2">
+            <FaCalendarAlt className="flex-shrink-0 text-[#E50914]" />
+            <span>{formatDate(event.date)}</span>
           </div>
-        </motion.div>
-      ))}
+          {event.time && (
+            <div className="flex items-center gap-2">
+              <FaClock className="flex-shrink-0 text-[#E50914]" />
+              <span>{event.time}</span>
+            </div>
+          )}
+          {event.location && (
+            <div className="flex items-center gap-2">
+              <FaMapMarkerAlt className="flex-shrink-0 text-[#E50914]" />
+              <span className="truncate">{event.location}</span>
+            </div>
+          )}
+          <div className="flex items-center gap-2">
+            <FaUsers className="flex-shrink-0 text-[#E50914]" />
+            <span>{event.registered || 0} participant(s) inscrit(s)</span>
+          </div>
+          {formatPrice(event.prizePool) && (
+            <div className="flex items-center gap-2">
+              <FaTrophy className="flex-shrink-0 text-yellow-500" />
+              <span className="font-bold text-yellow-400">
+                {formatPrice(event.prizePool)}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => navigate(`/events/${event.id}`)}
+            className="flex-1 rounded-lg border border-[#E50914] py-2.5 text-sm
+                       font-semibold text-white transition hover:bg-[#E50914]/10"
+          >
+            Détails
+          </button>
+
+          {/* Bouton selon état */}
+          {isRegistered ? (
+            <button
+              type="button"
+              disabled
+              className="flex flex-1 cursor-not-allowed items-center justify-center
+                         gap-1.5 rounded-lg bg-green-600/20 border border-green-500/30
+                         py-2.5 text-sm font-semibold text-green-400"
+            >
+              <FaCheckCircle size={11} /> Inscrit
+            </button>
+          ) : event.registrationOpen ? (
+            <button
+              type="button"
+              onClick={() => onOpenRegistration(event)}
+              className="flex-1 rounded-lg bg-[#E50914] py-2.5 text-sm font-bold
+                         text-white transition hover:bg-[#FF1E56]
+                         hover:shadow-[0_0_15px_rgba(229,9,20,0.6)] active:scale-95"
+            >
+              S'inscrire
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled
+              className="flex flex-1 cursor-not-allowed items-center justify-center
+                         gap-1.5 rounded-lg bg-gray-800 py-2.5 text-sm
+                         font-semibold text-gray-500"
+            >
+              <FaLock size={11} /> Fermé
+            </button>
+          )}
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -179,6 +205,10 @@ export default function EventPage() {
   const [sortBy, setSortBy] = useState("date-asc");
   const [selectedEvent, setSelectedEvent] = useState(null);
 
+  // IDs des events auxquels l'user est inscrit
+  const [registeredIds, setRegisteredIds] = useState(new Set());
+
+  // ── Fetch events ──────────────────────────────────────
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -187,23 +217,48 @@ export default function EventPage() {
         const res = await api.get("/events");
         setEvents(res.data.events);
       } catch {
-        setError("Impossible de charger les evenements.");
+        setError("Impossible de charger les événements.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchEvents();
   }, []);
 
+  // ── Vérifier inscriptions de l'user pour tous les events ──
+  useEffect(() => {
+    if (!isUserLoggedIn() || events.length === 0) return;
+
+    const checkAll = async () => {
+      try {
+        // On fait les checks en parallèle
+        const results = await Promise.all(
+          events.map((e) =>
+            api
+              .get(`/registrations/check/${e.id}`)
+              .then((r) => ({ id: e.id, registered: r.data.registered }))
+              .catch(() => ({ id: e.id, registered: false })),
+          ),
+        );
+        const ids = new Set(
+          results.filter((r) => r.registered).map((r) => r.id),
+        );
+        setRegisteredIds(ids);
+      } catch {
+        // silencieux
+      }
+    };
+    checkAll();
+  }, [events]);
+
+  // ── Après inscription réussie ─────────────────────────
   const handleRegistrationSuccess = (eventId) => {
     setEvents((prev) =>
-      prev.map((event) =>
-        event.id === eventId
-          ? { ...event, registered: (event.registered || 0) + 1 }
-          : event,
+      prev.map((e) =>
+        e.id === eventId ? { ...e, registered: (e.registered || 0) + 1 } : e,
       ),
     );
+    setRegisteredIds((prev) => new Set([...prev, eventId]));
   };
 
   const handleOpenRegistration = (event) => {
@@ -211,23 +266,19 @@ export default function EventPage() {
       navigate(buildLoginRedirect("/events"));
       return;
     }
-
     setSelectedEvent(event);
   };
 
+  // ── Filtrage + tri ────────────────────────────────────
   const filteredEvents = useMemo(() => {
-    const list = events.filter((event) => {
-      const safeTitle = (event.title || "").toLowerCase();
-      const safeGame = (event.game || "").toLowerCase();
-      const query = searchTerm.toLowerCase();
-      const matchesSearch =
-        safeTitle.includes(query) || safeGame.includes(query);
-      const matchesCategory =
-        category === "Tous" || event.category === category;
-
-      return matchesSearch && matchesCategory;
+    const list = events.filter((e) => {
+      const q = searchTerm.toLowerCase();
+      return (
+        ((e.title || "").toLowerCase().includes(q) ||
+          (e.game || "").toLowerCase().includes(q)) &&
+        (category === "Tous" || e.category === category)
+      );
     });
-
     switch (sortBy) {
       case "date-asc":
         list.sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -241,10 +292,7 @@ export default function EventPage() {
       case "prize-desc":
         list.sort((a, b) => (b.prizePool || 0) - (a.prizePool || 0));
         break;
-      default:
-        break;
     }
-
     return list;
   }, [category, events, searchTerm, sortBy]);
 
@@ -263,60 +311,70 @@ export default function EventPage() {
               Calendrier public
             </p>
             <h2 className="mb-3 text-3xl font-extrabold text-white md:text-5xl">
-              Nos <span className="text-[#E50914]">evenements</span>
+              Nos <span className="text-[#E50914]">événements</span>
             </h2>
             <p className="mx-auto max-w-2xl text-gray-400">
-              Retrouvez les competitions ouvertes a la communaute et
-              inspirez-vous de nos formats pour imaginer votre propre tournoi
-              sur mesure.
+              Retrouvez les compétitions ouvertes à la communauté.
             </p>
             {!loading && !error && (
               <p className="mt-2 text-sm text-gray-500">
-                {filteredEvents.length} evenement(s)
+                {filteredEvents.length} événement(s)
               </p>
             )}
           </motion.div>
 
+          {/* Filtres */}
           <div className="mb-8 space-y-4">
             <div className="flex flex-col gap-3 md:flex-row">
               <div className="relative flex-1">
-                <FaSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                <FaSearch
+                  className="pointer-events-none absolute left-4 top-1/2
+                                     -translate-y-1/2 text-gray-500"
+                />
                 <input
                   type="text"
-                  placeholder="Rechercher un evenement, un jeu..."
+                  placeholder="Rechercher un événement, un jeu..."
                   value={searchTerm}
-                  onChange={(event) => setSearchTerm(event.target.value)}
-                  className="w-full rounded-lg border border-[#E50914]/30 bg-[#1A1A1A] py-3 pl-12 pr-4 text-white transition-all focus:border-[#E50914] focus:outline-none focus:ring-2 focus:ring-[#E50914]/50"
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full rounded-lg border border-[#E50914]/30 bg-[#1A1A1A]
+                             py-3 pl-12 pr-4 text-white transition-all
+                             focus:border-[#E50914] focus:outline-none
+                             focus:ring-2 focus:ring-[#E50914]/50"
                 />
               </div>
-
               <div className="relative w-full md:w-56">
-                <FaSortAmountDown className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                <FaSortAmountDown
+                  className="pointer-events-none absolute left-4 top-1/2
+                                            -translate-y-1/2 text-gray-500"
+                />
                 <select
                   value={sortBy}
-                  onChange={(event) => setSortBy(event.target.value)}
-                  className="w-full appearance-none rounded-lg border border-[#E50914]/30 bg-[#1A1A1A] py-3 pl-12 pr-4 text-white transition-all focus:border-[#E50914] focus:outline-none"
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full appearance-none rounded-lg border border-[#E50914]/30
+                             bg-[#1A1A1A] py-3 pl-12 pr-4 text-white transition-all
+                             focus:border-[#E50914] focus:outline-none"
                 >
-                  {SORT_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
                     </option>
                   ))}
                 </select>
               </div>
             </div>
-
             <div className="flex flex-wrap justify-center gap-2">
               {CATEGORIES.map((item) => (
                 <button
                   key={item}
                   type="button"
                   onClick={() => setCategory(item)}
-                  className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-300 ${
-                    category === item
-                      ? "scale-105 bg-[#E50914] text-white shadow-[0_0_15px_rgba(229,9,20,0.6)]"
-                      : "bg-[#1A1A1A] text-gray-400 hover:bg-[#E50914]/20 hover:text-white"
-                  }`}
+                  className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all
+                              duration-300
+                              ${
+                                category === item
+                                  ? "scale-105 bg-[#E50914] text-white shadow-[0_0_15px_rgba(229,9,20,0.6)]"
+                                  : "bg-[#1A1A1A] text-gray-400 hover:bg-[#E50914]/20 hover:text-white"
+                              }`}
                 >
                   {item}
                 </button>
@@ -324,6 +382,7 @@ export default function EventPage() {
             </div>
           </div>
 
+          {/* Contenu */}
           <AnimatePresence mode="wait">
             {loading ? (
               <motion.div
@@ -333,22 +392,24 @@ export default function EventPage() {
                 className="py-16 text-center"
               >
                 <FaSpinner className="mx-auto mb-4 text-5xl text-[#E50914] animate-spin" />
-                <p className="text-gray-400">Chargement des evenements...</p>
+                <p className="text-gray-400">Chargement des événements...</p>
               </motion.div>
             ) : error ? (
               <motion.div
                 key="error"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="rounded-2xl border border-red-500/20 bg-red-500/8 px-6 py-10 text-center"
+                className="rounded-2xl border border-red-500/20 bg-red-500/8
+                           px-6 py-10 text-center"
               >
                 <p className="mb-4 text-lg text-red-400">{error}</p>
                 <button
                   type="button"
                   onClick={() => window.location.reload()}
-                  className="rounded-lg bg-[#E50914] px-6 py-3 text-white transition hover:bg-[#FF1E56]"
+                  className="rounded-lg bg-[#E50914] px-6 py-3 text-white
+                             transition hover:bg-[#FF1E56]"
                 >
-                  Reessayer
+                  Réessayer
                 </button>
               </motion.div>
             ) : filteredEvents.length === 0 ? (
@@ -359,14 +420,31 @@ export default function EventPage() {
                 className="py-16 text-center"
               >
                 <FaCalendarAlt className="mx-auto mb-4 text-6xl text-gray-700" />
-                <p className="text-xl text-gray-500">Aucun evenement trouve.</p>
+                <p className="text-xl text-gray-500">Aucun événement trouvé.</p>
               </motion.div>
             ) : (
-              <EventsGrid
-                events={filteredEvents}
-                navigate={navigate}
-                onOpenRegistration={handleOpenRegistration}
-              />
+              <motion.div
+                key="grid"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
+              >
+                {filteredEvents.map((event, index) => (
+                  <motion.div
+                    key={event.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <EventCard
+                      event={event}
+                      navigate={navigate}
+                      onOpenRegistration={handleOpenRegistration}
+                      isRegistered={registeredIds.has(event.id)}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
