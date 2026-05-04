@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaUsers, FaChevronDown } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import api from "../api/api";
+import { getTeams } from "../services/teamDataService";
 
 export default function TeamDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -73,8 +73,8 @@ export default function TeamDropdown() {
     const fetchTeams = async () => {
       try {
         setLoading(true);
-        const res = await api.get("/teams");
-        const activeTeams = res.data.teams.filter((t) => t.active !== false);
+        const data = await getTeams();
+        const activeTeams = data.filter((t) => t.active !== false);
         setTeams(activeTeams);
       } catch (err) {
         console.error("Erreur chargement équipes:", err);

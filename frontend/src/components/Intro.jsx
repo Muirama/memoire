@@ -90,9 +90,9 @@ export default function Intro() {
                 {titles[currentTitle]}
               </motion.span>
             </AnimatePresence>{" "}
-            <span className="text-[#E50914] drop-shadow-[0_0_25px_rgba(229,9,20,0.8)]">
+            <p className="text-[#E50914] drop-shadow-[0_0_25px_rgba(229,9,20,0.8)]">
               Gascom eSports
-            </span>
+            </p>
           </h1>
 
           <p

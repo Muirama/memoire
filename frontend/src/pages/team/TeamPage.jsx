@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { FaUsers, FaGamepad, FaSpinner, FaArrowRight } from "react-icons/fa";
-import api from "../../api/api";
+import { getTeams } from "../../services/teamDataService";
 
 export default function TeamPage() {
   const navigate = useNavigate();
@@ -12,13 +12,12 @@ export default function TeamPage() {
   const [search, setSearch] = useState("");
   const [game, setGame] = useState("Tous");
 
-  useEffect(() => {
-    api
-      .get("/teams")
-      .then((r) => setTeams(r.data.teams))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+useEffect(() => {
+  getTeams()
+    .then((data) => setTeams(data))
+    .catch(console.error)
+    .finally(() => setLoading(false));
+}, []);
 
   const filtered = teams.filter((t) => {
     const matchSearch = t.name.toLowerCase().includes(search.toLowerCase());

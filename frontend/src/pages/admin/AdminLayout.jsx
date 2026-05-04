@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -22,7 +22,7 @@ const navItems = [
   { label: "Produits", icon: <FaStore />, to: "/admin/products" },
   { label: "Événements", icon: <FaCalendarAlt />, to: "/admin/events" },
   { label: "News", icon: <FaNewspaper />, to: "/admin/news" },
-  { label: "Équipes", icon: <FaUsers />, to: "/admin/teams" }
+  { label: "Équipes", icon: <FaUsers />, to: "/admin/teams" },
 ];
 
 export default function AdminLayout({ children }) {
@@ -51,7 +51,7 @@ export default function AdminLayout({ children }) {
           />
           <div>
             <p className="text-white font-extrabold text-base leading-none">
-              Gascom Esport
+              Gascom
             </p>
             <p className="text-gray-500 text-xs mt-0.5">Administration</p>
           </div>
@@ -153,12 +153,12 @@ export default function AdminLayout({ children }) {
                            bg-[#111111] border-b border-white/5 sticky top-0 z-30"
         >
           <div className="flex items-center gap-3">
-            <div
-              className="w-8 h-8 bg-[#E50914] rounded-lg flex items-center
-                            justify-center font-extrabold text-white"
-            >
-              G
-            </div>
+            <img
+              src={logo_GES_blanc}
+              alt="G"
+              className="w-9 h-9 rounded-lg flex items-center
+                          justify-center font-extrabold text-white text-lg shadow-lg"
+            />
             <span className="text-white font-bold">Admin</span>
           </div>
           <button

@@ -13,7 +13,7 @@ import {
   FaDiscord,
   FaGlobe,
 } from "react-icons/fa";
-import api from "../../api/api";
+import { getTeamById } from "../../services/teamDataService";
 
 const STATUS_COLORS = {
   Titulaire: "bg-green-500/20 text-green-400 border-green-500/30",
@@ -33,9 +33,8 @@ export default function TeamDetailPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    api
-      .get(`/teams/${id}`)
-      .then((r) => setTeam(r.data.team))
+    getTeamById(id)
+      .then((data) => setTeam(data))
       .catch(() => setError("Équipe introuvable."))
       .finally(() => setLoading(false));
   }, [id]);
