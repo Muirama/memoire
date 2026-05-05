@@ -137,4 +137,56 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { login, register, getMe };
+// —— PATCH /api/auth/me ——————————————————————————————————————————————————————————
+const updateMe = async (req, res) => {
+  try {
+    const { name, email, phone, address, pseudo } = req.body;
+
+    if (!name || !email || !phone || !pseudo) {
+      return res.status(400).json({
+        message: "Nom, email, telephone et pseudo sont requis.",
+      });
+    }
+
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur introuvable." });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (normalizedEmail !== user.email) {
+      const emailTaken = await User.findOne({
+        where: { email: normalizedEmail },
+      });
+      if (emailTaken) {
+        return res.status(409).json({ message: "Cet email est deja utilise." });
+      }
+    }
+
+    await user.update({
+      name: name.trim(),
+      email: normalizedEmail,
+      phone: phone.trim(),
+      address: address?.trim() || null,
+      pseudo: pseudo.trim(),
+    });
+
+    return res.status(200).json({
+      message: "Profil mis a jour avec succes.",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        pseudo: user.pseudo,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Erreur updateMe :", error);
+    return res.status(500).json({ message: "Erreur serveur." });
+  }
+};
+
+module.exports = { login, register, getMe, updateMe };

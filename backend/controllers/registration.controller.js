@@ -242,6 +242,36 @@ const checkRegistration = async (req, res) => {
   }
 };
 
+// GET inscriptions de l'utilisateur connecte
+const getMyRegistrations = async (req, res) => {
+  try {
+    const registrations = await Registration.findAll({
+      where: { userId: req.user.id },
+      include: [
+        {
+          model: Event,
+          attributes: [
+            "id",
+            "title",
+            "date",
+            "game",
+            "category",
+            "image",
+            "registrationOpen",
+            "maxParticipants",
+          ],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.status(200).json({ registrations });
+  } catch (error) {
+    console.error("Erreur getMyRegistrations :", error);
+    return res.status(500).json({ message: "Erreur serveur." });
+  }
+};
+
 // GET toutes les inscriptions (admin)
 const getAllRegistrations = async (req, res) => {
   try {
@@ -387,6 +417,7 @@ const deleteRegistration = async (req, res) => {
 module.exports = {
   createRegistration,
   checkRegistration,
+  getMyRegistrations,
   getEventRegistrations,
   getAllRegistrations,
   updateRegistrationStatus,
