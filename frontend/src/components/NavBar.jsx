@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaBars,
   FaTimes,
@@ -27,6 +28,7 @@ export default function NavBar() {
   const { totalItems, toggleCart } = useCart();
   const [userLoggedIn, setUserLoggedIn] = useState(isUserLoggedIn());
   const accountMenuRef = useRef(null);
+  const navigate = useNavigate();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -88,6 +90,7 @@ export default function NavBar() {
     setUserLoggedIn(false);
     setMenuOpen(false);
     setAccountMenuOpen(false);
+    navigate("/");
   };
 
   const pageLinks = [
