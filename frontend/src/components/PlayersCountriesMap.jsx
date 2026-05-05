@@ -203,169 +203,165 @@ export default function PlayersCountriesMap() {
           </h2>
         </motion.div>
 
-        <div className="rounded-[28px] border border-white/8 bg-[#050505]/95 p-3 shadow-[0_0_45px_rgba(229,9,20,0.08)] md:p-5">
-          <div className="relative aspect-[900/440] overflow-hidden rounded-2xl border border-white/5 bg-[radial-gradient(circle_at_top,_rgba(229,9,20,0.14),_transparent_45%),linear-gradient(180deg,_rgba(255,255,255,0.02),_rgba(255,255,255,0))]">
-            <svg
-              ref={svgRef}
-              viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
-              className="h-full w-full"
-            />
+        <div className="relative aspect-[900/440] overflow-hidden rounded-2xl border border-white/5 bg-[radial-gradient(circle_at_top,_rgba(229,9,20,0.14),_transparent_45%),linear-gradient(180deg,_rgba(255,255,255,0.02),_rgba(255,255,255,0))]">
+          <svg
+            ref={svgRef}
+            viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
+            className="h-full w-full"
+          />
 
-            <div className="pointer-events-none absolute inset-0 z-10">
-              {projectedCountries.map((country, index) => {
-                const isActive = country.id === activeCountryId;
+          <div className="pointer-events-none absolute inset-0 z-10">
+            {projectedCountries.map((country, index) => {
+              const isActive = country.id === activeCountryId;
 
-                return (
-                  <button
-                    key={country.id}
-                    type="button"
-                    aria-label={`Afficher ${country.name}`}
-                    className="pointer-events-auto absolute flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
-                    style={{
-                      left: `${(country.x / MAP_WIDTH) * 100}%`,
-                      top: `${(country.y / MAP_HEIGHT) * 100}%`,
-                    }}
-                    onMouseEnter={() => setActiveCountryId(country.id)}
-                    onMouseLeave={() => {
-                      if (!isMobileLike) {
-                        setActiveCountryId(null);
-                      }
-                    }}
-                    onFocus={() => setActiveCountryId(country.id)}
-                    onBlur={() => {
-                      if (!isMobileLike) {
-                        setActiveCountryId(null);
-                      }
-                    }}
-                    onClick={() => setActiveCountryId(country.id)}
-                  >
-                    <motion.span
-                      aria-hidden="true"
-                      className="absolute h-5 w-5 rounded-full border"
-                      style={{ borderColor: country.color }}
-                      animate={{ scale: [1, 2.6], opacity: [0.7, 0] }}
-                      transition={{
-                        duration: 2.2,
-                        ease: "easeOut",
-                        repeat: Number.POSITIVE_INFINITY,
-                        delay: index * 0.22,
-                      }}
-                    />
-
-                    <motion.span
-                      aria-hidden="true"
-                      className="absolute h-4 w-4 rounded-full border-2 bg-white"
-                      style={{
-                        borderColor: country.color,
-                        boxShadow: isActive
-                          ? `0 0 0 6px ${country.color}22, 0 0 24px ${country.color}`
-                          : `0 0 0 3px ${country.color}18`,
-                      }}
-                      animate={
-                        isActive ? { scale: [1, 1.18, 1] } : { scale: 1 }
-                      }
-                      transition={{
-                        duration: 0.9,
-                        ease: "easeInOut",
-                        repeat: isActive ? Number.POSITIVE_INFINITY : 0,
-                      }}
-                    />
-                  </button>
-                );
-              })}
-
-              <AnimatePresence>
-                {activeCountry && !isMobileLike && (
-                  <div
-                    className="pointer-events-none absolute z-20"
-                    style={getTooltipPosition(activeCountry)}
-                  >
-                    <motion.div
-                      key={activeCountry.id}
-                      initial={{ opacity: 0, scale: 0.92 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.92 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
-                      className="min-w-[190px] rounded-2xl border border-white/12 bg-black/80 px-4 py-3 backdrop-blur-md"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span
-                          className="h-3 w-3 rounded-full"
-                          style={{
-                            backgroundColor: activeCountry.color,
-                            boxShadow: `0 0 16px ${activeCountry.color}`,
-                          }}
-                        />
-                        <div>
-                          <p className="text-sm font-semibold text-white">
-                            {activeCountry.name}
-                          </p>
-                          <p className="text-xs uppercase tracking-[0.18em] text-white/50">
-                            {activeCountry.sub}
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-
-          <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="flex flex-wrap gap-3 text-xs text-white/65">
-              {LEGEND.map((item) => (
-                <div
-                  key={item.label}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.03] px-3 py-1.5"
+              return (
+                <button
+                  key={country.id}
+                  type="button"
+                  aria-label={`Afficher ${country.name}`}
+                  className="pointer-events-auto absolute flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                  style={{
+                    left: `${(country.x / MAP_WIDTH) * 100}%`,
+                    top: `${(country.y / MAP_HEIGHT) * 100}%`,
+                  }}
+                  onMouseEnter={() => setActiveCountryId(country.id)}
+                  onMouseLeave={() => {
+                    if (!isMobileLike) {
+                      setActiveCountryId(null);
+                    }
+                  }}
+                  onFocus={() => setActiveCountryId(country.id)}
+                  onBlur={() => {
+                    if (!isMobileLike) {
+                      setActiveCountryId(null);
+                    }
+                  }}
+                  onClick={() => setActiveCountryId(country.id)}
                 >
-                  <span
-                    className="h-2.5 w-2.5 rounded-full"
-                    style={{ backgroundColor: item.color }}
-                  />
-                  <span>{item.label}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* <p className="text-xs uppercase tracking-[0.18em] text-white/35">
-              {isMobileLike
-                ? "Mode mobile : le pays actif defile automatiquement."
-                : "Survolez un point pour afficher le pays."}
-            </p> */}
-          </div>
-
-          <AnimatePresence mode="wait">
-            {isMobileLike && activeCountry && (
-              <motion.div
-                key={activeCountry.id}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 12 }}
-                transition={{ duration: 0.22, ease: "easeOut" }}
-                className="mt-4 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3"
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="h-3 w-3 rounded-full"
-                    style={{
-                      backgroundColor: activeCountry.color,
-                      boxShadow: `0 0 16px ${activeCountry.color}`,
+                  <motion.span
+                    aria-hidden="true"
+                    className="absolute h-5 w-5 rounded-full border"
+                    style={{ borderColor: country.color }}
+                    animate={{ scale: [1, 2.6], opacity: [0.7, 0] }}
+                    transition={{
+                      duration: 2.2,
+                      ease: "easeOut",
+                      repeat: Number.POSITIVE_INFINITY,
+                      delay: index * 0.22,
                     }}
                   />
-                  <div>
-                    <p className="text-sm font-semibold text-white">
-                      {activeCountry.name}
-                    </p>
-                    <p className="text-xs uppercase tracking-[0.18em] text-white/55">
-                      {activeCountry.sub}
-                    </p>
-                  </div>
+
+                  <motion.span
+                    aria-hidden="true"
+                    className="absolute h-4 w-4 rounded-full border-2 bg-white"
+                    style={{
+                      borderColor: country.color,
+                      boxShadow: isActive
+                        ? `0 0 0 6px ${country.color}22, 0 0 24px ${country.color}`
+                        : `0 0 0 3px ${country.color}18`,
+                    }}
+                    animate={isActive ? { scale: [1, 1.18, 1] } : { scale: 1 }}
+                    transition={{
+                      duration: 0.9,
+                      ease: "easeInOut",
+                      repeat: isActive ? Number.POSITIVE_INFINITY : 0,
+                    }}
+                  />
+                </button>
+              );
+            })}
+
+            <AnimatePresence>
+              {activeCountry && !isMobileLike && (
+                <div
+                  className="pointer-events-none absolute z-20"
+                  style={getTooltipPosition(activeCountry)}
+                >
+                  <motion.div
+                    key={activeCountry.id}
+                    initial={{ opacity: 0, scale: 0.92 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.92 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    className="min-w-[190px] rounded-2xl border border-white/12 bg-black/80 px-4 py-3 backdrop-blur-md"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="h-3 w-3 rounded-full"
+                        style={{
+                          backgroundColor: activeCountry.color,
+                          boxShadow: `0 0 16px ${activeCountry.color}`,
+                        }}
+                      />
+                      <div>
+                        <p className="text-sm font-semibold text-white">
+                          {activeCountry.name}
+                        </p>
+                        <p className="text-xs uppercase tracking-[0.18em] text-white/50">
+                          {activeCountry.sub}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
+
+        <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-wrap gap-3 text-xs text-white/65">
+            {LEGEND.map((item) => (
+              <div
+                key={item.label}
+                className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.03] px-3 py-1.5"
+              >
+                <span
+                  className="h-2.5 w-2.5 rounded-full"
+                  style={{ backgroundColor: item.color }}
+                />
+                <span>{item.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-xs uppercase tracking-[0.18em] text-white/35">
+            {isMobileLike
+              ? "Mode mobile : le pays actif defile automatiquement."
+              : "Survolez un point pour afficher le pays."}
+          </p>
+        </div>
+
+        <AnimatePresence mode="wait">
+          {isMobileLike && activeCountry && (
+            <motion.div
+              key={activeCountry.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="mt-4 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3"
+            >
+              <div className="flex items-center gap-3">
+                <span
+                  className="h-3 w-3 rounded-full"
+                  style={{
+                    backgroundColor: activeCountry.color,
+                    boxShadow: `0 0 16px ${activeCountry.color}`,
+                  }}
+                />
+                <div>
+                  <p className="text-sm font-semibold text-white">
+                    {activeCountry.name}
+                  </p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-white/55">
+                    {activeCountry.sub}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

@@ -1,13 +1,16 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
+import { useEffect, useState, useRef } from "react";
+import { useInView, useMotionValue, animate } from "framer-motion";
 import { motion } from "framer-motion";
 import { FaRocket, FaFire, FaShieldAlt, FaUsers } from "react-icons/fa";
 import { GiCrown } from "react-icons/gi";
+
 const stats = [
-  { value: "50+", label: "Joueurs compétitifs" },
-  { value: "30+", label: "Tournois organisés" },
-  { value: "14", label: "Rosters Compétitifs" },
-  { value: "5", label: "Ans d'expérience" },
+  { value: 50, suffix: "+", label: "Joueurs compétitifs" },
+  { value: 30, suffix: "+", label: "Tournois organisés" },
+  { value: 14, suffix: "", label: "Rosters Compétitifs" },
+  { value: 5, suffix: "", label: "Ans d'expérience" },
 ];
 
 const values = [
@@ -108,7 +111,8 @@ export default function About() {
                     className="text-center bg-black/40 rounded-xl py-3 px-2 border border-white/5"
                   >
                     <p className="text-2xl font-extrabold text-[#E50914]">
-                      {s.value}
+                      <CountUp end={s.value} />
+                      {s.suffix}
                     </p>
                     <p className="text-gray-400 text-xs mt-1">{s.label}</p>
                   </motion.div>
@@ -193,4 +197,40 @@ export default function About() {
       </div>
     </section>
   );
+}
+
+function CountUp({ end, duration = 1.5 }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { amount: 0.4 });
+  const hasBeenInView = useRef(false);
+
+  const motionValue = useMotionValue(0);
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = motionValue.on("change", (latest) => {
+      setDisplay(Math.floor(latest));
+    });
+
+    return () => unsubscribe();
+  }, [motionValue]);
+
+  useEffect(() => {
+    if (!isInView) {
+      hasBeenInView.current = false;
+      return;
+    }
+
+    if (!hasBeenInView.current) {
+      hasBeenInView.current = true;
+      motionValue.set(0);
+      const controls = animate(motionValue, end, {
+        duration,
+        ease: "easeOut",
+      });
+      return () => controls.stop();
+    }
+  }, [isInView, end, duration, motionValue]);
+
+  return <span ref={ref}>{display}</span>;
 }
