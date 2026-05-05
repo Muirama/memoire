@@ -43,6 +43,13 @@ const formatPrice = (p) =>
 
 // ── Card d'un événement ───────────────────────────────────
 function EventCard({ event, navigate, onOpenRegistration, isRegistered }) {
+  const hasCapacity = Number.isInteger(event.maxParticipants);
+  const filled = event.registered || 0;
+  const remainingSpots = hasCapacity
+    ? Math.max(0, event.maxParticipants - filled)
+    : null;
+  const shouldShowWaitlistHint = hasCapacity && remainingSpots === 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -131,7 +138,13 @@ function EventCard({ event, navigate, onOpenRegistration, isRegistered }) {
           )}
           <div className="flex items-center gap-2">
             <FaUsers className="flex-shrink-0 text-[#E50914]" />
-            <span>{event.registered || 0} participant(s) inscrit(s)</span>
+            {hasCapacity ? (
+              <span>
+                {filled}/{event.maxParticipants} inscription(s) ({remainingSpots} place(s) restante(s))
+              </span>
+            ) : (
+              <span>{filled} participant(s) inscrit(s)</span>
+            )}
           </div>
           {formatPrice(event.prizePool) && (
             <div className="flex items-center gap-2">
@@ -166,15 +179,22 @@ function EventCard({ event, navigate, onOpenRegistration, isRegistered }) {
               <FaCheckCircle size={11} /> Inscrit
             </button>
           ) : event.registrationOpen ? (
-            <button
-              type="button"
-              onClick={() => onOpenRegistration(event)}
-              className="flex-1 rounded-lg bg-[#E50914] py-2.5 text-sm font-bold
-                         text-white transition hover:bg-[#FF1E56]
-                         hover:shadow-[0_0_15px_rgba(229,9,20,0.6)] active:scale-95"
-            >
-              S'inscrire
-            </button>
+            <div className="flex-1 space-y-1">
+              <button
+                type="button"
+                onClick={() => onOpenRegistration(event)}
+                className="w-full rounded-lg bg-[#E50914] py-2.5 text-sm font-bold
+                           text-white transition hover:bg-[#FF1E56]
+                           hover:shadow-[0_0_15px_rgba(229,9,20,0.6)] active:scale-95"
+              >
+                S'inscrire
+              </button>
+              {shouldShowWaitlistHint && (
+                <p className="text-[11px] text-yellow-400 text-center">
+                  Places remplies: nouvelles inscriptions en attente.
+                </p>
+              )}
+            </div>
           ) : (
             <button
               type="button"
@@ -297,7 +317,7 @@ export default function EventPage() {
   return (
     <section className="relative z-10 min-h-screen bg-transparent px-4 py-12 md:px-6 md:py-20">
       <div className="mx-auto max-w-7xl">
-        <EventIntroSection />
+        {/* <EventIntroSection /> */}
 
         <div id="event-catalog" className="mt-16">
           <motion.div

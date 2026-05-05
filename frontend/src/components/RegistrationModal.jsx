@@ -147,7 +147,7 @@ export default function RegistrationModal({ event, onClose, onSuccess }) {
 
       setRegInfo(res.data.registration);
       setSuccess(true);
-      if (onSuccess) onSuccess(event.id);
+      if (onSuccess) onSuccess(event.id, res.data.registration);
     } catch (err) {
       setErrors({
         global: err.response?.data?.message || "Une erreur est survenue.",

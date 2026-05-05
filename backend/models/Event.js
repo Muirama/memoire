@@ -60,6 +60,15 @@ const Event = sequelize.define(
       defaultValue: 0,
     },
 
+    maxParticipants: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        min: 1,
+      },
+    },
+
     // Prize pool
     prizePool: {
       type: DataTypes.INTEGER,

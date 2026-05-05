@@ -79,7 +79,7 @@ export default function EventDetailPage() {
   }, [id]);
 
   // ── Après inscription réussie ─────────────────────────
-  const handleSuccess = (regData) => {
+  const handleSuccess = (_, regData) => {
     setEvent((prev) => ({ ...prev, registered: (prev.registered || 0) + 1 }));
     setAlreadyRegistered(true);
     if (regData) setMyRegistration(regData);
@@ -120,6 +120,11 @@ export default function EventDetailPage() {
 
   // ── Bouton d'inscription selon l'état ─────────────────
   const renderRegistrationButton = () => {
+    const hasCapacity = Number.isInteger(event.maxParticipants);
+    const filled = event.registered || 0;
+    const remainingSpots = hasCapacity
+      ? Math.max(0, event.maxParticipants - filled)
+      : null;
     if (checkingReg)
       return (
         <div
@@ -148,9 +153,9 @@ export default function EventDetailPage() {
               Statut :{" "}
               <span
                 className={`font-semibold
-              ${myRegistration.status === "Confirmée" ? "text-green-400" : ""}
-              ${myRegistration.status === "En attente" ? "text-yellow-400" : ""}
-              ${myRegistration.status === "Annulée" ? "text-red-400" : ""}
+              ${myRegistration.status?.toLowerCase().includes("confirm") ? "text-green-400" : ""}
+              ${myRegistration.status?.toLowerCase().includes("attente") ? "text-yellow-400" : ""}
+              ${myRegistration.status?.toLowerCase().includes("annul") ? "text-red-400" : ""}
             `}
               >
                 {myRegistration.status}
@@ -196,8 +201,15 @@ export default function EventDetailPage() {
           S'inscrire maintenant
         </motion.button>
         <p className="text-gray-500 text-xs text-center mt-3">
-          {event.registered || 0} personne(s) déjà inscrite(s)
+          {hasCapacity
+            ? `${filled}/${event.maxParticipants} inscription(s) - ${remainingSpots} place(s) restante(s)`
+            : `${filled} personne(s) deja inscrite(s)`}
         </p>
+        {hasCapacity && remainingSpots === 0 && (
+          <p className="text-yellow-400 text-xs text-center mt-1">
+            Nouvelles inscriptions placees en liste d'attente.
+          </p>
+        )}
       </>
     );
   };
@@ -340,7 +352,9 @@ export default function EventDetailPage() {
                 {event.registered || 0}
               </p>
               <p className="text-gray-500 text-sm mt-1">
-                participant(s) inscrit(s)
+                {Number.isInteger(event.maxParticipants)
+                  ? `${event.registered || 0}/${event.maxParticipants} inscription(s)`
+                  : "participant(s) inscrit(s)"}
               </p>
             </motion.div>
           </div>
@@ -371,6 +385,13 @@ export default function EventDetailPage() {
                     icon={<FaClock />}
                     label="Heure"
                     value={event.time}
+                  />
+                )}
+                {Number.isInteger(event.maxParticipants) && (
+                  <InfoRow
+                    icon={<FaUsers />}
+                    label="Places"
+                    value={`${Math.max(0, event.maxParticipants - (event.registered || 0))} restante(s) sur ${event.maxParticipants}`}
                   />
                 )}
                 {event.location && (
