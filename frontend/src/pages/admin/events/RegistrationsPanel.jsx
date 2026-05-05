@@ -22,6 +22,33 @@ export default function RegistrationsPanel({
   onEdit,
   onDelete,
 }) {
+  const isSquad = event?.category === "Squad";
+
+  const getTeamMembers = (reg) => {
+    const teammates = Array.isArray(reg.teammates) ? reg.teammates : [];
+    return [reg.pseudo, ...teammates.map((tm) => tm?.pseudo).filter(Boolean)];
+  };
+
+  const renderTeamCell = (reg) => {
+    if (!isSquad) return <span className="text-gray-500 text-xs">Solo</span>;
+
+    const members = getTeamMembers(reg);
+    const preview = members.slice(0, 2).join(", ");
+    const remaining = members.length - 2;
+
+    return (
+      <div className="text-xs">
+        <p className="text-white font-semibold">
+          {members.length} membre{members.length > 1 ? "s" : ""}
+        </p>
+        <p className="text-gray-500 truncate">
+          {preview}
+          {remaining > 0 ? ` +${remaining}` : ""}
+        </p>
+      </div>
+    );
+  };
+
   return (
     <div className="border-t border-white/5 px-4 md:px-5 pb-5 pt-4">
       {/* Header */}
@@ -66,7 +93,7 @@ export default function RegistrationsPanel({
         <div className="text-center py-8">
           <FaUsers className="text-gray-700 text-4xl mx-auto mb-2" />
           <p className="text-gray-500 text-sm">
-            Aucune inscription pour cet événement.
+            Aucune inscription pour cet evenement.
           </p>
         </div>
       ) : (
@@ -80,6 +107,7 @@ export default function RegistrationsPanel({
                     "#",
                     "Participant",
                     "Pseudo",
+                    "Equipe",
                     "Contact",
                     "Date",
                     "Statut",
@@ -114,6 +142,7 @@ export default function RegistrationsPanel({
                           {reg.pseudo}
                         </span>
                       </td>
+                      <td className="px-4 py-3">{renderTeamCell(reg)}</td>
                       <td className="px-4 py-3 text-gray-400 text-xs">
                         {reg.phone}
                       </td>
@@ -176,8 +205,9 @@ export default function RegistrationsPanel({
                     </span>
                   </div>
                   <p className="text-gray-500 text-xs mb-2">
-                    {reg.email} · {reg.phone}
+                    {reg.email} - {reg.phone}
                   </p>
+                  <div className="mb-2">{renderTeamCell(reg)}</div>
                   <div className="flex justify-between items-center">
                     <p className="text-gray-600 text-xs">{date}</p>
                     <div className="flex gap-1.5">

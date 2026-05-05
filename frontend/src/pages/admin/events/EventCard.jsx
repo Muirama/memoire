@@ -31,6 +31,9 @@ export default function EventCard({
   onEditEvent,
   onDeleteEvent,
 }) {
+  const isSquad = event.category === "Squad";
+  const registeredLabel = isSquad ? "equipe(s)" : "inscrit(s)";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -85,7 +88,7 @@ export default function EventCard({
               <span className="text-white font-semibold">
                 {event.registered || 0}
               </span>{" "}
-              inscrit(s)
+              {registeredLabel}
             </span>
           </div>
         </div>
