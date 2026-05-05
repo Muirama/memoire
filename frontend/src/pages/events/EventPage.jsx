@@ -20,11 +20,7 @@ import EventIntroSection from "../../components/EventIntroSection";
 import RegistrationModal from "../../components/RegistrationModal";
 import { buildLoginRedirect, isUserLoggedIn } from "../../utils/auth";
 
-const CATEGORIES = [
-  "Tous",
-  "Solo",
-  "Squad",
-];
+const CATEGORIES = ["Tous", "Solo", "Squad"];
 const SORT_OPTIONS = [
   { value: "date-asc", label: "Date (prochains)" },
   { value: "date-desc", label: "Date (récents)" },
@@ -48,13 +44,17 @@ function EventCard({ event, navigate, onOpenRegistration, isRegistered }) {
   const remainingSpots = hasCapacity
     ? Math.max(0, event.maxParticipants - filled)
     : null;
-  const shouldShowWaitlistHint = hasCapacity && remainingSpots === 0;
+  const isWaitlistMode =
+    hasCapacity &&
+    remainingSpots === 0 &&
+    event.registrationOpen &&
+    !isRegistered;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col overflow-hidden rounded-2xl border border-[#E50914]/20
+      className="h-[500px] flex flex-col overflow-hidden rounded-2xl border border-[#E50914]/20
                  bg-[#1A1A1A] transition-all duration-300
                  hover:border-[#E50914] hover:shadow-[0_0_25px_rgba(229,9,20,0.3)]"
     >
@@ -139,8 +139,9 @@ function EventCard({ event, navigate, onOpenRegistration, isRegistered }) {
           <div className="flex items-center gap-2">
             <FaUsers className="flex-shrink-0 text-[#E50914]" />
             {hasCapacity ? (
-              <span>
-                {filled}/{event.maxParticipants} inscription(s) ({remainingSpots} place(s) restante(s))
+              <span className="line-clamp-1">
+                {filled}/{event.maxParticipants} inscription(s) (
+                {remainingSpots} place(s) restante(s))
               </span>
             ) : (
               <span>{filled} participant(s) inscrit(s)</span>
@@ -179,22 +180,17 @@ function EventCard({ event, navigate, onOpenRegistration, isRegistered }) {
               <FaCheckCircle size={11} /> Inscrit
             </button>
           ) : event.registrationOpen ? (
-            <div className="flex-1 space-y-1">
-              <button
-                type="button"
-                onClick={() => onOpenRegistration(event)}
-                className="w-full rounded-lg bg-[#E50914] py-2.5 text-sm font-bold
-                           text-white transition hover:bg-[#FF1E56]
-                           hover:shadow-[0_0_15px_rgba(229,9,20,0.6)] active:scale-95"
-              >
-                S'inscrire
-              </button>
-              {shouldShowWaitlistHint && (
-                <p className="text-[11px] text-yellow-400 text-center">
-                  Places remplies: nouvelles inscriptions en attente.
-                </p>
-              )}
-            </div>
+            <button
+              type="button"
+              onClick={() => onOpenRegistration(event)}
+              className={`flex-1 rounded-lg py-2.5 text-sm font-bold transition active:scale-95 ${
+                isWaitlistMode
+                  ? "bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 hover:bg-yellow-500/30"
+                  : "bg-[#E50914] text-white hover:bg-[#FF1E56] hover:shadow-[0_0_15px_rgba(229,9,20,0.6)]"
+              }`}
+            >
+              {isWaitlistMode ? "Liste d'attente" : "S'inscrire"}
+            </button>
           ) : (
             <button
               type="button"
@@ -453,6 +449,7 @@ export default function EventPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
+                    className="h-full"
                   >
                     <EventCard
                       event={event}

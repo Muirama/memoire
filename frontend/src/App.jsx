@@ -18,7 +18,6 @@ import ShopPage from "./pages/shop/ShopPage";
 import ShopDetailPage from "./pages/shop/ShopDetailPage";
 import CheckoutPage from "./pages/shop/CheckoutPage";
 import TeamPage from "./pages/team/TeamPage";
-import TeamDetailPage from "./pages/team/TeamDetailPage";
 import NewsPage from "./pages/news/NewsPage";
 import NewsDetailPage from "./pages/news/NewsDetailPage";
 import EventPage from "./pages/events/EventPage";
@@ -26,6 +25,7 @@ import EventDetailPage from "./pages/events/EventDetailPage";
 import LoginPage from "./pages/LoginPage";
 import SignPage from "./pages/SignPage";
 import ScrollToTop from "./components/ScrollToTop";
+import GameDetailPage from "./pages/team/GamedetailPage";
 
 import AdminHome from "./pages/admin/AdminHome";
 import AdminOrders from "./pages/admin/orders/AdminOrders";
@@ -153,7 +153,7 @@ function App() {
             <Route path="/shop/:id" element={<ShopDetailPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/team" element={<TeamPage />} />
-            <Route path="/team/:id" element={<TeamDetailPage />} />
+            <Route path="/team/game/:slug" element={<GameDetailPage />} />
             <Route path="/news" element={<NewsPage />} />
             <Route path="/news/:id" element={<NewsDetailPage />} />
             <Route path="/events" element={<EventPage />} />
