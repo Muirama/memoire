@@ -43,6 +43,17 @@ const Registration = sequelize.define(
       allowNull: false,
     },
 
+    // ── Coéquipiers (squad uniquement) ───────────────────
+    // Format : [{ pseudo, name, phone }, ...]
+    // null pour les inscriptions solo
+    teammates: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      defaultValue: null,
+      comment:
+        "Squad : liste des coéquipiers [{pseudo, name, phone}]. null si solo.",
+    },
+
     // ── Statut inscription ────────────────────────────────
     status: {
       type: DataTypes.ENUM("En attente", "Confirmée", "Annulée"),
