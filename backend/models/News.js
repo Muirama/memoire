@@ -32,7 +32,7 @@ const News = sequelize.define(
         "Tournoi",
         "Communauté",
         "Produit",
-        "Annonce",
+        "Sponsor",
       ),
       defaultValue: "Actualité",
     },
