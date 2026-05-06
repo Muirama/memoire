@@ -176,7 +176,8 @@ export default function PreviewNews() {
                         <FaUser size={10} /> {featured.author}
                       </span>
                       <span className="flex items-center gap-1">
-                        <FaCalendarAlt size={10} /> {formatDate(featured.createdAt)}
+                        <FaCalendarAlt size={10} />{" "}
+                        {formatDate(featured.createdAt)}
                       </span>
                     </div>
                   </div>
@@ -191,9 +192,12 @@ export default function PreviewNews() {
               <div className="absolute inset-0 bg-[#1A1A1A] border border-white/10 flex items-center justify-center">
                 <div className="text-center px-6">
                   <FaNewspaper className="text-gray-700 text-5xl mx-auto mb-3" />
-                  <p className="text-white font-semibold">Aucune news Sponsor</p>
+                  <p className="text-white font-semibold">
+                    Aucune news Sponsor
+                  </p>
                   <p className="text-gray-500 text-sm mt-1">
-                    Ajoutez une actualite categorie Sponsor pour cette grande preview.
+                    Ajoutez une actualite categorie Sponsor pour cette grande
+                    preview.
                   </p>
                 </div>
               </div>
