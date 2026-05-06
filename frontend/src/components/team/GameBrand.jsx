@@ -1,7 +1,7 @@
 export default function GameBrand({
   game,
   className = "",
-  logoClassName = "w-full h-full object-contain",
+  logoClassName = "",
   textClassName = "",
 }) {
   if (game.logo) {
@@ -9,7 +9,7 @@ export default function GameBrand({
       <img
         src={game.logo}
         alt={game.name}
-        className={logoClassName}
+        className={`block w-full h-full ${logoClassName}`}
         loading="lazy"
       />
     );

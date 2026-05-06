@@ -117,15 +117,16 @@ export default function TeamDropdown() {
             </Link>
 
             <div className="max-h-[28rem] overflow-y-auto p-2">
-              <ul className="space-y-1.5">
+              <ul className="grid grid-cols-3 gap-1.5">
                 {games.map((game) => (
                   <li key={game.id}>
                     <Link
                       to={`/team/game/${game.slug}`}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 px-3 py-3 rounded-xl
-                                 text-gray-300 hover:text-white hover:bg-white/5
-                                 transition-all group border border-transparent hover:border-white/10"
+                      className="flex flex-col items-center gap-2 px-2 py-3 rounded-xl
+                     text-gray-300 hover:text-white hover:bg-white/5
+                     transition-all group border border-transparent
+                     hover:border-white/10 text-center"
                     >
                       <div className="w-11 h-11 rounded-xl bg-black/40 border border-white/8 p-2 flex items-center justify-center flex-shrink-0">
                         <GameBrand
@@ -134,12 +135,11 @@ export default function TeamDropdown() {
                           textClassName="text-sm tracking-[0.24em]"
                         />
                       </div>
-
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm truncate">
+                      <div className="min-w-0 w-full">
+                        <p className="font-semibold text-xs truncate leading-tight">
                           {game.name}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-[10px] text-gray-500 mt-0.5">
                           {game.rosterCount} membre(s)
                         </p>
                       </div>
