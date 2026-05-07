@@ -324,8 +324,6 @@ export default function PlayersCountriesMap() {
               </div>
             ))}
           </div>
-
-        
         </div>
 
         <AnimatePresence mode="wait">
