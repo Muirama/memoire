@@ -19,12 +19,14 @@ const formatDate = (d) =>
 export default function PreviewNews() {
   const [news, setNews] = useState([]);
   const [featuredIdx, setFeaturedIdx] = useState(0);
-  const [direction, setDirection] = useState(1); // 1 = vers droite, -1 = vers gauche
+  const [direction, setDirection] = useState(1);
   const navigate = useNavigate();
 
   useEffect(() => {
     api.get("/news").then((r) => {
-      setNews(r.data.news.slice(0, 4));
+      const newsData = Array.isArray(r?.data?.news) ? r.data.news : [];
+
+      setNews(newsData.slice(0, 4));
     });
   }, []);
 
