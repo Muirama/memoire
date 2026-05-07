@@ -33,11 +33,8 @@ const formatDate = (d) =>
 const statusBadge = (status) => {
   const map = {
     "En attente": "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-    Confirmée: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-    "En cours de livraison":
-      "bg-purple-500/20 text-purple-400 border-purple-500/30",
-    Livrée: "bg-green-500/20 text-green-400 border-green-500/30",
-    Annulée: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+    "Déjà récupérée": "bg-green-500/20 text-green-400 border-green-500/30",
+    "Annulée": "bg-red-500/20 text-red-400 border-red-500/30",
   };
   return map[status] || "bg-gray-500/20 text-gray-400";
 };
@@ -134,8 +131,7 @@ export default function AdminHome() {
         setOrderStats({
           total: o.length,
           pending: o.filter((x) => x.status === "En attente").length,
-          confirmed: o.filter((x) => x.status === "Confirmée").length,
-          delivered: o.filter((x) => x.status === "Livrée").length,
+          delivered: o.filter((x) => x.status === "Déjà récupérée").length,
           cancelled: o.filter((x) => x.status === "Annulée").length,
         });
         setRecentOrders(o.slice(0, 4));
@@ -295,24 +291,17 @@ export default function AdminHome() {
             icon: <FaHourglassHalf />,
           },
           {
-            label: "Confirmées",
-            value: orderStats.confirmed,
-            color: "text-blue-400",
-            bg: "bg-blue-500/10   border border-blue-500/20",
-            icon: <FaCheckCircle />,
-          },
-          {
-            label: "Livrées",
+            label: "Déjà récupérée",
             value: orderStats.delivered,
             color: "text-green-400",
             bg: "bg-green-500/10  border border-green-500/20",
             icon: <FaTruck />,
           },
           {
-            label: "Annulées",
+            label: "Annulée",
             value: orderStats.cancelled,
-            color: "text-gray-400",
-            bg: "bg-gray-500/10   border border-gray-500/20",
+            color: "text-red-400",
+            bg: "bg-red-500/10   border border-red-500/20",
             icon: <FaTimesCircle />,
           },
         ].map((s, i) => (
@@ -548,8 +537,8 @@ export default function AdminHome() {
               {
                 label: "Annulées",
                 value: regStats.cancelled,
-                color: "text-gray-400",
-                bg: "bg-gray-500/10   border border-gray-500/20",
+                color: "text-red-400",
+                bg: "bg-red-500/10   border border-red-500/20",
                 icon: <FaBan />,
               },
             ].map((s, i) => (

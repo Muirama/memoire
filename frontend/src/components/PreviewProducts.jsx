@@ -19,7 +19,13 @@ export default function PreviewProducts() {
     const fetchPreview = async () => {
       try {
         const res = await api.get("/shop");
-        const shuffled = [...res.data.products].sort(() => 0.5 - Math.random());
+
+        const products = Array.isArray(res?.data?.products)
+          ? res.data.products
+          : [];
+
+        const shuffled = [...products].sort(() => 0.5 - Math.random());
+
         setProducts(shuffled.slice(0, 8));
       } catch (err) {
         console.error(err);

@@ -86,7 +86,11 @@ export default function TeamDropdown() {
                    }`}
       >
         <FaUsers />
-        <span>Teams</span>
+        <span>
+          <Link to="/team" className="font-semibold">
+            Teams
+          </Link>
+        </span>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
@@ -113,7 +117,7 @@ export default function TeamDropdown() {
               onClick={() => setIsOpen(false)}
             >
               <FaGamepad size={14} />
-              Voir tous les jeux
+              Voir tous les roster
             </Link>
 
             <div className="max-h-[28rem] overflow-y-auto p-2">
