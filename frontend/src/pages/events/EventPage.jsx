@@ -229,7 +229,7 @@ export default function EventPage() {
         setLoading(true);
         setError(null);
         const res = await api.get("/events");
-        setEvents(res.data.events);
+        setEvents(Array.isArray(res.data.events) ? res.data.events : []);
       } catch {
         setError(
           "Impossible de charger les événements pour le moment. Réessayez plus tard.",
