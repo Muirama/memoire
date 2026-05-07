@@ -15,6 +15,7 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import logo_GES_blanc from "/LOGO/Logo_GES_blanc.svg";
+import { clearAuthSession } from "../../utils/auth";
 
 const navItems = [
   { label: "Dashboard", icon: <FaTachometerAlt />, to: "/admin", end: true },
@@ -30,12 +31,8 @@ export default function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userRole");
-    localStorage.removeItem("adminName");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userPseudo");
-    navigate("/login");
+    clearAuthSession();
+    navigate("/login", { replace: true });
   };
 
   const SidebarContent = () => (

@@ -6,6 +6,7 @@ import PlayersCountriesMap from "../components/PlayersCountriesMap";
 import PoweredByOrange from "../components/PoweredByOrange";
 import BronzeSponsorLoaline from "../components/BronzeSponsorLoaline";
 import PreviewNews from "../components/PreviewNews";
+import GroupCompaniesBanner from "../components/GroupCompaniesBanner";
 import SponsorsPartnersBanner from "../components/SponsorsPartnersBanner";
 
 export default function HomePage() {
@@ -14,11 +15,12 @@ export default function HomePage() {
       <Intro />
       <PreviewNews />
       <PoweredByOrange />
+      <GroupCompaniesBanner />
       <About />
       <BronzeSponsorLoaline />
       <PlayersCountriesMap />
-      <PreviewProducts />
       <SponsorsPartnersBanner />
+      <PreviewProducts />
       <Carousel />
     </>
   );

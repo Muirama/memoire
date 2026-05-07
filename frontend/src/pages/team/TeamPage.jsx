@@ -1,244 +1,206 @@
 /* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { FaArrowRight, FaGamepad, FaLayerGroup, FaUsers } from "react-icons/fa";
+import { FaArrowRight, FaUsers } from "react-icons/fa";
 import { games, players, playerPhotoFallback } from "../../data/GamesData";
 import GameBrand from "../../components/team/GameBrand";
 
 const toRgba = (hex, alpha) => {
-  const value = hex.replace("#", "");
-  const safeValue =
-    value.length === 3
-      ? value
+  const v = hex.replace("#", "");
+  const safe =
+    v.length === 3
+      ? v
           .split("")
-          .map((character) => `${character}${character}`)
+          .map((c) => c + c)
           .join("")
-      : value;
-
-  const number = Number.parseInt(safeValue, 16);
-  const red = (number >> 16) & 255;
-  const green = (number >> 8) & 255;
-  const blue = number & 255;
-
-  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+      : v;
+  const n = parseInt(safe, 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
 };
-
-const cardSurface = (game) => ({
-  background: `
-    radial-gradient(circle at top left, ${toRgba(game.accent, 0.28)}, transparent 44%),
-    radial-gradient(circle at bottom right, ${toRgba(game.accentSoft, 0.22)}, transparent 42%),
-    linear-gradient(160deg, rgba(12, 12, 12, 0.96) 0%, rgba(18, 18, 18, 0.94) 55%, rgba(7, 7, 7, 0.98) 100%)
-  `,
-});
 
 export default function TeamPage() {
   const navigate = useNavigate();
-  const multiGamePlayers = players.filter(
-    (player) => player.gameTags.length > 1,
-  );
 
   return (
-    <section className="relative overflow-hidden bg-transparent min-h-screen py-12 md:py-20 px-4 md:px-6 z-10">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 left-[-10%] h-72 w-72 rounded-full bg-[#E50914]/18 blur-3xl" />
-        <div className="absolute top-1/3 right-[-8%] h-80 w-80 rounded-full bg-[#2563EB]/14 blur-3xl" />
-        <div className="absolute bottom-[-8rem] left-1/3 h-96 w-96 rounded-full bg-[#F59E0B]/10 blur-3xl" />
+    <section className="relative min-h-screen bg-transparent py-16 md:py-24 px-4 md:px-8 z-10 overflow-hidden">
+      {/* Orbes */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-[#E50914]/12 blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 h-80 w-80 rounded-full bg-[#E50914]/8 blur-[100px]" />
       </div>
 
       <div className="max-w-7xl mx-auto relative">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] items-end mb-12 md:mb-16">
-          <div>
-            <p className="text-xs sm:text-sm uppercase tracking-[0.38em] text-[#E50914] mb-4">
-              GeS Teams Hub
-            </p>
-            <h1 className="text-4xl md:text-6xl font-black text-white leading-[0.95] max-w-4xl">
-              Nos jeux, presents dans le code comme un vrai hub d organisation
-              esport.
-            </h1>
-            <p className="text-gray-400 text-base md:text-lg mt-5 max-w-3xl leading-relaxed">
-              L onglet Teams devient un index par jeu, inspire de Team Liquid:
-              chaque roster GeS est gere directement dans le front avec les tags
-              des players, leurs photos et un fallback logo quand une image
-              manque.
-            </p>
+        {/* HEADER */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="mb-16 md:mb-20"
+        >
+          <div className="flex items-center gap-4 mb-6">
+            <div className="h-px w-12 bg-[#E50914]" />
+            <span className="text-[#E50914] text-xs font-black uppercase tracking-[0.4em]">
+              Gascom Esports
+            </span>
+          </div>
 
-            <div className="flex flex-wrap gap-2 mt-6">
-              {games.map((game) => (
-                <button
-                  key={game.id}
-                  type="button"
-                  onClick={() => navigate(`/team/game/${game.slug}`)}
-                  className="px-3 py-2 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-white border border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/10 transition"
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.9] max-w-2xl">
+              Nos <br />
+              <span className="text-[#E50914]">Équipes</span>
+            </h1>
+
+            <div className="flex gap-8 md:gap-12 pb-1">
+              {[
+                { val: games.length, label: "Jeux" },
+                { val: players.length, label: "Joueurs" },
+              ].map((s, i) => (
+                <motion.div
+                  key={s.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.2 }}
                 >
-                  {game.name}
-                </button>
+                  <p className="text-4xl md:text-5xl font-black text-white">
+                    {s.val}
+                  </p>
+                  <p className="text-gray-500 text-xs uppercase tracking-[0.3em] mt-1">
+                    {s.label}
+                  </p>
+                </motion.div>
               ))}
             </div>
           </div>
+        </motion.div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 md:p-7 shadow-[0_20px_80px_rgba(0,0,0,0.35)]">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-gray-500 mb-2">
-                  Snapshot
-                </p>
-                <h2 className="text-white text-2xl font-black">
-                  GeS roster overview
-                </h2>
-              </div>
-              <div className="w-12 h-12 rounded-2xl bg-[#E50914]/15 border border-[#E50914]/25 flex items-center justify-center text-[#E50914]">
-                <FaLayerGroup size={18} />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3 mt-6">
-              <div className="rounded-2xl border border-white/8 bg-black/30 p-4">
-                <p className="text-2xl md:text-3xl font-black text-white">
-                  {games.length}
-                </p>
-                <p className="text-gray-500 text-xs uppercase tracking-[0.24em] mt-2">
-                  Jeux
-                </p>
-              </div>
-              <div className="rounded-2xl border border-white/8 bg-black/30 p-4">
-                <p className="text-2xl md:text-3xl font-black text-white">
-                  {players.length}
-                </p>
-                <p className="text-gray-500 text-xs uppercase tracking-[0.24em] mt-2">
-                  Profils
-                </p>
-              </div>
-              <div className="rounded-2xl border border-white/8 bg-black/30 p-4">
-                <p className="text-2xl md:text-3xl font-black text-white">
-                  {multiGamePlayers.length}
-                </p>
-                <p className="text-gray-500 text-xs uppercase tracking-[0.24em] mt-2">
-                  Multi-jeux
-                </p>
-              </div>
-            </div>
-
-            <p className="text-sm text-gray-400 leading-relaxed mt-5">
-              Chaque carte ouvre un roster detaille avec la repartition par jeu,
-              des visuels locaux et un rendu adapte au branding GeS.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {/* GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {games.map((game, index) => (
-            <motion.article
+            <GameCard
               key={game.id}
-              initial={{ opacity: 0, y: 22 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.06 }}
+              game={game}
+              index={index}
               onClick={() => navigate(`/team/game/${game.slug}`)}
-              className="group relative overflow-hidden rounded-[2rem] border border-white/10 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
-              style={cardSurface(game)}
-            >
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,rgba(0,0,0,0.08)_50%,rgba(0,0,0,0.35)_100%)]" />
-
-              <div className="relative min-h-[360px] p-6 md:p-7 flex flex-col">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-[11px] uppercase tracking-[0.28em] text-white/50 mb-2">
-                      {game.shortLabel}
-                    </p>
-                    <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-xs text-white/80">
-                      <FaUsers size={11} />
-                      {game.rosterCount} membre(s)
-                    </div>
-                  </div>
-
-                  <div
-                    className="rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em] border"
-                    style={{
-                      color: game.accent,
-                      borderColor: toRgba(game.accent, 0.32),
-                      backgroundColor: toRgba(game.accent, 0.12),
-                    }}
-                  >
-                    GeS
-                  </div>
-                </div>
-
-                <div className="flex-1 flex items-center justify-center py-8">
-                  <div className="relative w-full max-w-[18rem] h-40 md:h-44">
-                    <div
-                      className="absolute inset-0 rounded-[2rem] blur-3xl"
-                      style={{
-                        background: `radial-gradient(circle, ${toRgba(
-                          game.accent,
-                          0.34,
-                        )} 0%, transparent 72%)`,
-                      }}
-                    />
-                    <div className="relative h-full w-full">
-                      <GameBrand
-                        game={game}
-                        logoClassName="w-full h-full object-contain drop-shadow-[0_12px_32px_rgba(0,0,0,0.55)] transition-transform duration-300 group-hover:scale-105"
-                        textClassName="text-4xl md:text-5xl"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-auto">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="flex -space-x-3">
-                      {game.featuredPlayers.map((player, playerIndex) => (
-                        <div
-                          key={player.id}
-                          className="w-11 h-11 rounded-full border-2 overflow-hidden bg-black/60"
-                          style={{
-                            borderColor:
-                              playerIndex === 0
-                                ? toRgba(game.accent, 0.9)
-                                : "rgba(255,255,255,0.08)",
-                          }}
-                        >
-                          <img
-                            src={player.photo || playerPhotoFallback}
-                            alt={player.pseudo}
-                            className="w-full h-full object-cover object-top"
-                            loading="lazy"
-                          />
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="text-sm text-gray-300">
-                      <p className="font-semibold text-white">
-                        {game.teamName}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {game.playerCount} player(s) / {game.staffCount} staff
-                      </p>
-                    </div>
-                  </div>
-
-                  <h3 className="text-white text-2xl font-black leading-tight">
-                    {game.name}
-                  </h3>
-                  <p className="text-gray-400 text-sm leading-relaxed mt-3 min-h-[4.5rem]">
-                    {game.description}
-                  </p>
-
-                  <div className="flex items-center justify-between pt-5 mt-5 border-t border-white/10">
-                    <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-white/70">
-                      <FaGamepad size={11} />
-                      Ouvrir le roster
-                    </span>
-                    <span className="inline-flex items-center gap-2 text-sm font-bold text-white group-hover:gap-3 transition-all">
-                      Voir la page <FaArrowRight size={12} />
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </motion.article>
+            />
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+/* CARD */
+function GameCard({ game, index, onClick }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{
+        delay: index * 0.1,
+        duration: 0.5,
+        ease: "easeOut",
+      }}
+      onClick={onClick}
+      className="group relative overflow-hidden rounded-2xl cursor-pointer
+                 border border-white/8 bg-[#0e0e0e]
+                 hover:border-white/20 transition-all duration-500
+                 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
+    >
+      {/* Glow */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100
+                   transition-opacity duration-500 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at top left,
+            ${toRgba(game.accent, 0.18)} 0%, transparent 60%)`,
+        }}
+      />
+
+      {/* Accent */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px]"
+        style={{ background: game.accent }}
+      />
+
+      <div className="relative p-6 flex flex-col h-full min-h-[320px]">
+        {/* TOP */}
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <p
+              className="text-[10px] uppercase tracking-[0.35em] mb-1"
+              style={{ color: game.accent }}
+            >
+              {game.shortLabel}
+            </p>
+            <h3 className="text-white font-black text-xl leading-tight">
+              {game.name}
+            </h3>
+          </div>
+
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs text-gray-400">
+            <FaUsers size={10} />
+            {game.rosterCount}
+          </div>
+        </div>
+
+        {/* LOGO */}
+        <div className="flex-1 flex items-center justify-center py-4 relative">
+          <div
+            className="absolute w-40 h-40 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"
+            style={{ background: game.accent }}
+          />
+          <div className="relative w-full max-w-[180px] h-32">
+            <GameBrand
+              game={game}
+              logoClassName="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+              textClassName="text-4xl"
+            />
+          </div>
+        </div>
+
+        {/* FOOTER */}
+        <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
+          {/* Avatars */}
+          <div className="flex items-center gap-3">
+            <div className="flex -space-x-2.5">
+              {game.featuredPlayers.slice(0, 4).map((player, i) => (
+                <motion.div
+                  key={player.id}
+                  initial={{ y: 10, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.1 }}
+                  viewport={{ once: true }}
+                  className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#0e0e0e]"
+                  style={{ zIndex: 4 - i }}
+                >
+                  <img
+                    src={player.photo || playerPhotoFallback}
+                    alt={player.pseudo}
+                    className="w-full h-full object-cover object-top"
+                  />
+                </motion.div>
+              ))}
+            </div>
+
+            <div>
+              <p className="text-white text-xs font-semibold leading-none">
+                {game.teamName}
+              </p>
+              <p className="text-gray-600 text-[10px] mt-0.5">
+                {game.playerCount}J · {game.staffCount}S
+              </p>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-500 group-hover:border-white/30 group-hover:text-white group-hover:translate-x-1 transition-all duration-300">
+            <FaArrowRight size={11} />
+          </div>
+        </div>
+      </div>
+    </motion.article>
   );
 }

@@ -35,7 +35,7 @@ const services = [
 
 export default function Intro() {
   // const [hovered, setHovered] = useState(null);
-  const titles = ["Tongasoa eto @", "Bienvenue chez", "Welcome to"];
+  const titles = ["Tongasoa eto amin'ny", "Bienvenue chez", "Welcome to"];
   const [currentTitle, setCurrentTitle] = useState(0);
 
   useEffect(() => {

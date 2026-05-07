@@ -315,15 +315,12 @@ export default function EventPage() {
       <div className="mx-auto max-w-7xl">
         {/* <EventIntroSection /> */}
 
-        <div id="event-catalog" className="mt-16">
+        <div id="event-catalog" className="mt-2">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-10 text-center"
           >
-            <p className="mb-3 text-xs font-bold uppercase tracking-[0.28em] text-[#FF8A8A]">
-              Calendrier public
-            </p>
             <h2 className="mb-3 text-3xl font-extrabold text-white md:text-5xl">
               Nos <span className="text-[#E50914]">événements</span>
             </h2>
