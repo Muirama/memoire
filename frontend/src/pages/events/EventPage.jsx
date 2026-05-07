@@ -433,7 +433,7 @@ export default function EventPage() {
                 className="py-16 text-center"
               >
                 <FaCalendarAlt className="mx-auto mb-4 text-6xl text-gray-700" />
-                <p className="text-xl text-gray-500">Aucun événement trouvé.</p>
+                <p className="text-xl text-gray-500">Aucun événement disponible pour le moment.</p>
               </motion.div>
             ) : (
               <motion.div

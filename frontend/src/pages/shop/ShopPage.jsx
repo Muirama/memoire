@@ -173,11 +173,11 @@ export default function ShopPage() {
             {/* EMPTY API */}
             {isApiEmpty ? (
               <div className="text-center py-16 text-gray-500">
-                Aucun produit disponible
+                Aucun produit disponible pour le moment.
               </div>
             ) : isEmpty ? (
               <div className="text-center py-16 text-gray-500">
-                Aucun produit trouvé avec ces filtres
+                Aucun produit trouvé avec ces filtres.
                 <button
                   onClick={resetFilters}
                   className="block mt-4 px-6 py-3 bg-[#E50914] text-white rounded-lg mx-auto"
