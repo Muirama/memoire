@@ -103,7 +103,7 @@ const GAME_DEFINITIONS = [
     slug: "2xko",
     teamName: "GeS 2XKO",
     shortLabel: "Tag Fighter",
-    logo: "",
+    logo: "/games/2XKO.png",
     logoText: "2XKO",
     accent: "#F97316",
     accentSoft: "#E50914",
