@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -36,6 +36,8 @@ import AdminEvents from "./pages/admin/events/AdminEvents";
 import AdminNewsPage from "./pages/admin/news/AdminNewsPage";
 import AdminUsersPage from "./pages/admin/users/AdminUsersPage";
 
+const isAdminPath = (pathname) => pathname.startsWith("/admin");
+
 function AdminRoute() {
   const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("userRole");
@@ -66,17 +68,14 @@ function AdminRoute() {
             localStorage.setItem("userRole", authenticatedUser.role);
             localStorage.setItem("adminName", authenticatedUser.name || "");
           } else {
-            localStorage.removeItem("token");
-            localStorage.removeItem("userRole");
-            localStorage.removeItem("adminName");
-            localStorage.removeItem("userName");
-            localStorage.removeItem("userPseudo");
+            clearAuthSession();
           }
 
           setIsChecking(false);
         }
       } catch {
         if (isMounted) {
+          clearAuthSession();
           setIsAuthorized(false);
           setIsChecking(false);
         }
@@ -183,7 +182,8 @@ function UserRoute() {
 
 function Layout({ children }) {
   const location = useLocation();
-  const isAdmin = location.pathname.startsWith("/admin");
+  const isAdmin = isAdminPath(location.pathname);
+  const previousPathRef = useRef(location.pathname);
 
   const getPageTitle = (pathname) => {
     if (pathname === "/") return "Gascom";
@@ -203,6 +203,20 @@ function Layout({ children }) {
 
   useEffect(() => {
     document.title = getPageTitle(location.pathname);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const previousPath = previousPathRef.current;
+    const leftAdminArea =
+      isAdminPath(previousPath) &&
+      !isAdminPath(location.pathname) &&
+      localStorage.getItem("userRole") === "admin";
+
+    if (leftAdminArea) {
+      clearAuthSession();
+    }
+
+    previousPathRef.current = location.pathname;
   }, [location.pathname]);
 
   return (

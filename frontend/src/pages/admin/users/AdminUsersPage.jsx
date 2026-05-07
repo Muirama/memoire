@@ -123,19 +123,6 @@ export default function AdminUsersPage() {
                       {/* ACTIONS */}
                       <td className="p-4">
                         <div className="flex gap-3 justify-center items-center">
-                          {/* EDIT */}
-                          <button
-                            type="button"
-                            title="Modifier le rôle"
-                            onClick={() => console.log("edit user", user.id)}
-                            className="w-8 h-8 rounded-lg bg-blue-500/10
-                                           hover:bg-blue-500/20 text-blue-400
-                                           hover:text-blue-300 transition
-                                           flex items-center justify-center"
-                          >
-                            <FaEdit size={13} />
-                          </button>
-
                           {/* DELETE */}
                           <button
                             type="button"

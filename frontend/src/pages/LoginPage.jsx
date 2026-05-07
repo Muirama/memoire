@@ -1,10 +1,15 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import api from "../api/api";
-import { getRedirectAfterAuth, storeAuthSession } from "../utils/auth";
+import {
+  getRedirectAfterAuth,
+  getUserRole,
+  isLoggedIn,
+  storeAuthSession,
+} from "../utils/auth";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -15,6 +20,15 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const redirectTo = getRedirectAfterAuth(location.search, "/");
+
+  useEffect(() => {
+    if (!isLoggedIn()) return;
+
+    const role = getUserRole();
+    const destination = role === "admin" ? "/admin" : redirectTo;
+
+    navigate(destination, { replace: true });
+  }, [navigate, redirectTo]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -43,9 +57,9 @@ export default function LoginPage() {
       storeAuthSession(res.data);
 
       if (role === "admin") {
-        navigate("/admin");
+        navigate("/admin", { replace: true });
       } else {
-        navigate(redirectTo);
+        navigate(redirectTo, { replace: true });
       }
     } catch (err) {
       setErrors({
@@ -92,7 +106,8 @@ export default function LoginPage() {
               Connexion
             </h1>
             <p className="text-gray-400">
-              Accedez a votre compte <span className="text-[#E50914]">Gascom</span>
+              Accedez a votre compte{" "}
+              <span className="text-[#E50914]">Gascom</span>
             </p>
           </div>
 
