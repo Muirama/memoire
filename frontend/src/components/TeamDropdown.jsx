@@ -87,10 +87,9 @@ export default function TeamDropdown() {
       >
         <FaUsers />
         <span>
-          
-          <a href="/team" className="text-white hover:text-[#E50914]">
-            Teams
-          </a>
+        <a href="/team" className="text-white hover:text-[blanchedalmond] transition-colors">
+          Teams
+        </a>
         </span>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
