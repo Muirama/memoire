@@ -39,6 +39,12 @@ export default function EventDetailPage() {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
+  // ── État inscription de l'user courant ────────────────
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+  const [myRegistration, setMyRegistration] = useState(null);
+  const [checkingReg, setCheckingReg] = useState(false);
+
+  // ── Fetch event ───────────────────────────────────────
   useEffect(() => {
     const fetchEvent = async () => {
       try {
@@ -54,10 +60,29 @@ export default function EventDetailPage() {
     fetchEvent();
   }, [id]);
 
-  // ✅ Met à jour le compteur SANS fermer le modal
-  // Le modal se ferme seulement quand l'utilisateur clique "Parfait, merci !"
-  const handleSuccess = () => {
+  // ── Vérifier si l'user est déjà inscrit ───────────────
+  useEffect(() => {
+    if (!isUserLoggedIn() || !id) return;
+    const checkReg = async () => {
+      try {
+        setCheckingReg(true);
+        const res = await api.get(`/registrations/check/${id}`);
+        setAlreadyRegistered(res.data.registered);
+        setMyRegistration(res.data.registration);
+      } catch {
+        // silencieux — l'user verra juste le bouton normal
+      } finally {
+        setCheckingReg(false);
+      }
+    };
+    checkReg();
+  }, [id]);
+
+  // ── Après inscription réussie ─────────────────────────
+  const handleSuccess = (_, regData) => {
     setEvent((prev) => ({ ...prev, registered: (prev.registered || 0) + 1 }));
+    setAlreadyRegistered(true);
+    if (regData) setMyRegistration(regData);
   };
 
   const handleOpenRegistration = () => {
@@ -85,14 +110,109 @@ export default function EventDetailPage() {
           <p className="text-red-400 text-xl mb-6">{error || "Introuvable."}</p>
           <button
             onClick={() => navigate("/events")}
-            className="px-6 py-3 bg-[#E50914] text-white rounded-lg
-                     flex items-center gap-2 mx-auto"
+            className="px-6 py-3 bg-[#E50914] text-white rounded-lg flex items-center gap-2 mx-auto"
           >
             <FaArrowLeft /> Retour
           </button>
         </div>
       </section>
     );
+
+  // ── Bouton d'inscription selon l'état ─────────────────
+  const renderRegistrationButton = () => {
+    const hasCapacity = Number.isInteger(event.maxParticipants);
+    const filled = event.registered || 0;
+    const remainingSpots = hasCapacity
+      ? Math.max(0, event.maxParticipants - filled)
+      : null;
+    if (checkingReg)
+      return (
+        <div
+          className="w-full py-4 flex items-center justify-center gap-2
+                      bg-[#1A1A1A] rounded-xl border border-white/5"
+        >
+          <FaSpinner className="animate-spin text-[#E50914]" />
+          <span className="text-gray-400 text-sm">Vérification...</span>
+        </div>
+      );
+
+    if (alreadyRegistered)
+      return (
+        <div className="text-center">
+          <div
+            className="w-12 h-12 bg-green-500/10 rounded-full flex items-center
+                        justify-center mx-auto mb-3 border border-green-500/20"
+          >
+            <FaCheckCircle className="text-green-400 text-xl" />
+          </div>
+          <p className="text-green-400 font-bold text-sm">
+            Vous êtes inscrit !
+          </p>
+          {myRegistration && (
+            <p className="text-gray-500 text-xs mt-1">
+              Statut :{" "}
+              <span
+                className={`font-semibold
+              ${myRegistration.status?.toLowerCase().includes("confirm") ? "text-green-400" : ""}
+              ${myRegistration.status?.toLowerCase().includes("attente") ? "text-yellow-400" : ""}
+              ${myRegistration.status?.toLowerCase().includes("annul") ? "text-red-400" : ""}
+            `}
+              >
+                {myRegistration.status}
+              </span>
+            </p>
+          )}
+          <p className="text-gray-600 text-xs mt-2">
+            Vous avez déjà une inscription pour cet événement.
+          </p>
+        </div>
+      );
+
+    if (!event.registrationOpen)
+      return (
+        <div className="text-center">
+          <div
+            className="w-12 h-12 bg-gray-800 rounded-full flex items-center
+                        justify-center mx-auto mb-3"
+          >
+            <FaLock className="text-gray-500 text-xl" />
+          </div>
+          <p className="text-gray-400 font-semibold text-sm">
+            Inscriptions fermées
+          </p>
+          <p className="text-gray-600 text-xs mt-1">
+            Les inscriptions ont été clôturées par l'organisateur.
+          </p>
+        </div>
+      );
+
+    return (
+      <>
+        <motion.button
+          type="button"
+          whileTap={{ scale: 0.97 }}
+          onClick={handleOpenRegistration}
+          className="w-full py-4 bg-[#E50914] hover:bg-[#FF1E56] text-white
+                     font-bold rounded-xl transition-all duration-300
+                     hover:shadow-[0_0_20px_rgba(229,9,20,0.6)]
+                     flex items-center justify-center gap-2"
+        >
+          <FaCheckCircle />
+          S'inscrire maintenant
+        </motion.button>
+        <p className="text-gray-500 text-xs text-center mt-3">
+          {hasCapacity
+            ? `${filled}/${event.maxParticipants} inscription(s) - ${remainingSpots} place(s) restante(s)`
+            : `${filled} personne(s) deja inscrite(s)`}
+        </p>
+        {hasCapacity && remainingSpots === 0 && (
+          <p className="text-yellow-400 text-xs text-center mt-1">
+            Nouvelles inscriptions placees en liste d'attente.
+          </p>
+        )}
+      </>
+    );
+  };
 
   return (
     <section
@@ -226,20 +346,22 @@ export default function EventDetailPage() {
               className="bg-[#1A1A1A] rounded-2xl p-6 border border-white/5"
             >
               <h2 className="text-white font-bold text-lg mb-3 flex items-center gap-2">
-                <FaUsers className="text-[#E50914]" />
-                Participants
+                <FaUsers className="text-[#E50914]" /> Participants
               </h2>
               <p className="text-4xl font-extrabold text-[#E50914]">
                 {event.registered || 0}
               </p>
               <p className="text-gray-500 text-sm mt-1">
-                participant(s) inscrit(s)
+                {Number.isInteger(event.maxParticipants)
+                  ? `${event.registered || 0}/${event.maxParticipants} inscription(s)`
+                  : "participant(s) inscrit(s)"}
               </p>
             </motion.div>
           </div>
 
           {/* Colonne droite */}
           <div className="space-y-4">
+            {/* Infos pratiques */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -250,41 +372,34 @@ export default function EventDetailPage() {
                 Infos pratiques
               </h2>
               <div className="space-y-3 text-sm">
-                <div className="flex items-start gap-3">
-                  <FaGamepad className="text-[#E50914] mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="text-gray-500 text-xs">Jeu</p>
-                    <p className="text-white font-semibold">{event.game}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <FaCalendarAlt className="text-[#E50914] mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="text-gray-500 text-xs">Date</p>
-                    <p className="text-white font-semibold capitalize">
-                      {formatDate(event.date)}
-                    </p>
-                  </div>
-                </div>
+                <InfoRow icon={<FaGamepad />} label="Jeu" value={event.game} />
+                <InfoRow
+                  icon={<FaCalendarAlt />}
+                  label="Date"
+                  value={
+                    <span className="capitalize">{formatDate(event.date)}</span>
+                  }
+                />
                 {event.time && (
-                  <div className="flex items-start gap-3">
-                    <FaClock className="text-[#E50914] mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-gray-500 text-xs">Heure</p>
-                      <p className="text-white font-semibold">{event.time}</p>
-                    </div>
-                  </div>
+                  <InfoRow
+                    icon={<FaClock />}
+                    label="Heure"
+                    value={event.time}
+                  />
+                )}
+                {Number.isInteger(event.maxParticipants) && (
+                  <InfoRow
+                    icon={<FaUsers />}
+                    label="Places"
+                    value={`${Math.max(0, event.maxParticipants - (event.registered || 0))} restante(s) sur ${event.maxParticipants}`}
+                  />
                 )}
                 {event.location && (
-                  <div className="flex items-start gap-3">
-                    <FaMapMarkerAlt className="text-[#E50914] mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-gray-500 text-xs">Lieu</p>
-                      <p className="text-white font-semibold">
-                        {event.location}
-                      </p>
-                    </div>
-                  </div>
+                  <InfoRow
+                    icon={<FaMapMarkerAlt />}
+                    label="Lieu"
+                    value={event.location}
+                  />
                 )}
                 {formatPrice(event.prizePool) && (
                   <div className="flex items-start gap-3">
@@ -307,40 +422,7 @@ export default function EventDetailPage() {
               transition={{ delay: 0.2 }}
               className="bg-[#1A1A1A] rounded-2xl p-6 border border-white/5"
             >
-              {event.registrationOpen ? (
-                <>
-                  <motion.button
-                    type="button"
-                    whileTap={{ scale: 0.97 }}
-                    onClick={handleOpenRegistration}
-                    className="w-full py-4 bg-[#E50914] hover:bg-[#FF1E56] text-white
-                               font-bold rounded-xl transition-all duration-300
-                               hover:shadow-[0_0_20px_rgba(229,9,20,0.6)]
-                               flex items-center justify-center gap-2"
-                  >
-                    <FaCheckCircle />
-                    S'inscrire maintenant
-                  </motion.button>
-                  <p className="text-gray-500 text-xs text-center mt-3">
-                    {event.registered || 0} personne(s) déjà inscrite(s)
-                  </p>
-                </>
-              ) : (
-                <div className="text-center">
-                  <div
-                    className="w-12 h-12 bg-gray-800 rounded-full flex items-center
-                                  justify-center mx-auto mb-3"
-                  >
-                    <FaLock className="text-gray-500 text-xl" />
-                  </div>
-                  <p className="text-gray-400 font-semibold text-sm">
-                    Inscriptions fermées
-                  </p>
-                  <p className="text-gray-600 text-xs mt-1">
-                    Les inscriptions ont été clôturées par l'organisateur.
-                  </p>
-                </div>
-              )}
+              {renderRegistrationButton()}
             </motion.div>
           </div>
         </div>
@@ -357,5 +439,17 @@ export default function EventDetailPage() {
         )}
       </AnimatePresence>
     </section>
+  );
+}
+
+function InfoRow({ icon, label, value }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="text-[#E50914] mt-0.5 flex-shrink-0">{icon}</span>
+      <div>
+        <p className="text-gray-500 text-xs">{label}</p>
+        <p className="text-white font-semibold">{value}</p>
+      </div>
+    </div>
   );
 }

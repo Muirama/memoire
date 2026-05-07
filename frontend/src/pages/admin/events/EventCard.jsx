@@ -31,6 +31,13 @@ export default function EventCard({
   onEditEvent,
   onDeleteEvent,
 }) {
+  const isSquad = event.category === "Squad";
+  const registeredLabel = isSquad ? "equipe(s)" : "inscrit(s)";
+  const hasCapacity = Number.isInteger(event.maxParticipants);
+  const remainingSpots = hasCapacity
+    ? Math.max(0, event.maxParticipants - (event.registered || 0))
+    : null;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -82,10 +89,22 @@ export default function EventCard({
             </span>
             <span className="text-gray-500 text-xs flex items-center gap-1">
               <FaUsers size={10} />
-              <span className="text-white font-semibold">
-                {event.registered || 0}
-              </span>{" "}
-              inscrit(s)
+              {hasCapacity ? (
+                <>
+                  <span className="text-white font-semibold">
+                    {event.registered || 0}/{event.maxParticipants}
+                  </span>{" "}
+                  {registeredLabel}
+                  <span className="text-gray-600">({remainingSpots} place(s) libre(s))</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-white font-semibold">
+                    {event.registered || 0}
+                  </span>{" "}
+                  {registeredLabel}
+                </>
+              )}
             </span>
           </div>
         </div>

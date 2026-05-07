@@ -34,12 +34,10 @@ const Event = sequelize.define(
     },
     category: {
       type: DataTypes.ENUM(
-        "Tournoi",
-        "Championnat",
-        "Qualificatif",
-        "Exhibition",
+        "Solo",
+        "Squad",
       ),
-      defaultValue: "Tournoi",
+      defaultValue: "Solo",
     },
 
     // Date & Lieu
@@ -60,6 +58,15 @@ const Event = sequelize.define(
     registered: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
+    },
+
+    maxParticipants: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        min: 1,
+      },
     },
 
     // Prize pool

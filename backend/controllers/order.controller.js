@@ -125,6 +125,21 @@ const createOrder = async (req, res) => {
   }
 };
 
+// GET commandes de l'utilisateur connecte
+const getMyOrders = async (req, res) => {
+  try {
+    const orders = await Order.findAll({
+      where: { userId: req.user.id },
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.status(200).json({ orders });
+  } catch (error) {
+    console.error("Erreur getMyOrders :", error);
+    return res.status(500).json({ message: "Erreur serveur." });
+  }
+};
+
 // GET toutes les commandes (admin)
 const getAllOrders = async (req, res) => {
   try {
@@ -165,9 +180,7 @@ const updateOrderStatus = async (req, res) => {
 
     const validStatuses = [
       "En attente",
-      "Confirmée",
-      "En cours de livraison",
-      "Livrée",
+      "Déjà récupérée",
       "Annulée",
     ];
 
@@ -211,6 +224,7 @@ const deleteOrder = async (req, res) => {
 
 module.exports = {
   createOrder,
+  getMyOrders,
   getAllOrders,
   getOrderById,
   updateOrderStatus,

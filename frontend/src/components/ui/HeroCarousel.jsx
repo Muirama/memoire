@@ -6,115 +6,7 @@ import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import { motion } from "framer-motion";
-
-const items = [
-  { id: 1, title: "KIMI", tags: ["Tekken 8"], image: "/players/Kimi.png" },
-  {
-    id: 2,
-    title: "VIDELOU",
-    tags: ["Manager PUBG"],
-    image: "/players/Videlouu.png",
-  },
-  {
-    id: 3,
-    title: "BOUTA",
-    tags: ["MOBILE LEGENDS : BANG BANG", "Team Manager"],
-    image: "/players/Bouta.png",
-  },
-  { id: 4, title: "FAMENOG", tags: ["NBA 2K"], image: "/players/FamenoG.png" },
-  {
-    id: 5,
-    title: "GENESS",
-    tags: ["PUBG MOBILE"],
-    image: "/players/Geness.png",
-  },
-  {
-    id: 6,
-    title: "JOG",
-    tags: ["MOBILE LEGENDS : BANG BANG"],
-    image: "/players/Jog.png",
-  },
-  {
-    id: 7,
-    title: "JOHANN52",
-    tags: ["EFOOTBALL"],
-    image: "/players/Johann52.png",
-  },
-  {
-    id: 8,
-    title: "BERU99",
-    tags: ["PUBG MOBILE"],
-    image: "/players/Beru99.png",
-  },
-  {
-    id: 9,
-    title: "KNIGHT",
-    tags: ["PUBG MOBILE"],
-    image: "/players/Knight.png",
-  },
-  {
-    id: 10,
-    title: "LOGAN",
-    tags: ["PUBG MOBILE"],
-    image: "/players/loggan33.png",
-  },
-  {
-    id: 11,
-    title: "MAESTRR",
-    tags: ["MOBILE LEGENDS : BANG BANG", "D.A"],
-    image: "/players/Maestrr.png",
-  },
-  { id: 12, title: "MANOU", tags: ["EA FC"], image: "/players/Manou.png" },
-  { id: 13, title: "N4SH", tags: ["PUBG MOBILE"], image: "/players/N4sh.png" },
-  {
-    id: 14,
-    title: "NGANJIN",
-    tags: ["MOBILE LEGENDS : BANG BANG", "C.E.O"],
-    image: "/players/Nganjin.png",
-  },
-  {
-    id: 15,
-    title: "RANTOANGELO",
-    tags: ["EFOOTBALL"],
-    image: "/players/Ranto Angelo.png",
-  },
-  {
-    id: 16,
-    title: "SATCHIO",
-    tags: ["MOBILE LEGENDS : BANG BANG", "ADMIN"],
-    image: "/players/Satchio.png",
-  },
-  {
-    id: 17,
-    title: "SEIJURO",
-    tags: ["EFOOTBALL MOBILE"],
-    image: "/players/Seijuro.png",
-  },
-  {
-    id: 18,
-    title: "STEELISH360",
-    tags: ["Tekken 8", "Street Fighter VI", "2XKO"],
-    image: "/players/Steelish.png",
-  },
-  {
-    id: 19,
-    title: "VENDRAXX",
-    tags: ["PUBG MOBILE"],
-    image: "/players/Vendraxx.png",
-  },
-  {
-    id: 20,
-    title: "BONYKODAHY",
-    tags: ["EFOOTBALL MOBILE"],
-    image: "/players/BonyKodahy.png",
-  },
-  {
-    id: 21,
-    title: "YONDAIME",
-    tags: ["Tekken 8"],
-    image: "/players/Yondaime.png",
-  },
-];
+import { heroPlayers as items } from "../../data/GamesData";
 
 export default function HeroCarousel() {
   const swiperRef = useRef(null);
@@ -138,7 +30,9 @@ export default function HeroCarousel() {
           bulletClass: "swiper-bullet",
           bulletActiveClass: "swiper-bullet-active",
         }}
-        onSwiper={(swiper) => (swiperRef.current = swiper)}
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+        }}
         onSlideChange={(swiper) => setActiveIdx(swiper.realIndex)}
         className="w-full rounded-2xl overflow-hidden hero-swiper"
       >
@@ -148,7 +42,6 @@ export default function HeroCarousel() {
               className="relative w-full h-[340px] sm:h-[400px] md:h-[460px]
                             overflow-hidden rounded-2xl"
             >
-              {/* Image */}
               <img
                 src={item.image}
                 alt={item.title}
@@ -157,19 +50,16 @@ export default function HeroCarousel() {
                            data-[swiper-slide-active]:scale-100"
               />
 
-              {/* Overlay dégradé */}
               <div
                 className="absolute inset-0 bg-gradient-to-t
                               from-black/80 via-black/30 to-transparent"
               />
 
-              {/* Bordure rouge en bas */}
               <div
                 className="absolute bottom-0 left-0 right-0 h-0.5
                               bg-gradient-to-r from-transparent via-[#E50914] to-transparent"
               />
 
-              {/* Contenu slide */}
               <div className="absolute bottom-0 left-0 right-0 p-6 pb-10">
                 <motion.div
                   key={index === activeIdx ? "active" : "idle"}
@@ -177,7 +67,6 @@ export default function HeroCarousel() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.15 }}
                 >
-                  {/* Tags */}
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
                     {item.tags.map((tag, tagIdx) => (
                       <span
@@ -190,7 +79,7 @@ export default function HeroCarousel() {
                       </span>
                     ))}
                   </div>
-                  {/* Titre */}
+
                   <h3
                     className="text-white font-extrabold text-2xl md:text-3xl
                                  drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
@@ -200,7 +89,6 @@ export default function HeroCarousel() {
                 </motion.div>
               </div>
 
-              {/* Coin décoratif */}
               <div
                 className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2
                               border-[#E50914]/60 rounded-tr-lg"
@@ -214,7 +102,6 @@ export default function HeroCarousel() {
         ))}
       </Swiper>
 
-      {/* Indicateur de slide actif custom */}
       <div className="flex items-center justify-center gap-2 mt-4">
         {items.map((_, i) => (
           <button

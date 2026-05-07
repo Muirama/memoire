@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaBars,
   FaTimes,
@@ -12,6 +13,7 @@ import {
   FaSignOutAlt,
   FaUserCircle,
   FaChevronDown,
+  FaIdCard,
 } from "react-icons/fa";
 
 import logo_GES_blanc from "/LOGO/Logo_GES_blanc.svg";
@@ -27,6 +29,7 @@ export default function NavBar() {
   const { totalItems, toggleCart } = useCart();
   const [userLoggedIn, setUserLoggedIn] = useState(isUserLoggedIn());
   const accountMenuRef = useRef(null);
+  const navigate = useNavigate();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -37,6 +40,8 @@ export default function NavBar() {
     if (pathname.startsWith("/team")) return "Gascom eSport";
     if (pathname.startsWith("/news")) return "Gascom News";
     if (pathname.startsWith("/events")) return "Gascom Events";
+    if (pathname.startsWith("/login")) return "Gascom Login";
+    if (pathname.startsWith("/account")) return "Gascom eCompte";
 
     return "Gascom";
   };
@@ -87,6 +92,13 @@ export default function NavBar() {
     setUserLoggedIn(false);
     setMenuOpen(false);
     setAccountMenuOpen(false);
+    navigate("/");
+  };
+
+  const handleGoToAccount = () => {
+    setMenuOpen(false);
+    setAccountMenuOpen(false);
+    navigate("/account");
   };
 
   const pageLinks = [
@@ -215,6 +227,17 @@ export default function NavBar() {
 
                 <button
                   type="button"
+                  onClick={handleGoToAccount}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-left
+                             text-gray-300 hover:text-white hover:bg-white/5
+                             transition-all text-sm font-semibold"
+                >
+                  <FaIdCard />
+                  Mon profil
+                </button>
+
+                <button
+                  type="button"
                   onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-4 py-3 text-left
                              text-gray-300 hover:text-red-400 hover:bg-red-400/10
@@ -317,6 +340,17 @@ export default function NavBar() {
             </div>
 
             {/* Bouton logout */}
+            <button
+              type="button"
+              onClick={handleGoToAccount}
+              className="flex items-center gap-3 px-4 py-3 border border-white/10
+                         text-white font-semibold rounded-lg text-sm sm:text-base
+                         hover:bg-white/5 transition-all duration-300"
+            >
+              <FaIdCard />
+              Mon profil
+            </button>
+
             <button
               type="button"
               onClick={handleLogout}

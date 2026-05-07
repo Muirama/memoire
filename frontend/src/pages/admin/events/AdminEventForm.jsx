@@ -14,25 +14,33 @@ import {
   FaAlignLeft,
   FaListUl,
   FaTag,
+  FaUsers,
 } from "react-icons/fa";
 import api from "../../../api/api";
 
-const CATEGORIES = ["Tournoi", "Championnat", "Qualificatif", "Exhibition"];
+const CATEGORIES = ["Solo", "Squad"];
 const GAMES = [
-  "League of Legends",
-  "CS2",
-  "Valorant",
-  "EA FC 24",
-  "PUBG Mobile",
-  "Free Fire",
-  "Mobile Legends",
-  "Autre",
+  "EA FC",
+  "NBA 2K",
+  "TEKKEN 8",
+  "STREET FIGHTER VI",
+  "MORTAL KOMBAT 1",
+  "MOBILE LEGENDS : BANG BANG",
+  "2XKO",
+  "EA FC MOBILE",
+  "PUBG MOBILE",
+  "EFOOTBALL MOBILE",
+  "EFOOTBALL",
+  "PUBG MOBILE",
+  "GUILTY GEAR STRIVE",
+  "CLASH ROYAL",
+  "SUPER SMASH",
 ];
 
 const EMPTY = {
   title: "",
   game: "",
-  category: "Tournoi",
+  category: "Solo",
   date: "",
   time: "",
   location: "",
@@ -40,6 +48,7 @@ const EMPTY = {
   rules: "",
   image: "",
   prizePool: "",
+  maxParticipants: "",
   registrationOpen: true,
 };
 
@@ -56,7 +65,7 @@ export default function AdminEventForm({ event, onClose, onSaved }) {
       setForm({
         title: event.title || "",
         game: event.game || "",
-        category: event.category || "Tournoi",
+        category: event.category || "Solo",
         date: event.date || "",
         time: event.time || "",
         location: event.location || "",
@@ -64,6 +73,7 @@ export default function AdminEventForm({ event, onClose, onSaved }) {
         rules: event.rules || "",
         image: event.image || "",
         prizePool: event.prizePool || "",
+        maxParticipants: event.maxParticipants || "",
         registrationOpen: event.registrationOpen ?? true,
       });
     }
@@ -82,6 +92,10 @@ export default function AdminEventForm({ event, onClose, onSaved }) {
     if (!form.title.trim()) e.title = "Le titre est requis.";
     if (!form.game.trim()) e.game = "Le jeu est requis.";
     if (!form.date) e.date = "La date est requise.";
+    const max = parseInt(form.maxParticipants, 10);
+    if (!form.maxParticipants || Number.isNaN(max) || max <= 0) {
+      e.maxParticipants = "Le nombre de places doit etre superieur a 0.";
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -94,6 +108,7 @@ export default function AdminEventForm({ event, onClose, onSaved }) {
       const payload = {
         ...form,
         prizePool: form.prizePool ? parseInt(form.prizePool) : null,
+        maxParticipants: parseInt(form.maxParticipants, 10),
         time: form.time || null,
         image: form.image || null,
       };
@@ -250,15 +265,32 @@ export default function AdminEventForm({ event, onClose, onSaved }) {
           </Field>
 
           {/* Prize pool */}
-          <Field label="Prize pool (Ar)" icon={<FaTrophy />}>
-            <input
-              type="number"
-              value={form.prizePool}
-              onChange={set("prizePool")}
-              placeholder="Ex: 1000000"
-              className={inputCls()}
-            />
-          </Field>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="Prize pool (Ar)" icon={<FaTrophy />}>
+              <input
+                type="number"
+                min="0"
+                value={form.prizePool}
+                onChange={set("prizePool")}
+                placeholder="Ex: 1000000"
+                className={inputCls()}
+              />
+            </Field>
+            <Field
+              label="Nombre de places *"
+              icon={<FaUsers />}
+              error={errors.maxParticipants}
+            >
+              <input
+                type="number"
+                min="1"
+                value={form.maxParticipants}
+                onChange={set("maxParticipants")}
+                placeholder="Ex: 16"
+                className={inputCls("maxParticipants")}
+              />
+            </Field>
+          </div>
 
           {/* Image URL */}
           <Field label="Image (URL)" icon={<FaImage />}>

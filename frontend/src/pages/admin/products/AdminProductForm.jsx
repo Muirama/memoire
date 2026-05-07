@@ -15,7 +15,7 @@ import {
 } from "react-icons/fa";
 import api from "../../../api/api";
 
-const CATEGORIES = ["Jersey", "Accessoire", "Périphérique", "Goodies", "Autre"];
+const CATEGORIES = ["PC", "Console", "Mobile", "Accessoires"];
 
 const EMPTY = {
   name: "",

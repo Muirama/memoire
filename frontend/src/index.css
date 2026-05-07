@@ -126,3 +126,78 @@ body {
 .spb-logo--invert {
   filter: invert(1) brightness(0.18) contrast(1.1);
 }
+
+/* Group companies banner */
+.groupb-marquee:hover .groupb-track {
+  animation-play-state: paused;
+}
+
+.groupb-track {
+  display: flex;
+  width: max-content;
+  animation: groupb-marquee 28s linear infinite;
+}
+
+.groupb-segment {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 18px;
+  padding-right: 18px;
+}
+
+@keyframes groupb-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.groupb-logo {
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.groupb-logo--ges {
+  height: 54px;
+}
+
+.groupb-logo--coolconcept {
+  height: 48px;
+}
+
+.groupb-logo--graphicom {
+  height: 44px;
+}
+
+.groupb-logo--odyssey {
+  height: 48px;
+}
+
+.groupb-logo--gasconcept {
+  height: 46px;
+}
+
+@media (max-width: 640px) {
+  .groupb-segment {
+    gap: 14px;
+    padding-right: 14px;
+  }
+
+  .groupb-logo--ges {
+    height: 46px;
+  }
+
+  .groupb-logo--coolconcept,
+  .groupb-logo--odyssey,
+  .groupb-logo--gasconcept {
+    height: 40px;
+  }
+
+  .groupb-logo--graphicom {
+    height: 36px;
+  }
+}

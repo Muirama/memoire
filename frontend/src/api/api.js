@@ -1,8 +1,10 @@
 import axios from "axios";
 import { clearAuthSession } from "../utils/auth";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -29,7 +31,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Token expiré ou invalide → déconnecter l'admin
       clearAuthSession();
-      window.location.href = "/login";
+      window.location.replace("/login");
     }
     return Promise.reject(error);
   },

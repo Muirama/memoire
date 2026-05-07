@@ -9,7 +9,6 @@ import {
   FaTrash,
   FaSpinner,
   FaBoxOpen,
-  FaTag,
   FaSortAmountDown,
   FaExclamationTriangle,
 } from "react-icons/fa";
@@ -17,24 +16,14 @@ import AdminLayout from "../AdminLayout";
 import api from "../../../api/api";
 import AdminProductForm from "./AdminProductForm";
 
-const CATEGORIES = [
-  "Tous",
-  "Jersey",
-  "Accessoire",
-  "Périphérique",
-  "Goodies",
-  "Autre",
-];
+const CATEGORIES = ["Tous", "PC", "Console", "Mobile", "Accessoires"];
 
 const CATEGORY_COLORS = {
-  Jersey: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  Accessoire: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-  Périphérique: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-  Goodies: "bg-green-500/20 text-green-400 border-green-500/30",
-  Autre: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+  PC: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  Console: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+  Mobile: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+  Accessoires: "bg-green-500/20 text-green-400 border-green-500/30",
 };
-
-const formatPrice = (p) => new Intl.NumberFormat("fr-MG").format(p) + " Ar";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState([]);
@@ -401,14 +390,6 @@ function ProductCard({ product, index, onEdit, onDelete }) {
             label: `${product.stock} en stock`,
             cls: "text-green-400 bg-green-500/10 border-green-500/20",
           };
-
-  const CATEGORY_COLORS = {
-    Jersey: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-    Accessoire: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-    Périphérique: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-    Goodies: "bg-green-500/20 text-green-400 border-green-500/30",
-    Autre: "bg-gray-500/20 text-gray-400 border-gray-500/30",
-  };
 
   return (
     <motion.div

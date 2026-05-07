@@ -11,10 +11,10 @@ const authRoutes = require("./routes/auth.routes");
 const shopRoutes = require("./routes/shop.routes");
 const productRoutes = require("./routes/product.routes");
 const orderRoutes = require("./routes/order.routes");
-const teamRoutes = require("./routes/team.routes");
 const newsRoutes = require("./routes/news.routes");
 const eventRoutes = require("./routes/event.routes");
 const registrationRoutes = require("./routes/registration.routes");
+const userRoutes = require("./routes/user.routes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -27,11 +27,11 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/teams", teamRoutes);
 app.use("/api/shop", shopRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/registrations", registrationRoutes);
+app.use("/api/users", userRoutes);
 
 // ── Sync DB + démarrage ───────────────────────────────────
 sequelize

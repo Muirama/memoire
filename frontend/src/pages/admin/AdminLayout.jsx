@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -15,6 +15,7 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import logo_GES_blanc from "/LOGO/Logo_GES_blanc.svg";
+import { clearAuthSession } from "../../utils/auth";
 
 const navItems = [
   { label: "Dashboard", icon: <FaTachometerAlt />, to: "/admin", end: true },
@@ -22,7 +23,7 @@ const navItems = [
   { label: "Produits", icon: <FaStore />, to: "/admin/products" },
   { label: "Événements", icon: <FaCalendarAlt />, to: "/admin/events" },
   { label: "News", icon: <FaNewspaper />, to: "/admin/news" },
-  { label: "Équipes", icon: <FaUsers />, to: "/admin/teams" }
+  { label: "Utilisateurs", icon: <FaUsers />, to: "/admin/users" },
 ];
 
 export default function AdminLayout({ children }) {
@@ -30,12 +31,8 @@ export default function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userRole");
-    localStorage.removeItem("adminName");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userPseudo");
-    navigate("/login");
+    clearAuthSession();
+    navigate("/login", { replace: true });
   };
 
   const SidebarContent = () => (
@@ -51,7 +48,7 @@ export default function AdminLayout({ children }) {
           />
           <div>
             <p className="text-white font-extrabold text-base leading-none">
-              Gascom Esport
+              Gascom
             </p>
             <p className="text-gray-500 text-xs mt-0.5">Administration</p>
           </div>
@@ -153,12 +150,12 @@ export default function AdminLayout({ children }) {
                            bg-[#111111] border-b border-white/5 sticky top-0 z-30"
         >
           <div className="flex items-center gap-3">
-            <div
-              className="w-8 h-8 bg-[#E50914] rounded-lg flex items-center
-                            justify-center font-extrabold text-white"
-            >
-              G
-            </div>
+            <img
+              src={logo_GES_blanc}
+              alt="G"
+              className="w-9 h-9 rounded-lg flex items-center
+                          justify-center font-extrabold text-white text-lg shadow-lg"
+            />
             <span className="text-white font-bold">Admin</span>
           </div>
           <button

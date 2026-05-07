@@ -1,196 +1,206 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { FaUsers, FaGamepad, FaSpinner, FaArrowRight } from "react-icons/fa";
-import api from "../../api/api";
+import { FaArrowRight, FaUsers } from "react-icons/fa";
+import { games, players, playerPhotoFallback } from "../../data/GamesData";
+import GameBrand from "../../components/team/GameBrand";
+
+const toRgba = (hex, alpha) => {
+  const v = hex.replace("#", "");
+  const safe =
+    v.length === 3
+      ? v
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : v;
+  const n = parseInt(safe, 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+};
 
 export default function TeamPage() {
   const navigate = useNavigate();
-  const [teams, setTeams] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [game, setGame] = useState("Tous");
-
-  useEffect(() => {
-    api
-      .get("/teams")
-      .then((r) => setTeams(r.data.teams))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
-
-  const filtered = teams.filter((t) => {
-    const matchSearch = t.name.toLowerCase().includes(search.toLowerCase());
-    const matchGame = game === "Tous" || t.game === game;
-    return matchSearch && matchGame;
-  });
-
-  // Jeux présents dans les équipes
-  const gamesPresent = ["Tous", ...new Set(teams.map((t) => t.game))];
-
-  if (loading)
-    return (
-      <section
-        className="relative bg-transparent min-h-screen flex items-center
-                        justify-center z-10"
-      >
-        <div className="text-center">
-          <FaSpinner className="text-[#E50914] text-5xl animate-spin mx-auto mb-4" />
-          <p className="text-gray-400">Chargement des équipes...</p>
-        </div>
-      </section>
-    );
 
   return (
-    <section
-      className="relative bg-transparent min-h-screen py-12 md:py-20
-                        px-4 md:px-6 z-10"
-    >
-      <div className="max-w-7xl mx-auto">
-        {/* Grille équipes */}
-        {filtered.length === 0 ? (
-          <div className="text-center py-16">
-            <FaUsers className="text-gray-700 text-6xl mx-auto mb-4" />
-            <p className="text-gray-500 text-xl">Aucune équipe trouvée.</p>
+    <section className="relative min-h-screen bg-transparent py-16 md:py-24 px-4 md:px-8 z-10 overflow-hidden">
+      {/* Orbes */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-[#E50914]/12 blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 h-80 w-80 rounded-full bg-[#E50914]/8 blur-[100px]" />
+      </div>
+
+      <div className="max-w-7xl mx-auto relative">
+        {/* HEADER */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="mb-16 md:mb-20"
+        >
+          <div className="flex items-center gap-4 mb-6">
+            <div className="h-px w-12 bg-[#E50914]" />
+            <span className="text-[#E50914] text-xs font-black uppercase tracking-[0.4em]">
+              Gascom Esports
+            </span>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filtered.map((team, index) => (
-              <motion.div
-                key={team.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.07 }}
-                onClick={() => navigate(`/team/${team.id}`)}
-                className="group bg-[#1A1A1A] rounded-2xl overflow-hidden border border-white/5
-                           hover:border-[#E50914]/40 hover:shadow-[0_0_30px_rgba(229,9,20,0.15)]
-                           transition-all duration-300 cursor-pointer flex flex-col"
-              >
-                {/* Bannière ou couleur */}
-                <div className="relative h-36 overflow-hidden bg-[#0D0D0D]">
-                  {team.banner ? (
-                    <img
-                      src={team.banner}
-                      alt={`${team.name} banner`}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105
-                                    transition duration-700 opacity-70"
-                    />
-                  ) : (
-                    <div
-                      className="w-full h-full bg-gradient-to-br from-[#E50914]/20
-                                    to-[#0D0D0D]"
-                    />
-                  )}
-                  {/* Overlay gradient */}
-                  <div
-                    className="absolute inset-0 bg-gradient-to-t
-                                  from-[#1A1A1A] via-transparent to-transparent"
-                  />
 
-                  {/* Logo centré */}
-                  <div
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2
-                                  w-16 h-16 rounded-2xl overflow-hidden border-2 border-[#1A1A1A]
-                                  bg-[#0D0D0D] shadow-xl"
-                  >
-                    {team.logo ? (
-                      <img
-                        src={team.logo}
-                        alt={team.name}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div
-                        className="w-full h-full flex items-center justify-center
-                                        bg-[#E50914]/10"
-                      >
-                        <FaUsers className="text-[#E50914] text-xl" />
-                      </div>
-                    )}
-                  </div>
-                </div>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.9] max-w-2xl">
+              Nos <br />
+              <span className="text-[#E50914]">Équipes</span>
+            </h1>
 
-                {/* Contenu */}
-                <div className="p-5 pt-12 flex flex-col flex-1 text-center">
-                  <h3
-                    className="text-white font-extrabold text-lg mb-1
-                                 group-hover:text-[#E50914] transition"
-                  >
-                    {team.name}
-                  </h3>
-                  <span
-                    className="inline-flex items-center gap-1.5 text-[#E50914] text-xs
-                                   font-semibold justify-center mb-3"
-                  >
-                    <FaGamepad size={10} /> {team.game}
-                  </span>
-
-                  {team.description && (
-                    <p className="text-gray-400 text-sm line-clamp-2 mb-4 leading-relaxed">
-                      {team.description}
-                    </p>
-                  )}
-
-                  {/* Roster aperçu */}
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="flex -space-x-2">
-                      {(team.players || []).slice(0, 5).map((p, i) => (
-                        <div
-                          key={p.id}
-                          className="w-8 h-8 rounded-full overflow-hidden border-2
-                                     border-[#1A1A1A] bg-[#0D0D0D]"
-                          style={{ zIndex: 5 - i }}
-                        >
-                          {p.photo ? (
-                            <img
-                              src={p.photo}
-                              alt={p.pseudo}
-                              referrerPolicy="no-referrer"
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div
-                              className="w-full h-full flex items-center justify-center
-                                              text-xs font-bold text-gray-500"
-                            >
-                              {p.pseudo[0].toUpperCase()}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                      {(team.players || []).length > 5 && (
-                        <div
-                          className="w-8 h-8 rounded-full border-2 border-[#1A1A1A]
-                                        bg-[#E50914]/20 flex items-center justify-center
-                                        text-[#E50914] text-xs font-bold"
-                        >
-                          +{team.players.length - 5}
-                        </div>
-                      )}
-                    </div>
-                    <span className="text-gray-500 text-xs ml-3">
-                      {(team.players || []).length} joueur(s)
-                    </span>
-                  </div>
-
-                  <div className="mt-auto pt-3 border-t border-white/5">
-                    <span
-                      className="text-[#E50914] text-xs font-semibold
-                                     flex items-center justify-center gap-1
-                                     group-hover:gap-2 transition-all"
-                    >
-                      Voir le roster <FaArrowRight size={10} />
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+            <div className="flex gap-8 md:gap-12 pb-1">
+              {[
+                { val: games.length, label: "Jeux" },
+                { val: players.length, label: "Joueurs" },
+              ].map((s, i) => (
+                <motion.div
+                  key={s.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.2 }}
+                >
+                  <p className="text-4xl md:text-5xl font-black text-white">
+                    {s.val}
+                  </p>
+                  <p className="text-gray-500 text-xs uppercase tracking-[0.3em] mt-1">
+                    {s.label}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        )}
+        </motion.div>
+
+        {/* GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          {games.map((game, index) => (
+            <GameCard
+              key={game.id}
+              game={game}
+              index={index}
+              onClick={() => navigate(`/team/game/${game.slug}`)}
+            />
+          ))}
+        </div>
       </div>
     </section>
+  );
+}
+
+/* CARD */
+function GameCard({ game, index, onClick }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{
+        delay: index * 0.1,
+        duration: 0.5,
+        ease: "easeOut",
+      }}
+      onClick={onClick}
+      className="group relative overflow-hidden rounded-2xl cursor-pointer
+                 border border-white/8 bg-[#0e0e0e]
+                 hover:border-white/20 transition-all duration-500
+                 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
+    >
+      {/* Glow */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100
+                   transition-opacity duration-500 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at top left,
+            ${toRgba(game.accent, 0.18)} 0%, transparent 60%)`,
+        }}
+      />
+
+      {/* Accent */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px]"
+        style={{ background: game.accent }}
+      />
+
+      <div className="relative p-6 flex flex-col h-full min-h-[320px]">
+        {/* TOP */}
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <p
+              className="text-[10px] uppercase tracking-[0.35em] mb-1"
+              style={{ color: game.accent }}
+            >
+              {game.shortLabel}
+            </p>
+            <h3 className="text-white font-black text-xl leading-tight">
+              {game.name}
+            </h3>
+          </div>
+
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs text-gray-400">
+            <FaUsers size={10} />
+            {game.rosterCount}
+          </div>
+        </div>
+
+        {/* LOGO */}
+        <div className="flex-1 flex items-center justify-center py-4 relative">
+          <div
+            className="absolute w-40 h-40 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"
+            style={{ background: game.accent }}
+          />
+          <div className="relative w-full max-w-[180px] h-32">
+            <GameBrand
+              game={game}
+              logoClassName="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+              textClassName="text-4xl"
+            />
+          </div>
+        </div>
+
+        {/* FOOTER */}
+        <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
+          {/* Avatars */}
+          <div className="flex items-center gap-3">
+            <div className="flex -space-x-2.5">
+              {game.featuredPlayers.slice(0, 4).map((player, i) => (
+                <motion.div
+                  key={player.id}
+                  initial={{ y: 10, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.1 }}
+                  viewport={{ once: true }}
+                  className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#0e0e0e]"
+                  style={{ zIndex: 4 - i }}
+                >
+                  <img
+                    src={player.photo || playerPhotoFallback}
+                    alt={player.pseudo}
+                    className="w-full h-full object-cover object-top"
+                  />
+                </motion.div>
+              ))}
+            </div>
+
+            <div>
+              <p className="text-white text-xs font-semibold leading-none">
+                {game.teamName}
+              </p>
+              <p className="text-gray-600 text-[10px] mt-0.5">
+                {game.playerCount}J · {game.staffCount}S
+              </p>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-500 group-hover:border-white/30 group-hover:text-white group-hover:translate-x-1 transition-all duration-300">
+            <FaArrowRight size={11} />
+          </div>
+        </div>
+      </div>
+    </motion.article>
   );
 }
