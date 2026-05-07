@@ -160,7 +160,7 @@ export default function NewsPage() {
             {isApiEmpty ? (
               <div className="text-center py-16">
                 <FaNewspaper className="text-gray-700 text-6xl mx-auto mb-4" />
-                <p className="text-gray-500">Aucun article disponible.</p>
+                <p className="text-gray-500">Aucun article publié pour le moment.</p>
               </div>
             ) : isFilterEmpty ? (
               <div className="text-center py-16">
