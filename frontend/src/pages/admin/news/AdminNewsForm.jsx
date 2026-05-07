@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 import api from "../../../api/api";
 
-const CATEGORIES = ["Actualité", "Tournoi", "Communauté", "Produit", "Sponsor"];
+const CATEGORIES = ["Actualité", "Tournoi", "Communauté", "Produit", "Annonce"];
 
 const EMPTY = {
   title: "",
