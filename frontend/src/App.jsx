@@ -27,7 +27,7 @@ import LoginPage from "./pages/LoginPage";
 import SignPage from "./pages/SignPage";
 import UserAccountPage from "./pages/account/UserAccountPage";
 import ScrollToTop from "./components/ScrollToTop";
-import GameDetailPage from "./pages/team/GamedetailPage";
+import GameDetailPage from "./pages/team/GameDetailPage";
 
 import AdminHome from "./pages/admin/AdminHome";
 import AdminOrders from "./pages/admin/orders/AdminOrders";
