@@ -52,6 +52,12 @@ const items = [
     tag: "FPS",
     image: "/games/Valorant.png",
   },
+  {
+    id: 8,
+    title: "2XKO",
+    tag: "Fighting",
+    image: "/games/2XKO.png",
+  },
 ];
 
 export default function Carousel() {
