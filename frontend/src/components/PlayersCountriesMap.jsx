@@ -324,12 +324,6 @@ export default function PlayersCountriesMap() {
               </div>
             ))}
           </div>
-
-          <p className="text-xs uppercase tracking-[0.18em] text-white/35">
-            {isMobileLike
-              ? "Mode mobile : le pays actif defile automatiquement."
-              : "Survolez un point pour afficher le pays."}
-          </p>
         </div>
 
         <AnimatePresence mode="wait">
