@@ -14,6 +14,12 @@ const sponsorLogos = [
     image: "/loaline-bronze.png",
     className: "spb-logo spb-logo--invert spb-logo--loaline",
   },
+  {
+    href: "",
+    label: "Gasconcept",
+    image: "/Logo Groupe/GASCONCEPT.png",
+    className: "spb-logo spb-logo--invert spb-logo--Gasconcept",
+  },
 ];
 
 const partnerLogos = [

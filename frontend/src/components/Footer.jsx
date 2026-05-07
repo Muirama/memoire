@@ -9,7 +9,7 @@ import {
 
 const gascomContacts = [
   { label: "Telephone", value: "+261 32 70 712 26", icon: FaPhone },
-  { label: "Telephone 2", value: "+261 34 63 620 43", icon: FaPhone },
+  { label: "Telephone 2", value: "+261 34 52 517 30", icon: FaPhone },
   { label: "Telephone 3", value: "+33 7 67 66 81 42", icon: FaPhone },
   { label: "Email", value: "Gascomesports@gmail.com", icon: FaEnvelope },
   {
