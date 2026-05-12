@@ -258,12 +258,14 @@ const teams = games.map((game) => ({
   accentSoft: game.accentSoft,
 }));
 
-const heroPlayers = players.map((player) => ({
-  id: player.id,
-  title: player.pseudo,
-  tags: player.gameTags.slice(0, 3),
-  image: player.photo || GES_LOGO,
-}));
+const heroPlayers = players
+  .filter((player) => player.hasPhoto)
+  .map((player) => ({
+    id: player.id,
+    title: player.pseudo,
+    tags: player.gameTags.slice(0, 3),
+    image: player.photo,
+  }));
 
 const playerCountryStats = Object.values(
   players.reduce((accumulator, player) => {

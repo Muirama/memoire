@@ -23,13 +23,13 @@ const services = [
     icon: <FaTrophy size={40} className="text-[#E50914]" />,
     title: "Tournois esports",
     desc: "Participez à des compétitions intenses avec des récompenses prestigieuses.",
-    image: "/Photo Contenu/IMG_5972.JPEG",
+    image: "/Photo Contenu/TOURNOI.JPEG",
   },
   {
     icon: <FaUsers size={40} className="text-[#E50914]" />,
     title: "Communauté",
     desc: "Rejoignez une communauté passionnée et grandissante de joueurs à Madagascar.",
-    image: "/Photo Contenu/IMG_2894.JPEG",
+    image: "/Photo Contenu/COMMU.JPEG",
   },
 ];
 

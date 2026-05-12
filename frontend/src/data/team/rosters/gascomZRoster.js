@@ -18,7 +18,7 @@ const gascomZRoster = {
       note: "Capitaine",
       status: "Player",
       gameSlugs: ["mobile-legends"],
-      photo: "",
+      photo: "/players/Shiro.png",
     },
     {
       order: 2,
@@ -32,7 +32,7 @@ const gascomZRoster = {
       lineupStatus: "Titulaire",
       status: "Player",
       gameSlugs: ["mobile-legends"],
-      photo: "",
+      photo: "/players/Xlan.png",
     },
     {
       order: 3,
@@ -74,7 +74,7 @@ const gascomZRoster = {
       lineupStatus: "Titulaire",
       status: "Player",
       gameSlugs: ["mobile-legends"],
-      photo: "",
+      photo: "/players/Ares.png",
     },
     {
       order: 6,
@@ -102,7 +102,7 @@ const gascomZRoster = {
       lineupStatus: "Remplaçant",
       status: "Player",
       gameSlugs: ["mobile-legends"],
-      photo: "",
+      photo: "/players/Drago malfoy.png",
     },
     {
       order: 8,
