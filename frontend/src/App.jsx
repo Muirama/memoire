@@ -27,7 +27,8 @@ import LoginPage from "./pages/LoginPage";
 import SignPage from "./pages/SignPage";
 import UserAccountPage from "./pages/account/UserAccountPage";
 import ScrollToTop from "./components/ScrollToTop";
-import GameDetailPage from "./pages/team/GamedetailPage";
+import GameDetailPage from "./pages/team/GameDetailPage";
+import AdminTeamPage from "./pages/team/AdminTeamPage";
 
 import AdminHome from "./pages/admin/AdminHome";
 import AdminOrders from "./pages/admin/orders/AdminOrders";
@@ -242,6 +243,7 @@ function App() {
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/team" element={<TeamPage />} />
             <Route path="/team/game/:slug" element={<GameDetailPage />} />
+            <Route path="/team/admin" element={<AdminTeamPage />} />
             <Route path="/news" element={<NewsPage />} />
             <Route path="/news/:id" element={<NewsDetailPage />} />
             <Route path="/events" element={<EventPage />} />
