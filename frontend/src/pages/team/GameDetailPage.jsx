@@ -19,13 +19,22 @@ const toRgba = (hex, alpha) => {
 
 const unique = (values) => Array.from(new Set(values.filter(Boolean)));
 
-const buildPlayerTags = (player, activeGameName) =>
-  unique([
+const buildPlayerTags = (player, activeGameName, sectionType) => {
+  if (sectionType === "staff") {
+    return unique([
+      player.note || player.staffRole,
+      player.memberTypes?.includes("Player") ? "Competitor" : "",
+      ...player.gameTags.filter((tag) => tag !== activeGameName),
+    ]);
+  }
+
+  return unique([
     player.lineupStatus,
     player.note,
     player.secondaryRole,
     ...player.gameTags.filter((tag) => tag !== activeGameName),
   ]);
+};
 
 export default function GameDetailPage() {
   const navigate = useNavigate();
@@ -197,6 +206,7 @@ function GameRosterBlock({ roster, game }) {
         {roster.lineup.length > 0 && (
           <RosterSection
             title="Lineup"
+            sectionType="player"
             count={roster.lineup.length}
             accent={game.accent}
             players={roster.lineup}
@@ -206,6 +216,7 @@ function GameRosterBlock({ roster, game }) {
         {roster.staff.length > 0 && (
           <RosterSection
             title="Staff"
+            sectionType="staff"
             count={roster.staff.length}
             accent={game.accentSoft}
             players={roster.staff}
@@ -217,7 +228,7 @@ function GameRosterBlock({ roster, game }) {
   );
 }
 
-function RosterSection({ title, count, accent, players, game }) {
+function RosterSection({ title, sectionType, count, accent, players, game }) {
   return (
     <div>
       <div className="mb-8 flex items-center gap-4">
@@ -243,6 +254,7 @@ function RosterSection({ title, count, accent, players, game }) {
             game={game}
             accent={accent}
             index={index}
+            sectionType={sectionType}
           />
         ))}
       </div>
@@ -250,8 +262,20 @@ function RosterSection({ title, count, accent, players, game }) {
   );
 }
 
-function PlayerCard({ player, game, accent, index }) {
-  const tags = buildPlayerTags(player, game.name);
+function PlayerCard({ player, game, accent, index, sectionType }) {
+  const tags = buildPlayerTags(player, game.name, sectionType);
+  const displayRole =
+    sectionType === "staff" ? player.staffRole || player.role : player.role;
+  const displayStatus =
+    sectionType === "staff"
+      ? "Staff"
+      : player.statusLabel || player.status;
+  const topBadgeLabel =
+    sectionType === "staff"
+      ? displayRole
+      : player.jerseyNumber
+        ? `#${player.jerseyNumber}`
+        : displayRole;
 
   return (
     <motion.article
@@ -280,7 +304,7 @@ function PlayerCard({ player, game, accent, index }) {
       >
         <div className="absolute left-4 top-4 z-10">
           <span className="rounded-full border border-white/10 bg-black/50 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.3em] text-white/70 backdrop-blur-sm">
-            {player.jerseyNumber ? `#${player.jerseyNumber}` : player.role}
+            {topBadgeLabel}
           </span>
         </div>
 
@@ -293,7 +317,7 @@ function PlayerCard({ player, game, accent, index }) {
               background: toRgba(accent, 0.15),
             }}
           >
-            {player.status}
+            {displayStatus}
           </span>
         </div>
 
@@ -328,7 +352,7 @@ function PlayerCard({ player, game, accent, index }) {
               <p className="mt-1 text-xs text-gray-500">{player.realName}</p>
             )}
             <p className="mt-1 text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
-              {player.role}
+              {displayRole}
             </p>
           </div>
 

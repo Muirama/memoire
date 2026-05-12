@@ -23,7 +23,7 @@ const COUNTRY_METADATA = {
   MG: {
     id: "MG",
     name: "Madagascar",
-    sub: "Océan Indien",
+    sub: "Ocean Indien",
     color: "#E50914",
     coords: [46.8, -19.0],
   },
@@ -40,16 +40,39 @@ const NATIONALITY_CODE_LOOKUP = {
   MALAGASY: "MG",
   MALAGACHE: "MG",
   FRANCAIS: "FR",
-  FRANÇAIS: "FR",
   FRENCH: "FR",
 };
 
 const toCountryCode = (nationality) =>
   NATIONALITY_CODE_LOOKUP[normalizeValue(nationality)] || "";
 
+const getMemberTypes = (member) => {
+  const memberTypes = [];
+
+  if (member.status === "Player" || member.isAlsoPlayer) {
+    memberTypes.push("Player");
+  }
+
+  if (member.status === "Staff") {
+    memberTypes.push("Staff");
+  }
+
+  return memberTypes.length ? memberTypes : ["Player"];
+};
+
+const hasMemberType = (member, type) => member.memberTypes.includes(type);
+
+const getPrimaryStatus = (memberTypes) =>
+  memberTypes.includes("Player") ? "Player" : "Staff";
+
+const getStatusLabel = (memberTypes) => memberTypes.join(" / ");
+
 const sortMembers = (left, right) => {
-  if (left.status !== right.status) {
-    return left.status === "Player" ? -1 : 1;
+  const leftPriority = hasMemberType(left, "Player") ? 0 : 1;
+  const rightPriority = hasMemberType(right, "Player") ? 0 : 1;
+
+  if (leftPriority !== rightPriority) {
+    return leftPriority - rightPriority;
   }
 
   return left.order - right.order;
@@ -57,13 +80,17 @@ const sortMembers = (left, right) => {
 
 const rosterEntries = rosterSources.flatMap((roster) =>
   roster.members.map((member) => {
-    const gameSlugs = unique(member.gameSlugs?.length ? member.gameSlugs : roster.gameSlugs);
+    const memberTypes = getMemberTypes(member);
+    const gameSlugs = unique(
+      member.gameSlugs?.length ? member.gameSlugs : roster.gameSlugs,
+    );
     const gameTags = gameSlugs
       .map((slug) => gameBySlug[slug]?.name)
       .filter(Boolean);
     const extraTags = unique([
       member.lineupStatus,
       member.note,
+      member.staffRole,
       member.secondaryRole,
     ]);
     const realName = [member.firstName, member.lastName]
@@ -86,8 +113,11 @@ const rosterEntries = rosterSources.flatMap((roster) =>
       nationality: toCountryCode(member.nationality),
       nationalityLabel: member.nationality || "",
       role: member.role || "Player",
+      staffRole: member.staffRole || "",
       secondaryRole: member.secondaryRole || "",
-      status: member.status || "Player",
+      memberTypes,
+      status: getPrimaryStatus(memberTypes),
+      statusLabel: getStatusLabel(memberTypes),
       lineupStatus: member.lineupStatus || "",
       note: member.note || "",
       jerseyNumber: member.jerseyNumber || "",
@@ -119,7 +149,10 @@ for (const member of rosterEntries) {
       nationalityLabel: member.nationalityLabel,
       hasPhoto: member.hasPhoto,
       role: member.role,
+      staffRole: member.staffRole,
       status: member.status,
+      statusLabel: member.statusLabel,
+      memberTypes: [...member.memberTypes],
       tags: [...member.tags],
       gameTags: [...member.gameTags],
       extraTags: [...member.extraTags],
@@ -132,14 +165,19 @@ for (const member of rosterEntries) {
   current.photo = current.photo || member.photo;
   current.hasPhoto = current.hasPhoto || member.hasPhoto;
   current.nationality = current.nationality || member.nationality;
-  current.nationalityLabel = current.nationalityLabel || member.nationalityLabel;
-  if (current.status !== "Player" && member.status === "Player") {
+  current.nationalityLabel =
+    current.nationalityLabel || member.nationalityLabel;
+  current.staffRole = current.staffRole || member.staffRole;
+
+  if (!hasMemberType(current, "Player") && hasMemberType(member, "Player")) {
     current.role = member.role;
   } else if (!current.role && member.role) {
     current.role = member.role;
   }
-  current.status =
-    current.status === "Player" || member.status === "Player" ? "Player" : "Staff";
+
+  current.memberTypes = unique([...current.memberTypes, ...member.memberTypes]);
+  current.status = getPrimaryStatus(current.memberTypes);
+  current.statusLabel = getStatusLabel(current.memberTypes);
   current.tags = unique([...current.tags, ...member.tags]);
   current.gameTags = unique([...current.gameTags, ...member.gameTags]);
   current.extraTags = unique([...current.extraTags, ...member.extraTags]);
@@ -151,7 +189,7 @@ const allProfiles = Array.from(profilesById.values()).sort((left, right) =>
   left.pseudo.localeCompare(right.pseudo),
 );
 
-const players = allProfiles.filter((profile) => profile.status === "Player");
+const players = allProfiles.filter((profile) => hasMemberType(profile, "Player"));
 
 const games = GAME_DEFINITIONS.map((game) => {
   const members = rosterEntries
@@ -168,8 +206,12 @@ const games = GAME_DEFINITIONS.map((game) => {
         return null;
       }
 
-      const lineup = rosterMembers.filter((member) => member.status === "Player");
-      const staff = rosterMembers.filter((member) => member.status === "Staff");
+      const lineup = rosterMembers.filter((member) =>
+        hasMemberType(member, "Player") && !hasMemberType(member, "Staff"),
+      );
+      const staff = rosterMembers.filter((member) =>
+        hasMemberType(member, "Staff"),
+      );
 
       return {
         id: roster.id,
@@ -186,8 +228,8 @@ const games = GAME_DEFINITIONS.map((game) => {
     })
     .filter(Boolean);
 
-  const lineup = members.filter((member) => member.status === "Player");
-  const staff = members.filter((member) => member.status === "Staff");
+  const lineup = members.filter((member) => hasMemberType(member, "Player"));
+  const staff = members.filter((member) => hasMemberType(member, "Staff"));
   const featuredPool = lineup.filter((member) => member.photo);
 
   return {
