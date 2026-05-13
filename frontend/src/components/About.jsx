@@ -161,7 +161,7 @@ export default function About() {
             whileTap={{ scale: 0.97 }}
             className="inline-block mt-8 px-7 py-3 bg-[#E50914] hover:bg-[#ff1a28] text-white font-bold rounded-xl shadow-[0_0_20px_rgba(229,9,20,0.5)] hover:shadow-[0_0_35px_rgba(229,9,20,0.8)] transition-all duration-300 text-sm md:text-base"
           >
-            Rejoindre la communauté →
+            Découvrez notre Histoire →
           </motion.a>
         </motion.div>
       </div>

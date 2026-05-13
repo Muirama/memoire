@@ -60,7 +60,7 @@ const gascomZRoster = {
       lineupStatus: "Titulaire",
       status: "Player",
       gameSlugs: ["mobile-legends"],
-      photo: "",
+      photo: "/players/C_Norris.png",
     },
     {
       order: 5,
@@ -88,7 +88,7 @@ const gascomZRoster = {
       lineupStatus: "Remplaçant",
       status: "Player",
       gameSlugs: ["mobile-legends"],
-      photo: "",
+      photo: "/players/Slayy.png",
     },
     {
       order: 7,
@@ -133,7 +133,7 @@ const gascomZRoster = {
       lineupStatus: "Remplaçant",
       status: "Player",
       gameSlugs: ["mobile-legends"],
-      photo: "",
+      photo: "/players/Tiboy.png",
     },
   ],
 };

@@ -71,7 +71,7 @@ const gascomSlavengerRoster = {
       jerseySize: "L",
       status: "Player",
       gameSlugs: ["tekken"],
-      photo: "",
+      photo: "/players/Nightmare.png",
     },
   ],
 };
