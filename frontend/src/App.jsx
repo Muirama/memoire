@@ -195,9 +195,9 @@ function Layout({ children }) {
     if (pathname.startsWith("/team")) return "Gascom eSport";
     if (pathname.startsWith("/news")) return "Gascom News";
     if (pathname.startsWith("/events")) return "Gascom Events";
-    if (pathname.startsWith("/login")) return "Gascom Login";
-    if (pathname.startsWith("/sign")) return "Gascom Sign Up";
-    if (pathname.startsWith("/account")) return "Gascom eCompte";
+    if (pathname.startsWith("/login")) return "Gascom eSports";
+    if (pathname.startsWith("/sign")) return "Gascom eSports";
+    if (pathname.startsWith("/account")) return "Gascom eSports";
     if (pathname.startsWith("/organization/history")) return "Gascom eStory";
     if (pathname.startsWith("/organization/partners")) return "Gascom eSports";
 

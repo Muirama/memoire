@@ -46,8 +46,8 @@ export default function NavBar() {
     if (pathname.startsWith("/organization/partners")) return "Gascom eSports";
     if (pathname.startsWith("/news")) return "Gascom News";
     if (pathname.startsWith("/events")) return "Gascom Events";
-    if (pathname.startsWith("/login")) return "Gascom Login";
-    if (pathname.startsWith("/account")) return "Gascom eCompte";
+    if (pathname.startsWith("/login")) return "Gascom eSports";
+    if (pathname.startsWith("/account")) return "Gascom eSports";
     return "Gascom";
   };
 
