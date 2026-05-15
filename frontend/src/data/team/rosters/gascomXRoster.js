@@ -26,6 +26,7 @@ const gascomXRoster = {
       jerseyNumber: "29",
       nationality: "Malagasy",
       role: "Manager",
+      staffRole: "Manager",
       note: "Manager",
       jerseySize: "S",
       status: "Staff",

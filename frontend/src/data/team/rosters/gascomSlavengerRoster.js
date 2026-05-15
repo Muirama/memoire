@@ -73,6 +73,19 @@ const gascomSlavengerRoster = {
       gameSlugs: ["tekken"],
       photo: "/players/Nightmare.png",
     },
+    {
+      order: 6,
+      lastName: "RAMAMONJISOA",
+      firstName: "Vaniala Emilie",
+      pseudo: "Fatalemy",
+      jerseyNumber: "5",
+      nationality: "Malagasy",
+      role: "Competitor",
+      jerseySize: "M",
+      status: "Player",
+      gameSlugs: ["tekken"],
+      photo: "",
+    },
   ],
 };
 

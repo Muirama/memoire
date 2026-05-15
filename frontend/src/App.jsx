@@ -29,6 +29,8 @@ import UserAccountPage from "./pages/account/UserAccountPage";
 import ScrollToTop from "./components/ScrollToTop";
 import GameDetailPage from "./pages/team/GameDetailPage";
 import AdminTeamPage from "./pages/team/AdminTeamPage";
+import StoryPage from "./pages/organization/StoryPage";
+import PartnersPage from "./pages/organization/PartnersPage";
 
 import AdminHome from "./pages/admin/AdminHome";
 import AdminOrders from "./pages/admin/orders/AdminOrders";
@@ -196,6 +198,8 @@ function Layout({ children }) {
     if (pathname.startsWith("/login")) return "Gascom Login";
     if (pathname.startsWith("/sign")) return "Gascom Sign Up";
     if (pathname.startsWith("/account")) return "Gascom eCompte";
+    if (pathname.startsWith("/organization/history")) return "Gascom eStory";
+    if (pathname.startsWith("/organization/partners")) return "Gascom eSports";
 
     if (pathname.startsWith("/admin")) return "Gascom Admin";
 
@@ -244,6 +248,8 @@ function App() {
             <Route path="/team" element={<TeamPage />} />
             <Route path="/team/game/:slug" element={<GameDetailPage />} />
             <Route path="/team/admin" element={<AdminTeamPage />} />
+            <Route path="/organization/history" element={<StoryPage />} />
+            <Route path="/organization/partners" element={<PartnersPage />} />
             <Route path="/news" element={<NewsPage />} />
             <Route path="/news/:id" element={<NewsDetailPage />} />
             <Route path="/events" element={<EventPage />} />

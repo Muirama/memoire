@@ -264,7 +264,7 @@ export default function SignPage() {
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  placeholder="Adresse de livraison"
+                  placeholder="Adresse"
                   rows={2}
                   className="w-full pl-12 pr-4 py-3 bg-[#0D0D0D] text-white rounded-lg
                              border border-[#E50914]/30 focus:border-[#E50914]

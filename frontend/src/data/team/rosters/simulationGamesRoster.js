@@ -1,6 +1,6 @@
 const simulationGamesRoster = {
   id: "simulation-games",
-  name: "Simulation Games",
+  name: "Dei-Gascom",
   label: "Simulation Games",
   sheetName: "SIMULATION GAMES",
   gameSlugs: ["ea-fc", "efootball", "efootball-mobile", "nba-2k"],

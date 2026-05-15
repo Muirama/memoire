@@ -1,47 +1,16 @@
 /* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
-
-const sponsorLogos = [
-  {
-    href: "https://www.orange.mg/",
-    label: "Orange Madagascar",
-    image: "/Logo Orange.png",
-    className: "spb-logo",
-  },
-  {
-    href: "https://loaline.com/",
-    label: "Centre Loaline",
-    image: "/loaline-bronze.png",
-    className: "spb-logo spb-logo--invert spb-logo--loaline",
-  },
-  {
-    href: "",
-    label: "Gasconcept",
-    image: "/Logo Groupe/GASCONCEPT.png",
-    className: "spb-logo spb-logo--invert spb-logo--Gasconcept",
-  },
-];
-
-const partnerLogos = [
-  {
-    href: "https://www.instagram.com/syki.261?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
-    label: "SYKI",
-    image: "/LOGO/Logo SYKI Blanc.png",
-    className: "spb-logo spb-logo--invert spb-logo--syki",
-  },
-];
-
-const allLogos = [
-  ...sponsorLogos.map((l) => ({ ...l, group: "Sponsors" })),
-  ...partnerLogos.map((l) => ({ ...l, group: "Partenaires" })),
-];
+import { allPartnerLogos } from "../data/organizationData";
 
 export default function SponsorsPartnersBanner() {
   // Repetition volontaire pour garantir une "file indienne" continue.
-  const repeatedLogos = Array.from({ length: 8 }, () => allLogos).flat();
+  const repeatedLogos = Array.from({ length: 8 }, () => allPartnerLogos).flat();
 
   return (
-    <section className="relative z-10 bg-white">
+    <section
+      id="partners"
+      className="relative z-10 bg-white scroll-mt-28"
+    >
       <div className="mx-auto max-w-7xl px-4 py-7 md:px-6 md:py-9">
         <motion.div
           initial={{ opacity: 0, y: 14 }}

@@ -1,37 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
+import { groupCompanies } from "../data/organizationData";
 
 const groupLogo = {
+  href: "https://www.facebook.com/GascomEsport",
   label: "Groupe Gasconcept",
   image: "/Logo Groupe/GASCONCEPT.png",
 };
-
-const groupCompanies = [
-  {
-    href: "https://www.facebook.com/GascomEsport",
-    label: "Gascom Esports",
-    image: "/LOGO/Logo_GES_noir.svg",
-    className: "h-10 w-auto object-contain",
-  },
-  {
-    href: "https://www.facebook.com/Coolconceptevents",
-    label: "Coolconcept Events",
-    image: "/Logo Groupe/COOLCONCEPT EVENTS.png",
-    className: "h-9 w-auto object-contain",
-  },
-  {
-    href: "https://www.facebook.com/profile.php?id=61555458792559",
-    label: "Graphicom",
-    image: "/Logo Groupe/GRAPHICOM.png",
-    className: "h-9 w-auto object-contain",
-  },
-  {
-    href: "https://www.facebook.com/OdysseyFitness261",
-    label: "Odyssey Fitness",
-    image: "/Logo Groupe/ODYSSEY FITNESS.png",
-    className: "h-9 w-auto object-contain",
-  },
-];
 
 export default function GroupCompaniesBanner() {
   const radiusX = 190;
